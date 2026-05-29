@@ -196,7 +196,7 @@
   cursor: pointer;
 }
 
-/* サイバーパンクカード */
+/* キャストカード */
     .card {
       background: linear-gradient(180deg, rgba(15,8,40,.95), rgba(8,4,25,.98));
       border: 2px solid rgba(78,229,255,.3);
@@ -325,6 +325,17 @@
     .btn:hover { border-color: var(--cyan); background: rgba(78,229,255,.15); box-shadow: 0 0 15px var(--cyan); }
 
     footer { padding: 60px 0 90px; text-align: center; color: var(--muted); font-size: 14px; }
+
+    .section-title {
+  text-align: right;
+  font-size: clamp(19px, 3.2vw, 26px);
+  letter-spacing: 0.25em;
+  color: #c8f8ff;
+  margin: 15px 0 35px 0;
+  text-shadow: 0 0 20px var(--cyan),
+               0 0 40px var(--magenta);
+  font-weight: 500;
+}
   </style>
 </head>
 <body>
@@ -336,7 +347,7 @@
       <p class="lead">かくて運命の扉は閉じられた。――開くのはどうか君の手で。</p>
     </section>
 
-    <div class="section-title"; text-align: right>N◎VAリンクオンライン</div>
+    <div class="section-title">N◎VAリンクオンライン</div>
 
     <!-- 警察 Sector -->
     <section class="scenario-group collapsed" id="police">
