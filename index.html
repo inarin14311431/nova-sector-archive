@@ -225,7 +225,56 @@
     0 0 95px rgba(170, 0, 255, 0.85);
   transform: translateY(-12px) scale(1.02);
 }
+    
+/* ==================== セクターヘッダー 電撃エフェクト ==================== */
+.scenario-header {
+  position: relative;
+  overflow: hidden;
+}
 
+.scenario-header::before,
+.scenario-header::after {
+  content: "";
+  position: absolute;
+  background: linear-gradient(transparent, rgba(255,255,255,0.9), transparent);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.scenario-header::before {
+  width: 3px;
+  height: 80%;
+  left: 15%;
+  top: -20%;
+  box-shadow: 0 0 15px #00ffff;
+  animation: lightning 0.6s linear forwards;
+}
+
+.scenario-header::after {
+  width: 2px;
+  height: 60%;
+  left: 65%;
+  top: 10%;
+  box-shadow: 0 0 12px #ff00ff;
+  animation: lightning 0.45s linear forwards;
+}
+
+.scenario-header:hover::before,
+.scenario-header:hover::after {
+  animation: lightning 1.2s linear;
+}
+
+@keyframes lightning {
+  0%   { transform: translateY(-150%); opacity: 0; }
+  15%  { opacity: 1; }
+  30%  { transform: translateY(20%); }
+  45%  { transform: translateY(-60%); opacity: 0.8; }
+  65%  { transform: translateY(50%); }
+  80%  { transform: translateY(150%); opacity: 0; }
+  100% { opacity: 0; }
+}
+    
 /* スキャンラインアニメーション */
     .card::after {
       content: "";
