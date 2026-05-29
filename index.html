@@ -327,14 +327,16 @@
     footer { padding: 60px 0 90px; text-align: center; color: var(--muted); font-size: 14px; }
 
     .section-title {
+      width: fit-content;
+      margin-left: auto;
+      margin-right: 0;
+      font-size: clamp(19px, 3.2vw, 27px);
+      letter-spacing: 0.3em;
+      color: var(--cyan);
+      text-shadow: 0 0 20px var(--cyan);
+      margin: 15px 0 40px auto;     /* 上・下・左自動・右0 */
+      padding: 0 20px 0 0;          /* 右側に少し余白 */
       text-align: right;
-      font-size: clamp(19px, 3.2vw, 26px);
-      letter-spacing: 0.25em;
-      color: #c8f8ff;
-      margin: 15px 0 35px 0;
-      text-shadow: 0 0 20px var(--cyan),
-                   0 0 40px var(--magenta);
-      font-weight: 500;
     }
   </style>
 </head>
