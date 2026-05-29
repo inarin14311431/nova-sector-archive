@@ -79,106 +79,166 @@
 
     h1 { margin: 0 0 12px; font-size: clamp(44px, 8vw, 96px); line-height: .85; letter-spacing: -.08em; text-transform: uppercase; text-shadow: 0 0 30px var(--cyan); }
 
-    /* セクターヘッダー */
-    .scenario-header {
-      display: flex; align-items: center; gap: 24px;
-      padding: 28px 32px;
-      background: rgba(15,5,45,.92);
-      border-bottom: 2px solid var(--cyan);
-      cursor: pointer; transition: all 0.4s ease;
-    }
+/* セクターヘッダー */
+.scenario-header {
+  display: flex; 
+  align-items: center; 
+  gap: 24px;
+  padding: 28px 32px;
+  background: rgba(15,5,45,.92);
+  border-bottom: 2px solid var(--cyan);
+  cursor: pointer; 
+  transition: all 0.4s ease;
+  position: relative;           /* 電撃エフェクト用 */
+  overflow: hidden;
+}
 
-    .scenario-header:hover {
-      background: rgba(25,10,60,.98);
-    }
+.scenario-header:hover {
+  background: rgba(25,10,60,.98);
+}
 
-    .toggle-btn {
-      width: 36px; height: 36px; border: 2px solid var(--cyan); color: var(--cyan);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 26px; border-radius: 50%; flex-shrink: 0;
-      transition: transform 0.4s ease;
-    }
+/* 電撃エフェクト */
+.scenario-header::before,
+.scenario-header::after {
+  content: "";
+  position: absolute;
+  background: linear-gradient(transparent, rgba(255,255,255,0.85), transparent);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+}
 
-    .scenario-group.collapsed .toggle-btn {
-      transform: rotate(-90deg);
-    }
+.scenario-header::before {
+  width: 3px;
+  height: 75%;
+  left: 18%;
+  top: -30%;
+  box-shadow: 0 0 18px #00ffff;
+}
 
-    .scenario-head-content {
-      display: flex;
-      align-items: center;
-      gap: 40px;
-      flex: 1;
-    }
+.scenario-header::after {
+  width: 2px;
+  height: 55%;
+  left: 68%;
+  top: 25%;
+  box-shadow: 0 0 15px #ff00ff;
+}
 
-    .scenario-head h3 {
-      margin: 0;
-      font-size: clamp(26px, 3.4vw, 34px);
-      letter-spacing: -.04em;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
+.scenario-header:hover::before,
+.scenario-header:hover::after {
+  opacity: 1;
+  animation: lightning 0.75s linear;
+}
 
-    .scenario-sub {
-      color: #c8f0ff;
-      font-size: clamp(19px, 2.6vw, 27px);
-      font-weight: 500;
-      letter-spacing: .08em;
-      text-shadow: 0 0 20px var(--cyan);
-      white-space: nowrap;
-    }
+@keyframes lightning {
+  0%   { transform: translateY(-120%); opacity: 0; }
+  15%  { opacity: 1; }
+  35%  { transform: translateY(30%); }
+  55%  { transform: translateY(-50%); opacity: 0.9; }
+  75%  { transform: translateY(60%); }
+  100% { transform: translateY(150%); opacity: 0; }
+}
 
-    .handouts {
-      display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px;
-    }
+/* トグルボタン */
+.toggle-btn {
+  width: 36px; 
+  height: 36px; 
+  border: 2px solid var(--cyan); 
+  color: var(--cyan);
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  font-size: 26px; 
+  border-radius: 50%; 
+  flex-shrink: 0;
+  transition: transform 0.4s ease;
+}
 
-    .handout {
-      padding: 6px 18px;
-      background: rgba(0,240,255,.1);
-      border: 1px solid rgba(0,240,255,.4);
-      border-radius: 4px;
-      font-size: 15px;
-      color: #a0f8ff;
-      cursor: pointer;
-      position: relative;
-    }
+.scenario-group.collapsed .toggle-btn {
+  transform: rotate(-90deg);
+}
 
-    .handout:hover {
-      background: rgba(0,240,255,.25);
-      border-color: var(--cyan);
-    }
+.scenario-head-content {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  flex: 1;
+}
 
-    .handout::after {
-      content: attr(data-characters);
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(60,5,120,.95);
-      border: 1px solid var(--cyan);
-      padding: 12px 20px;
-      border-radius: 6px;
-      white-space: nowrap;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s ease;
-      z-index: 20;
-      box-shadow: 0 0 25px rgba(78,229,255,.6);
-    }
+.scenario-head h3 {
+  margin: 0;
+  font-size: clamp(26px, 3.4vw, 34px);
+  letter-spacing: -.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
 
-    .handout:hover::after {
-      opacity: 1;
-      visibility: visible;
-      top: calc(100% + 10px);
-    }
+.scenario-sub {
+  color: #c8f0ff;
+  font-size: clamp(19px, 2.6vw, 27px);
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-shadow: 0 0 20px var(--cyan);
+  white-space: nowrap;
+}
 
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(370px, 1fr));
-      gap: 22px;
-      padding: 24px;
-    }
+.handouts {
+  display: flex; 
+  gap: 12px; 
+  flex-wrap: wrap; 
+  margin-top: 12px;
+}
 
-    .scenario-group.collapsed .cards { display: none; }
+.handout {
+  padding: 6px 18px;
+  background: rgba(0,240,255,.1);
+  border: 1px solid rgba(0,240,255,.4);
+  border-radius: 4px;
+  font-size: 15px;
+  color: #a0f8ff;
+  cursor: pointer;
+  position: relative;
+}
+
+.handout:hover {
+  background: rgba(0,240,255,.25);
+  border-color: var(--cyan);
+}
+
+.handout::after {
+  content: attr(data-characters);
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(60,5,120,.95);
+  border: 1px solid var(--cyan);
+  padding: 12px 20px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 20;
+  box-shadow: 0 0 25px rgba(78,229,255,.6);
+}
+
+.handout:hover::after {
+  opacity: 1;
+  visibility: visible;
+  top: calc(100% + 10px);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(370px, 1fr));
+  gap: 22px;
+  padding: 24px;
+}
+
+.scenario-group.collapsed .cards { 
+  display: none; 
+}
 
 /* カード全体をリンク化 */
 .card-link {
@@ -225,56 +285,7 @@
     0 0 95px rgba(170, 0, 255, 0.85);
   transform: translateY(-12px) scale(1.02);
 }
-    
-/* ==================== セクターヘッダー 電撃エフェクト ==================== */
-.scenario-header {
-  position: relative;
-  overflow: hidden;
-}
-
-.scenario-header::before,
-.scenario-header::after {
-  content: "";
-  position: absolute;
-  background: linear-gradient(transparent, rgba(255,255,255,0.9), transparent);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 3;
-}
-
-.scenario-header::before {
-  width: 3px;
-  height: 80%;
-  left: 15%;
-  top: -20%;
-  box-shadow: 0 0 15px #00ffff;
-  animation: lightning 0.6s linear forwards;
-}
-
-.scenario-header::after {
-  width: 2px;
-  height: 60%;
-  left: 65%;
-  top: 10%;
-  box-shadow: 0 0 12px #ff00ff;
-  animation: lightning 0.45s linear forwards;
-}
-
-.scenario-header:hover::before,
-.scenario-header:hover::after {
-  animation: lightning 1.2s linear;
-}
-
-@keyframes lightning {
-  0%   { transform: translateY(-150%); opacity: 0; }
-  15%  { opacity: 1; }
-  30%  { transform: translateY(20%); }
-  45%  { transform: translateY(-60%); opacity: 0.8; }
-  65%  { transform: translateY(50%); }
-  80%  { transform: translateY(150%); opacity: 0; }
-  100% { opacity: 0; }
-}
-    
+        
 /* スキャンラインアニメーション */
     .card::after {
       content: "";
