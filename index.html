@@ -180,6 +180,22 @@
 
     .scenario-group.collapsed .cards { display: none; }
 
+/* カード全体をリンク化 */
+.card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.card-link:hover .card {
+  transform: translateY(-12px) scale(1.02);
+}
+
+/* クリック可能であることを視覚的にわかりやすく */
+.card-link:hover {
+  cursor: pointer;
+}
+
 /* サイバーパンクカード */
     .card {
       background: linear-gradient(180deg, rgba(15,8,40,.95), rgba(8,4,25,.98));
@@ -280,7 +296,7 @@
 
     .chip {
       padding: 9px 18px; border-radius: 4px; font-size: 13.8px;
-      border: 1px solid rgba(255,255,255,.15); background: rgba(10,5,35,.7);
+      border: 1px solid rgba(255,255,255,.15); background: rgba(50,55,85,.7);
     }
 
     .chip.major {
@@ -448,6 +464,11 @@
       <div class="cards">
         <article class="card blank"></article>
         
+
+      <a href="https://character-sheets.appspot.com/tnx/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByGgsSDUNoYXJhY3RlckRhdGEYgICQyZ3I0woM" 
+           class="card-link" 
+           target="_blank" 
+           rel="noopener noreferrer">
         <article class="card">
           <div class="art">
             <img src="assets/characters/yura.png" alt="逢坂ユラ">
@@ -463,7 +484,7 @@
             <div class="field">
               <span class="label">STYLE SIGNAL</span>
               <div class="styles">
-                <span class="chip major">トーキー◎</span>
+                <span class="chip major">トーキー◎●</span>
                 <span class="chip">マヤカシ</span>
                 <span class="chip">フェイト</span>
               </div>
@@ -485,6 +506,7 @@
             </div>
           </div>
         </article>
+      </a>
 
         <article class="card blank"></article>
       </div>
