@@ -128,12 +128,208 @@
   <div class="noise"></div>
 
   <div class="wrap">
-    <!-- ここにあなたの既存のHTML内容（heroからfooterまで）をすべて貼り付けてください -->
-    <!-- （長いので省略していますが、元のファイルの内容をそのまま使ってください） -->
+    <section class="hero">
+      <h2>トーキョーN◎VA THE AXLERATION<br></h2><h1>"ビフレスト"</h1>
+      <p class="lead">かくて運命の扉は閉じられた。――開くのはどうか君の手で。</p>
+    </section>
+
+    <div class="section-title">SECTOR GRID</div>
+
+    <!-- 警察 Sector -->
+    <section class="scenario-group" id="police">
+      <div class="scenario-header" onclick="toggleSector('police')">
+        <div class="toggle-btn">▼</div>
+        <div class="scenario-head-content">
+          <h3>警察 Sector</h3>
+          <div class="scenario-sub" data-text="黄金と正義 / 朽ちても朽ちぬ"></div>
+          <div class="handouts">
+            <span class="handout" data-characters="イヌ / カブト / ミストレス / カブトワリ">イヌ</span>
+            <span class="handout" data-characters="イヌ / カブト / ミストレス / カブトワリ">カブト</span>
+            <span class="handout" data-characters="イヌ / カブト / ミストレス / カブトワリ">ミストレス</span>
+            <span class="handout" data-characters="イヌ / カブト / ミストレス / カブトワリ">カブトワリ</span>
+          </div>
+        </div>
+      </div>
+      <div class="cards">
+        <article class="card blank"></article>
+        <article class="card blank"></article>
+        <article class="card blank"></article>
+        <article class="card blank"></article>
+      </div>
+    </section>
+
+    <!-- 企業 Sector -->
+    <section class="scenario-group" id="company">
+      <div class="scenario-header" onclick="toggleSector('company')">
+        <div class="toggle-btn">▼</div>
+        <div class="scenario-head-content">
+          <h3>企業 Sector</h3>
+          <div class="scenario-sub" data-text="絆の糸で、傀儡は踊る"></div>
+          <div class="handouts">
+            <span class="handout" data-characters="クグツ / エグゼク / カタナ">クグツ</span>
+            <span class="handout" data-characters="クグツ / エグゼク / カタナ">エグゼク</span>
+            <span class="handout" data-characters="クグツ / エグゼク / カタナ">カタナ</span>
+          </div>
+        </div>
+      </div>
+      <div class="cards">
+        <article class="card blank"></article>
+        <article class="card blank"></article>
+        <article class="card blank"></article>
+      </div>
+    </section>
+
+    <!-- ストリート Sector -->
+    <section class="scenario-group" id="street">
+      <div class="scenario-header" onclick="toggleSector('street')">
+        <div class="toggle-btn">▼</div>
+        <div class="scenario-head-content">
+          <h3>ストリート Sector</h3>
+          <div class="scenario-sub" data-text="飽無闇窖"></div>
+          <div class="handouts">
+            <span class="handout" data-characters="フェイト / レッガー / マネキン">フェイト</span>
+            <span class="handout" data-characters="フェイト / レッガー / マネキン">レッガー</span>
+            <span class="handout" data-characters="フェイト / レッガー / マネキン">マネキン</span>
+          </div>
+        </div>
+      </div>
+      <div class="cards">
+        <article class="card blank"></article>
+        <article class="card blank"></article>
+        <article class="card blank"></article>
+      </div>
+    </section>
+
+    <!-- アストラル Sector -->
+    <section class="scenario-group" id="astral">
+      <div class="scenario-header" onclick="toggleSector('astral')">
+        <div class="toggle-btn">▼</div>
+        <div class="scenario-head-content">
+          <h3>アストラル Sector</h3>
+          <div class="scenario-sub" data-text="虚像紫怨呪禍"></div>
+          <div class="handouts">
+            <span class="handout" data-characters="バサラ / マヤカシ / チャクラ">バサラ</span>
+            <span class="handout" data-characters="バサラ / マヤカシ / チャクラ">マヤカシ</span>
+            <span class="handout" data-characters="バサラ / マヤカシ / チャクラ">チャクラ</span>
+          </div>
+        </div>
+      </div>
+      <div class="cards">
+        <article class="card blank"></article>
+        <article class="card blank"></article>
+        <article class="card blank"></article>
+      </div>
+    </section>
+
+    <!-- テクノロジー Sector -->
+    <section class="scenario-group" id="tech">
+      <div class="scenario-header" onclick="toggleSector('tech')">
+        <div class="toggle-btn">▼</div>
+        <div class="scenario-head-content">
+          <h3>テクノロジー Sector</h3>
+          <div class="scenario-sub" data-text="屑鉄のエクリプス"></div>
+          <div class="handouts">
+            <span class="handout" data-characters="タタラ / ニューロ / カゼ">タタラ</span>
+            <span class="handout" data-characters="タタラ / ニューロ / カゼ">ニューロ</span>
+            <span class="handout" data-characters="タタラ / ニューロ / カゼ">カゼ</span>
+          </div>
+        </div>
+      </div>
+      <div class="cards">
+        <article class="card blank"></article>
+        <article class="card blank"></article>
+        <article class="card blank"></article>
+      </div>
+    </section>
+
+    <!-- メディア Sector -->
+    <section class="scenario-group" id="media">
+      <div class="scenario-header" onclick="toggleSector('media')">
+        <div class="toggle-btn">▼</div>
+        <div class="scenario-head-content">
+          <h3>メディア Sector</h3>
+          <div class="scenario-sub" data-text="トゥモロー・ワンスモア"></div>
+          <div class="handouts">
+            <span class="handout" data-characters="カブキ / トーキー / カゲ">カブキ</span>
+            <span class="handout" data-characters="”枯れ尾花” 逢坂 ユラ">トーキー</span>
+            <span class="handout" data-characters="カブキ / トーキー / カゲ">カゲ</span>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="cards">
+        <article class="card blank"></article>
+        
+        <article class="card">
+          <div class="art">
+            <img src="assets/characters/yura.png" alt="逢坂ユラ">
+          </div>
+          <div class="body">
+            <div class="topline">
+              <div>
+                <p class="reading">”ファントム・ウォッチャー” ゆらゆら</p>
+                <h3 class="name">”枯れ尾花” 逢坂 ユラ</h3>
+              </div>
+            </div>
+
+            <div class="field">
+              <span class="label">STYLE SIGNAL</span>
+              <div class="styles">
+                <span class="chip major">トーキー◎</span>
+                <span class="chip">マヤカシ</span>
+                <span class="chip">フェイト</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <span class="label">AGE / GENDER</span>
+              <div class="aux">22歳 / 女</div>
+            </div>
+
+            <div class="field">
+              <span class="label">PROFILE SUMMARY</span>
+              <p class="summary">怪談の裏に隠された真実を暴くチャンネル99の外注記者。心霊スポット調査と生配信を続け、異常現象の背後にある人間の執着や悪意を追う現場系トーキー。<br>ゆらゆら深夜巡礼チャンネル登録お願いします！</p>
+            </div>
+
+            <div class="player-field">
+              <span class="label">PLAYER</span><br>
+              稲荷 秋／イナリ アキ
+            </div>
+          </div>
+        </article>
+
+        <article class="card blank"></article>
+      </div>
+    </section>
+
+    <!-- 社交界 Sector -->
+    <section class="scenario-group" id="social">
+      <div class="scenario-header" onclick="toggleSector('social')">
+        <div class="toggle-btn">▼</div>
+        <div class="scenario-head-content">
+          <h3>社交界 Sector</h3>
+          <div class="scenario-sub" data-text="ファムファタルに染まって"></div>
+          <div class="handouts">
+            <span class="handout" data-characters="ハイランダー / クロマク / カリスマ">ハイランダー</span>
+            <span class="handout" data-characters="ハイランダー / クロマク / カリスマ">クロマク</span>
+            <span class="handout" data-characters="ハイランダー / クロマク / カリスマ">カリスマ</span>
+          </div>
+        </div>
+      </div>
+      <div class="cards">
+        <article class="card blank"></article>
+        <article class="card blank"></article>
+        <article class="card blank"></article>
+      </div>
+    </section>
+
+    <footer>
+      <p>ハンドアウトにホバーすると所属キャラクター名が表示されます</p>
+    </footer>
   </div>
 
   <script>
-    /* スクリプト部分もそのまま */
     function toggleSector(id) {
       const group = document.getElementById(id);
       if (group) group.classList.toggle('collapsed');
