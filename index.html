@@ -856,6 +856,11 @@
               sub.setAttribute('data-typed', 'true');
             }
           });
+    　  header.addEventListener('mouseleave', () => {
+        sub.innerHTML = '';
+        sub.style.opacity = '0';
+        sub.removeAttribute('data-typed');
+      });
         }
       });
     });
