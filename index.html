@@ -24,15 +24,15 @@
       font-family: Inter, "Noto Sans JP", system-ui, sans-serif;
       background-color: #0a001f;
       background-image: 
-        /* 全体を暗く沈めるグラデーション（文字の可読性用） */
         linear-gradient(rgba(10, 0, 31, 0.5), rgba(10, 0, 31, 0.85)),
-        url('assets/citymap.png');
+        url('assets/NoImage.png'); /* ★ 正しい画像パス */
       
-      background-size: auto 120%; /* 高さを画面より少し大きくして巨大感を出す */
-      background-position: right top; /* 右上に固定 */
+      background-size: auto 120%;
+      background-position: right top;
       background-attachment: fixed;
       background-repeat: no-repeat;
     }
+
 
     /* 背景画像をもっと「遠景」らしく見せるための調整 */
     body::before {
@@ -41,13 +41,16 @@
       inset: 0;
       z-index: 1;
       pointer-events: none;
-      /* 右上から左下にかけて暗くなるグラデーション（ビルを浮かび上がらせる） */
-      background: radial-gradient(circle at top right, transparent 0%, rgba(10, 0, 31, 0.9) 70%),
-                  linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 240, 255, 0.04) 50%);
+      /* 
+         1. 右上を透明にしてビルを見せ、左下に向かって暗くするグラデーション
+         2. サイバーパンク風の走査線（スキャンライン）
+      */
+      background: 
+        radial-gradient(circle at top right, transparent 0%, rgba(10, 0, 31, 0.9) 75%),
+        linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 240, 255, 0.04) 50%);
       background-size: 100% 100%, 100% 4px;
       opacity: 0.8;
     }
-    
     
     .noise {
       position: fixed; inset: 0; pointer-events: none; opacity: .12; z-index: 2;
@@ -57,21 +60,10 @@
       animation: noiseShift 0.4s steps(3) infinite;
     }
 
-/* ==================== ネオン背景エフェクト ==================== */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      background: 
-        radial-gradient(circle at 20% 30%, rgba(0, 240, 255, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(255, 0, 170, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 40% 80%, rgba(157, 0, 255, 0.06) 0%, transparent 60%);
-      animation: neonPulse 25s ease-in-out infinite alternate;
-      opacity: 0.7;
-    }
+    /* 「ネオン背景エフェクト」の body::before は削除 */
 
+
+    
     body::after {
       content: "";
       position: fixed;
@@ -160,6 +152,8 @@
 }
 
 .scenario-sub {
+  margin-left: auto; /* ★ これで右端に押し出す */
+  padding-right: 10px;
   color: #c8f0ff;
   font-size: clamp(19px, 2.6vw, 27px);
   font-weight: 500;
@@ -217,11 +211,12 @@
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(450px, 450px)); 
+  grid-template-columns: repeat(auto-fill, 450px); 
   gap: 22px;
   padding: 24px;
-  justify-content: end;
+  justify-content: end; /* ★ これで右寄せ */
 }
+
 
 
 
