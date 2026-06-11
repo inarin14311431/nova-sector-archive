@@ -830,48 +830,48 @@
     </footer>
   </div>
 
-  <script>
-    function toggleSector(id) {
-      const group = document.getElementById(id);
-      if (group) group.classList.toggle('collapsed');
-    }
+<script>
+  function toggleSector(id) {
+    const group = document.getElementById(id);
+    if (group) group.classList.toggle('collapsed');
+  }
 
-    function typeText(element) {
-      const text = element.getAttribute('data-text');
-      element.innerHTML = '';
-      let i = 0;
-      function type() {
-        if (i < text.length) {
-          element.innerHTML += text.charAt(i);
-          i++;
-          setTimeout(type, 45);
-        }
+  function typeText(element) {
+    const text = element.getAttribute('data-text');
+    element.innerHTML = '';
+    let i = 0;
+    function type() {
+      if (i < text.length) {
+        element.innerHTML += text.charAt(i);
+        i++;
+        setTimeout(type, 45);
       }
-      type();
     }
+    type();
+  }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.scenario-header').forEach(header => {
-        const sub = header.querySelector('.scenario-sub');
-        if (sub) {
-          sub.style.opacity = '0';
-          header.addEventListener('mouseenter', () => {
-            sub.style.opacity = '1';
-            if (!sub.hasAttribute('data-typed')) {
-              typeText(sub);
-              sub.setAttribute('data-typed', 'true');
-            }
-          });
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.scenario-header').forEach(header => {
+      const sub = header.querySelector('.scenario-sub');
+      if (sub) {
+        sub.style.opacity = '0';
+        header.addEventListener('mouseenter', () => {
+          sub.style.opacity = '1';
+          if (!sub.hasAttribute('data-typed')) {
+            typeText(sub);
+            sub.setAttribute('data-typed', 'true');
+          }
+        });
         header.addEventListener('mouseleave', () => {
-          // セクターが閉じている時だけ非表示にする
           if (header.parentElement.classList.contains('collapsed')) {
             sub.innerHTML = '';
             sub.style.opacity = '0';
             sub.removeAttribute('data-typed');
           }
         });
-      });
+      }
     });
-  </script>
+  });
+</script>
 </body>
 </html>
