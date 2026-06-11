@@ -384,6 +384,69 @@
       padding: 0 20px 0 0;          /* 右側に少し余白 */
       text-align: right;
     }
+
+    @media (max-width: 768px) {
+  .wrap {
+    width: calc(100% - 16px);
+  }
+
+  h1 {
+    font-size: 46px;
+  }
+
+  .scenario-header {
+    padding: 18px 16px;
+    gap: 12px;
+  }
+
+  .scenario-head-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .scenario-head h3 {
+    font-size: 24px;
+    white-space: normal;
+  }
+
+  .scenario-sub {
+    font-size: 16px;
+    white-space: normal;
+  }
+
+  .handouts {
+    gap: 8px;
+  }
+
+  .handout {
+    font-size: 13px;
+    padding: 5px 10px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+    padding: 14px;
+    gap: 16px;
+  }
+
+  .card-link:hover .card,
+  .card:hover {
+    transform: none;
+  }
+
+  .body {
+    padding: 16px;
+  }
+
+  .name {
+    font-size: 22px;
+  }
+
+  .summary {
+    font-size: 14px;
+  }
+}
   </style>
 </head>
 <body>
