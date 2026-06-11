@@ -108,7 +108,13 @@
   flex-shrink: 0;
   transition: transform 0.4s ease;
 }
-
+/* セクター展開時のトグル色変更 */
+.scenario-group:not(.collapsed) .toggle-btn {
+  color: var(--magenta);
+  border-color: var(--magenta);
+  box-shadow: 0 0 12px var(--magenta);
+}
+    
 .scenario-group.collapsed .toggle-btn {
   transform: rotate(-90deg);
 }
