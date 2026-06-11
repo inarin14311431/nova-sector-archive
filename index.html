@@ -16,14 +16,39 @@
 
     * { box-sizing: border-box; }
 
+    /* 背景画像とオーバーレイの設定（画面右上に配置） */
     html, body {
       margin: 0; padding: 0;
       min-height: 100%;
       color: var(--text);
       font-family: Inter, "Noto Sans JP", system-ui, sans-serif;
-      background: #0a001f;
+      background-color: #0a001f;
+      background-image: 
+        /* 全体を暗く沈めるグラデーション（文字の可読性用） */
+        linear-gradient(rgba(10, 0, 31, 0.5), rgba(10, 0, 31, 0.85)),
+        url('assets/characters/citymap.png');
+      
+      background-size: auto 120%; /* 高さを画面より少し大きくして巨大感を出す */
+      background-position: right top; /* 右上に固定 */
+      background-attachment: fixed;
+      background-repeat: no-repeat;
     }
 
+    /* 背景画像をもっと「遠景」らしく見せるための調整 */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      /* 右上から左下にかけて暗くなるグラデーション（ビルを浮かび上がらせる） */
+      background: radial-gradient(circle at top right, transparent 0%, rgba(10, 0, 31, 0.9) 70%),
+                  linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 240, 255, 0.04) 50%);
+      background-size: 100% 100%, 100% 4px;
+      opacity: 0.8;
+    }
+    
+    
     .noise {
       position: fixed; inset: 0; pointer-events: none; opacity: .12; z-index: 2;
       background-image: radial-gradient(circle at 30% 20%, rgba(255,255,255,.3) 0 1px, transparent 1px),
