@@ -67,22 +67,44 @@
     /* 「ネオン背景エフェクト」の body::before は削除 */
 
 
-   body::after {
+    body::after {
       content: "";
       position: fixed;
       inset: 0;
       z-index: 1;
       pointer-events: none;
-      background-image: 
-        /* 横線 */
-        linear-gradient(0deg, transparent 24%, rgba(0, 240, 255, 0.05) 25%, rgba(0, 240, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 240, 255, 0.05) 75%, rgba(0, 240, 255, 0.05) 76%, transparent 77%, transparent),
-        /* 縦線 */
-        linear-gradient(90deg, transparent 24%, rgba(0, 240, 255, 0.05) 25%, rgba(0, 240, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 240, 255, 0.05) 75%, rgba(0, 240, 255, 0.05) 76%, transparent 77%, transparent);
-      background-size: 60px 60px; /* グリッドのサイズ */
-      opacity: 0.5;
-      /* 背景がゆっくり動くようにして「ライブ感」を出す */
-      animation: gridScroll 60s linear infinite;
+      /* 
+         1. 太めのデジタルグリッド
+         2. 少し光っている（グロー）ような質感 
+      */
+      background: 
+        linear-gradient(rgba(0, 240, 255, 0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.15) 1px, transparent 1px);
+      background-size: 80px 80px; /* 少し大きめのグリッド */
+      
+      /* スキャンラインのような質感を追加 */
+      mask-image: radial-gradient(circle at center, black, transparent 80%);
+      -webkit-mask-image: radial-gradient(circle at center, black, transparent 80%);
+      
+      opacity: 0.6;
+      animation: neonScan 60s linear infinite;
     }
+
+    /* 走査線をもっと目立たせるための追加レイヤー（もし必要なら body に追加） */
+    .noise::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent 0,
+        rgba(0, 240, 255, 0.05) 1px,
+        transparent 2px
+      );
+      background-size: 100% 4px;
+      pointer-events: none;
+    }
+
 
     @keyframes gridScroll {
       0% { background-position: 0 0; }
