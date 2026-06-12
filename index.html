@@ -353,13 +353,17 @@
       pointer-events: none;
     }
     
-    /* ホバーした時にアニメーションを実行 */
-    .card:hover::after {
-      /* forwards を指定して、最後は消えた状態で止める */
-      animation: singleScan 0.8s ease-out forwards;
+    /* カードをホバーした時の設定 */
+    .card:hover {
       transform: translateY(-12px) scale(1.02);
-      /* ★ 枠線の色と影をアニメーションさせる */
+      /* ★ カード本体の枠線を明滅させる（無限ループ） */
       animation: borderGlow 2s ease-in-out infinite;
+    }
+
+    /* ホバーした瞬間にスキャンライン(::after)を走らせる設定 */
+    .card:hover::after {
+      /* ★ スキャンラインを1回だけ走らせる */
+      animation: singleScan 0.8s ease-out forwards;
     }
     
     /* 移動アニメーション */
@@ -419,9 +423,8 @@
     }
     
     .card:hover .art img {
-      transform: scale(1.15);
       /* ★ スキャンラインの通過に合わせて、じわっと鮮明にする */
-      filter: blur(0px) brightness(1.1) contrast(1.1);
+      filter: blur(0px) brightness(1.2) contrast(1.2);
     }
     
       /* デコード（表示）アニメーション */
