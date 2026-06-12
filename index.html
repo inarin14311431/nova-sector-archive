@@ -286,7 +286,22 @@
       transition: all .35s ease;
     }
 
+/* カードホバー時に一瞬だけ左右に揺らす */
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
 .card:hover {
+  animation: glitch 0.2s linear infinite; /* 非常に細かく震える */
+  box-shadow: 
+    -2px 0 var(--magenta), 
+    2px 0 var(--cyan), 
+    0 0 20px rgba(0, 240, 255, 0.6);
   border: 5px solid transparent;
   background: 
     linear-gradient(#0f0828, #080419),
@@ -300,10 +315,6 @@
     );
   background-clip: padding-box, border-box;
   background-origin: padding-box, border-box;
-  box-shadow: 
-    0 0 30px #00ffff,
-    0 0 60px #ff00ff,
-    0 0 95px rgba(170, 0, 255, 0.85);
   transform: translateY(-12px) scale(1.02);
 }
         
