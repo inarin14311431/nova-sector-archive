@@ -63,9 +63,24 @@
       background-size: 80px 80px, 120px 120px;
       animation: noiseShift 0.4s steps(3) infinite;
     }
+    
+/* スキャンライン */
+.scan-line {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: rgba(0, 240, 255, 0.2); 
+  box-shadow: 0 0 10px var(--cyan);
+  z-index: 9999;
+  pointer-events: none;
+  animation: scanlineMove 8s linear infinite;
+}
 
-    /* 「ネオン背景エフェクト」の body::before は削除 */
-
+@keyframes scanlineMove {
+  0% { top: -100px; }
+  100% { top: 100vh; }
+}
 
     body::after {
       content: "";
@@ -125,14 +140,20 @@
       0% { transform: translate(0,0); }
       100% { transform: translate(2px, -2px); }
     }
-
-    .wrap { width: min(1380px, calc(100% - 30px)); margin: 0 auto; z-index: 5; }
+    
+    .wrap { 
+      width: min(1380px, calc(100% - 30px)); 
+      margin: 0 auto; 
+      position: relative; /* ★ これを追加 */
+      z-index: 10;        /* ★ これを追加 */
+    }
 
     h1 { margin: 0 0 12px; font-size: clamp(44px, 8vw, 96px); line-height: .85; letter-spacing: -.08em; text-transform: uppercase; text-shadow: 0 0 30px var(--cyan); }
 
     /* セクターヘッダー */
 .scenario-header {
   display: flex; 
+  position: relative; 
   align-items: center; 
   gap: 24px;
   padding: 28px 32px;
@@ -141,7 +162,21 @@
   cursor: pointer; 
   transition: all 0.4s ease;
 }
-
+    
+/* ★ セクターバーの右上に文字を出す設定を追加 */
+.scenario-header::before {
+  content: "DATA_ACCESSING... 01010101";
+  position: absolute;
+  top: 6px;
+  right: 60px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--cyan);
+  opacity: 0.2;
+  letter-spacing: 2px;
+  pointer-events: none;
+}
+    
 .scenario-header:hover {
   background: rgba(25,10,60,.80);
 }
@@ -159,6 +194,7 @@
   flex-shrink: 0;
   transition: transform 0.4s ease;
 }
+    
 /* セクター展開時のトグル色変更 */
 .scenario-group:not(.collapsed) .toggle-btn {
   color: var(--magenta);
@@ -297,12 +333,6 @@
 }
 
 .card:hover {
-  animation: glitch 0.1s linear 1; 
-  box-shadow: 
-    -2px 0 var(--magenta), 
-    2px 0 var(--cyan), 
-    0 0 20px rgba(0, 240, 255, 0.6);
-  border: 5px solid transparent;
   background: 
     linear-gradient(#0f0828, #080419),
     conic-gradient(
@@ -316,6 +346,10 @@
   background-clip: padding-box, border-box;
   background-origin: padding-box, border-box;
   transform: translateY(-12px) scale(1.02);
+    /* グリッチとボーダー回転を同時にかける（カンマで区切る） */
+  animation: glitch 0.1s linear 1, borderRotate 5s linear infinite; 
+  border: 2px solid var(--magenta); /* 枠をはっきりさせる */
+  box-shadow: 0 0 30px var(--magenta);
 }
         
 /* スキャンラインアニメーション */
@@ -364,10 +398,21 @@
       pointer-events: none;
     }
 
-    .art img {
-      width: 100%; height: 100%; object-fit: contain; object-position: center;
-      filter: brightness(1.08) contrast(1.1) drop-shadow(0 10px 20px rgba(0,0,0,.7));
-    }
+  .art img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* または contain */
+    object-position: center;
+    filter: brightness(1.08) contrast(1.1);
+    /* ★ 追加：0.6秒かけてズームする設定 */
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), filter 0.3s;
+  }
+  
+  /* ★ 追加：ホバー時に拡大する */
+  .card:hover .art img {
+    transform: scale(1.15); /* 1.15倍に拡大 */
+    filter: brightness(1.2) contrast(1.2); /* 少し明るく */
+  }
 
     .body { padding: 22px; }
 
@@ -446,7 +491,16 @@
       padding: 0 20px 0 0;          /* 右側に少し余白 */
       text-align: right;
     }
-
+    
+    @keyframes scanlineMove {
+      0% { top: -100px; }
+      100% { top: 100vh; }
+    }
+    
+    /* ★アニメーション定義を追加 */
+    @keyframes borderRotate {
+      100% { filter: hue-rotate(360deg); }
+    }
     @media (max-width: 768px) {
   .wrap {
     width: calc(100% - 16px);
@@ -513,7 +567,7 @@
 </head>
 <body>
   <div class="noise"></div>
-
+  <div class="scan-line"></div> 
   <div class="wrap">
     <section class="hero">
       <h2>トーキョーN◎VA THE AXLERATION<br></h2><h1>"ビフレスト"</h1>
