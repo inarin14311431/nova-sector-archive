@@ -304,7 +304,7 @@
      .card::after {
       content: "";
       position: absolute;
-      top: 0; left: 0; width: 100%; height: 2px; /* ★ ラインを鋭く（細く）する */
+      top: 0; left: 0; width: 100%; height: 6px; /* ★ ラインを鋭く（細く）する */
       /* 鋭いグリーンの光を表現するグラデーション */
       background: linear-gradient(90deg, 
         transparent, 
@@ -337,7 +337,7 @@
         opacity: 1; 
       }
       /* ★ 移動距離を十分に大きく（120%）取ることで、確実に下まで走らせる */
-      100% { 
+      200% { 
         transform: translateY(500px); 
         opacity: 0; 
       }
