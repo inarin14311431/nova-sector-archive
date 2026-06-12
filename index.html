@@ -77,31 +77,36 @@
       text-align: right;
     }
     
-    /* 背景データストリームの設定 */
+    /* 背景データストリームの設定（修正版） */
     .bg-data-flow {
       position: fixed;
       inset: 0;
-      z-index: 0; /* マス目(1)より奥、背景画像(-1)より手前 */
-      display: flex;
-      justify-content: space-around;
+      z-index: 0;
+      display: block; /* 横並びをやめて自由配置にする */
       pointer-events: none;
-      opacity: 0.35; /* うっすら見える程度 */
+      opacity: 0.35;
       font-family: 'Share Tech Mono', monospace;
       font-size: 20px;
       color: var(--cyan);
     }
     
     .bg-data-flow span {
+      position: absolute; /* 自由配置 */
+      top: 0;
       writing-mode: vertical-rl;
       text-orientation: upright;
-      transform: translateY(-100%);
-      /* ★ 「時折」流すために、長い時間をかけてアニメーション */
-      animation: dataBurst 15s linear infinite;
+      transform: translateY(-120%);
+      animation: dataBurst 12s linear infinite;
     }
     
-    /* 各列のタイミングをズラす（ライブ感を出す） */
-    .bg-data-flow span:nth-child(2) { animation-delay: 5s; animation-duration: 12s; color: var(--magenta); }
-    .bg-data-flow span:nth-child(3) { animation-delay: 8s; animation-duration: 18s; }
+    /* 各列の出現位置・速さ・色をランダムに設定 */
+    .bg-data-flow span:nth-child(1) { left: 5%;  animation-duration: 10s; animation-delay: 2s; }
+    .bg-data-flow span:nth-child(2) { left: 18%; animation-duration: 14s; animation-delay: 8s; color: var(--magenta); font-size: 15px; opacity: 0.5; }
+    .bg-data-flow span:nth-child(3) { left: 35%; animation-duration: 11s; animation-delay: 0s; }
+    .bg-data-flow span:nth-child(4) { left: 55%; animation-duration: 15s; animation-delay: 5s; opacity: 0.4; }
+    .bg-data-flow span:nth-child(5) { left: 72%; animation-duration: 9s;  animation-delay: 10s; color: var(--magenta); }
+    .bg-data-flow span:nth-child(6) { left: 90%; animation-duration: 13s; animation-delay: 3s; font-size: 14px; }
+
     
     /* 滝のように一気に流れるアニメーション */
     @keyframes dataBurst {
@@ -360,9 +365,12 @@
   <div class="noise"></div>
   <div class="scan-line"></div> 
   <div class="bg-data-flow">
-    <span>011011010110010101101101011011110111001001111001</span>
-    <span>101001010101101010110101010101110101011010101011</span>
-    <span>011010101011110101101010110101011100101010111011</span>
+    <span>011011010110010101101101011011110111001001111001011011010110010101101101011011110111001001111001</span>
+    <span>10100101010110101011010101010111010101101010101110101101010110101010101110101011010101011</span>
+    <span>011010101011110101101010110101011100101010111011011010101011110101101010110101011100101010111011</span>
+    <span>0011010101001011010010111010101101010100110101010001011101010110100010111010101101001011010010111010101101010100</span>
+    <span>111010110101101111101011010110110001010101111010110101101111101011010110110001010</span>
+    <span>101010101010110101010101010111101010101010101101010101010101111010</span>
   </div>
   <div class="wrap">
     <section class="hero">
@@ -426,7 +434,7 @@
             </div>
 
             <div class="field">
-              <span class="label">PLAYER</span><br>
+              <span class="label">PLAYER</span>
               比良坂右京
             </div>
           </div>
@@ -472,7 +480,7 @@
             </div>
 
             <div class="field">
-              <span class="label">PLAYER</span><br>
+              <span class="label">PLAYER</span>
               maesonn
             </div>
           </div>
@@ -515,7 +523,7 @@
             </div>
 
             <div class="field">
-              <span class="label">PLAYER</span><br>
+              <span class="label">PLAYER</span>
               kenken
             </div>
           </div>
@@ -619,7 +627,7 @@
             </div>
 
             <div class="field">
-              <span class="label">PLAYER</span><br>
+              <span class="label">PLAYER</span>
               鶉衣
             </div>
           </div>
@@ -683,7 +691,7 @@
             </div>
 
             <div class="field">
-              <span class="label">PLAYER</span><br>
+              <span class="label">PLAYER</span>
               まっきー
             </div>
           </div>
@@ -730,7 +738,7 @@
             </div>
 
             <div class="field">
-              <span class="label">PLAYER</span><br>
+              <span class="label">PLAYER</span>
               綾瀬
             </div>
           </div>
@@ -794,7 +802,7 @@
             </div>
 
             <div class="field">
-              <span class="label">PLAYER</span><br>
+              <span class="label">PLAYER</span>
               さきほし
             </div>
           </div>
@@ -837,7 +845,7 @@
             </div>
 
             <div class="field">
-              <span class="label">PLAYER</span><br>
+              <span class="label">PLAYER</span>
               稲荷 秋／イナリ アキ
             </div>
           </div>
@@ -880,7 +888,7 @@
             </div>
 
             <div class="field">
-              <span class="label">PLAYER</span><br>
+              <span class="label">PLAYER</span>
               aguni
             </div>
           </div>
