@@ -275,11 +275,24 @@
     .card::after {
       content: "";
       position: absolute;
-      top: 0; left: 0; width: 100%; height: 60px;
-      background: linear-gradient(180deg, transparent, #fff 50%, var(--cyan) 50%, transparent);
-      filter: blur(5px); opacity: 0; z-index: 10; pointer-events: none;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px; /* ラインの太さ */
+      /* ★ 鮮やかな緑 (#00ff00) のスキャンライン */
+      background: linear-gradient(180deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.9) 50%, /* 中心は白く光らせる */
+        #00ff00 50%,                 /* 下半分を緑にする */
+        transparent 100%);
+      /* ★ さらに緑色の光を強調するために box-shadow を追加 */
+      box-shadow: 0 0 15px #00ff00;
+      filter: blur(5px);
+      opacity: 0;
+      z-index: 10;
+      pointer-events: none;
     }
-
+      
     .card:hover::after {
       animation: singleScan 0.8s ease-out forwards;
     }
@@ -288,7 +301,7 @@
       0% { transform: translateY(-100%); opacity: 0; }
       20% { opacity: 1; }
       80% { opacity: 1; }
-      100% { transform: translateY(800%); opacity: 0; }
+      100% { transform: translateY(calc(100% + 150px)); opacity: 0; }
     }
 
     @keyframes borderGlow {
