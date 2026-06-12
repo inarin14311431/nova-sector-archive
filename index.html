@@ -41,16 +41,15 @@
       inset: 0;
       z-index: 1;
       pointer-events: none;
-      /* 
-         1. 右上を透明にしてビルを見せ、左下に向かって暗くするグラデーション
-         2. サイバーパンク風の走査線（スキャンライン）
-      */
       background: 
-        radial-gradient(circle at top right, transparent 0%, rgba(10, 0, 31, 0.9) 75%),
-        linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 240, 255, 0.04) 50%);
-      background-size: 100% 100%, 100% 4px;
-      opacity: 0.8;
+        /* 1. グラデーションを薄く、範囲を狭くする */
+        radial-gradient(circle at top right, transparent 0%, rgba(10, 0, 31, 0.6) 90%),
+        /* 2. 走査線をより細く、薄くする */
+        linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 240, 255, 0.02) 50%);
+      background-size: 100% 100%, 100% 2px; /* ラインを細く */
+      opacity: 0.5; /* 全体の不透明度を下げる */
     }
+
     
     .noise {
       position: fixed; inset: 0; pointer-events: none; opacity: .12; z-index: 2;
@@ -152,8 +151,7 @@
 }
 
 .scenario-sub {
-  margin-left: auto; /* ★ これで右端に押し出す */
-  padding-right: 10px;
+  padding-left: 20px;    /* タイトルとの間に少し隙間を作る */
   color: #c8f0ff;
   font-size: clamp(19px, 2.6vw, 27px);
   font-weight: 500;
