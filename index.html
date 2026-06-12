@@ -358,44 +358,46 @@
       position: relative;
       overflow: hidden;
     }
-
-    .art::before {
-      content: ""; position: absolute; inset: 0;
-      background: linear-gradient(transparent, rgba(0,240,255,.15));
-      pointer-events: none;
+    
+    /* 画像の親要素（重なりの土台） */
+    .art {
+      aspect-ratio: 1 / 1; 
+      overflow: hidden;
+      background: linear-gradient(180deg, #120a2a, #0a0619);
+      position: relative; /* 子要素を重ねるための基準 */
     }
-
+    
+    /* 通常時と展開時の画像を重ねるための設定 */
     .art img {
-      width: 100%; height: 100%; object-fit: contain; object-position: center;
-      filter: brightness(1.08) contrast(1.1) drop-shadow(0 10px 20px rgba(0,0,0,.7));
-      position: absolute;
+      position: absolute; /* ★ 絶対配置にして重ねる */
       inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
+      object-position: center;
+      filter: brightness(1.08) contrast(1.1);
       /* ★ ここで2秒かけて変化するように設定 */
       transition: opacity 2.0s ease-in-out; 
     }
     
-    /* 2枚目の画像（展開後用）は初期状態で透明 */
+    /* 画像ごとの重なり順と初期状態 */
     .active-img {
-      opacity: 0;
+      opacity: 0; /* 最初は隠す */
       z-index: 2;
     }
     
-    /* 1枚目の画像（通常用） */
     .default-img {
-      opacity: 1;
+      opacity: 1; /* 最初は出す */
       z-index: 1;
     }
     
-    /* ★ セクターが開いた時（.collapsed がなくなった時）の挙動 */
+    /* ★ セクターが開いた時に透明度を入れ替える */
     .scenario-group:not(.collapsed) .active-img {
-      opacity: 1; /* gazou2 を表示 */
+      opacity: 1;
     }
     
     .scenario-group:not(.collapsed) .default-img {
-      opacity: 0; /* gazou1 を非表示 */
+      opacity: 0;
     }
     
     .body { padding: 22px; }
@@ -479,6 +481,10 @@
     @media (max-width: 768px) {
   .wrap {
     width: calc(100% - 16px);
+  }
+      
+  .art {
+    aspect-ratio: 16 / 9; /* スマホでは少し横長にして高さを抑える */
   }
 
   h1 {
