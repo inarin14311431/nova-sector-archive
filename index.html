@@ -44,7 +44,7 @@
       background: radial-gradient(circle at top right, transparent 0%, rgba(10, 0, 31, 0.9) 75%),
                   linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 240, 255, 0.04) 50%);
       background-size: 100% 100%, 100% 4px;
-      opacity: 0.8;
+      opacity: 0.5;
     }
     
     body::after {
@@ -59,7 +59,7 @@
       background-size: 80px 80px;
       mask-image: radial-gradient(circle at center, black, transparent 80%);
       -webkit-mask-image: radial-gradient(circle at center, black, transparent 80%);
-      opacity: 0.6;
+      opacity: 0.75;
       animation: gridScroll 10s linear infinite; 
     }
 
@@ -215,9 +215,12 @@
     .card-link { text-decoration: none; color: inherit; display: block; }
 
     .card {
-      background: linear-gradient(180deg, rgba(15,8,40,.95), rgba(8,4,25,.98));
+      background: linear-gradient(180deg, rgba(15,8,40,0.7), rgba(8,4,25,0.8));
+      backdrop-filter: blur(8px); 
+      -webkit-backdrop-filter: blur(8px);
       border: 4px solid rgba(0, 240, 255, 0.3);
-      clip-path: var(--cut); overflow: hidden;
+      clip-path: var(--cut); 
+      overflow: hidden;
       box-shadow: 0 0 20px rgba(0,0,0,.8);
       transition: all .35s ease;
       position: relative;
