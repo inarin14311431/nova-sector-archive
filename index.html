@@ -315,10 +315,13 @@
 /* キャストカード */
     .card {
       background: linear-gradient(180deg, rgba(15,8,40,.95), rgba(8,4,25,.98));
-      border: 2px solid rgba(78,229,255,.3);
-      clip-path: var(--cut); overflow: hidden;
-      box-shadow: 0 0 20px rgba(0,0,0,.8), inset 0 0 20px rgba(78,229,255,.1);
+      /* 通常時は薄い水色の枠 */
+      border: 4px solid rgba(0, 240, 255, 0.3); 
+      clip-path: var(--cut); 
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0,0,0,.8);
       transition: all .35s ease;
+      position: relative;
     }
 
 /* カードホバー時に一瞬だけ左右に揺らす
@@ -346,32 +349,44 @@
         transparent 100%);
       filter: blur(5px);
       opacity: 0;
-      /* ★ ここが重要：画像(.art)が z-index: なしの場合は、高い数値を設定 */
       z-index: 10; 
       pointer-events: none;
     }
     
     /* ホバーした時にアニメーションを実行 */
     .card:hover::after {
-      /* 透明度を一瞬で 1 にする */
-      opacity: 1;
       /* forwards を指定して、最後は消えた状態で止める */
-      animation: singleScan 0.7s ease-in-out forwards;
+      animation: singleScan 0.8s ease-out forwards;
+      transform: translateY(-12px) scale(1.02);
+      /* ★ 枠線の色と影をアニメーションさせる */
+      animation: borderGlow 2s ease-in-out infinite;
     }
     
     /* 移動アニメーション */
     @keyframes singleScan {
       0% { transform: translateY(-100%); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { transform: translateY(800%); opacity: 0; } /* 800%でカード下まで飛ばす */
+      /* 最初はじわっと現れる */
+      20% { opacity: 1; } 
+      /* 最後はじわっと消える */
+      80% { opacity: 1; }
+      100% { transform: translateY(800%); opacity: 0; }
     }
 
-
+    
+    /* ★ 明滅アニメーションの定義 */
     @keyframes borderGlow {
-      0% { border-color: var(--cyan); box-shadow: 0 0 15px var(--cyan); }
-      50% { border-color: var(--magenta); box-shadow: 0 0 30px var(--magenta); }
-      100% { border-color: var(--cyan); box-shadow: 0 0 15px var(--cyan); }
+      0% { 
+        border-color: var(--cyan); 
+        box-shadow: 0 0 15px var(--cyan); 
+      }
+      50% { 
+        border-color: var(--magenta); 
+        box-shadow: 0 0 35px var(--magenta); 
+      }
+      100% { 
+        border-color: var(--cyan); 
+        box-shadow: 0 0 15px var(--cyan); 
+      }
     }
     @keyframes scan {
       0% { transform: translateY(-120%); }
@@ -396,16 +411,17 @@
       height: 100%;
       object-fit: cover;
       object-position: center;
-      /* ★ 初期状態：常にぼかしておく（自動アニメーションは削除） */
-      filter: blur(15px) brightness(0.4) grayscale(0.5); 
-      /* ホバー時の変化をスムーズにする設定 */
+      /* 初期状態：強くぼかして暗くしておく */
+      filter: blur(15px) brightness(0.4); 
+      /* ★ ホバー時の変化時間をスキャンライン(0.8s)に合わせる */
       transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), 
-                  filter 0.5s ease-out; /* 0.5秒かけて鮮明にする */
+                  filter 0.8s ease-in-out; 
     }
     
-    /* ★ カードをホバーした時だけ鮮明にする */
     .card:hover .art img {
-      filter: blur(0px) brightness(1.2) contrast(1.2) grayscale(0); /* 鮮明化 */
+      transform: scale(1.15);
+      /* ★ スキャンラインの通過に合わせて、じわっと鮮明にする */
+      filter: blur(0px) brightness(1.1) contrast(1.1);
     }
     
       /* デコード（表示）アニメーション */
