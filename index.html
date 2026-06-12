@@ -351,7 +351,7 @@
       0% { transform: translateY(-120%); }
       100% { transform: translateY(500%); }
     }
-    
+        /* 画像の親要素（土台） */
     .art {
       aspect-ratio: 1 / 1; 
       background: linear-gradient(180deg, #120a2a, #0a0619);
@@ -365,28 +365,28 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      /* ★ サイズが異なる場合は cover にすると枠いっぱいに広がります */
       object-fit: cover; 
       object-position: center;
+      /* ★ 2秒かけてふわっと切り替える */
       transition: opacity 2.0s ease-in-out;
     }
     
-    /* 通常時の画像 */
+    /* 初期状態: Scanningを表示、顔写真を隠す */
     .art .default-img {
       opacity: 1;
       z-index: 1;
     }
-    
-    /* 展開後の画像 */
     .art .active-img {
       opacity: 0;
       z-index: 2;
     }
     
-    /* セクター展開時の切り替え */
+    /* セクター展開時の切り替えロジック */
+    /* セクターが .collapsed ではない（開いている）時に active-img を表示する */
     .scenario-group:not(.collapsed) .active-img {
       opacity: 1;
     }
+    /* セクターが .collapsed ではない（開いている）時に default-img を隠す */
     .scenario-group:not(.collapsed) .default-img {
       opacity: 0;
     }
@@ -397,6 +397,7 @@
       height: 100%;
       object-fit: contain;
     }
+
     
     .body { padding: 22px; }
 
