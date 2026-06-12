@@ -354,28 +354,35 @@
   box-shadow: 0 0 30px var(--magenta);
   background-clip: padding-box; /* 枠線の色と背景を分離する */
 }
-        
-/* スキャンラインアニメーション */
+            
+    /* スキャンライン本体 */
     .card::after {
       content: "";
       position: absolute;
-      left: -30%; right: -30%;
-      height: 20px; /* スキャンラインを少し太く */
-      top: -20%;
+      left: 0; right: 0; /* 幅をカードに合わせる */
+      height: 100px;     /* ラインの縦幅 */
+      top: -100px;       /* 開始位置（カードのすぐ上） */
       background: linear-gradient(180deg, 
         transparent 0%, 
-        #fff 40%,        /* 中心を白く光らせる */
+        rgba(255, 255, 255, 0.8) 50%, /* 中心を白く */
         var(--cyan) 50%, 
         transparent 100%);
-      filter: blur(4px);
+      filter: blur(8px);
       opacity: 0;
       z-index: 5;
       pointer-events: none;
     }
-
+    
+    /* ホバーした時だけスキャンを実行 */
     .card:hover::after {
       opacity: 1;
-      animation: singleScan 0.8s ease-out forwards; /* 1回だけ高速に走る */
+      animation: singleScan 0.6s ease-in-out forwards;
+    }
+    
+    /* カードの上端(-100px)から下端(100% + 100px)まで動かす */
+    @keyframes singleScan {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(calc(100% + 200px)); }
     }
 
     @keyframes borderGlow {
@@ -387,10 +394,7 @@
       0% { transform: translateY(-120%); }
       100% { transform: translateY(500%); }
     }
-    @keyframes singleScan {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(2000%); } /* 下まで一気に突き抜ける */
-    }
+
     
     .art {
       aspect-ratio: 1 / 1; overflow: hidden;
@@ -409,14 +413,16 @@
       height: 100%;
       object-fit: cover;
       object-position: center;
-      /* ★ 最初は強くぼかす（モザイク風） */
-      filter: blur(15px) brightness(0.4); 
-      /* ★ 2.5秒かけてじわっと表示されるようにする */
-      animation: decodeImage 2.5s ease-in-out forwards;
-      /* スキャンラインと同期させるため、少し遅らせて開始 */
-      animation-delay: 0.5s; 
-      /* ホバー時の変化（ズームなど）をスムーズにするための transition */
-      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), filter 0.8s ease-out;
+      /* ★ 初期状態：常にぼかしておく（自動アニメーションは削除） */
+      filter: blur(15px) brightness(0.4) grayscale(0.5); 
+      /* ホバー時の変化をスムーズにする設定 */
+      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), 
+                  filter 0.5s ease-out; /* 0.5秒かけて鮮明にする */
+    }
+    
+    /* ★ カードをホバーした時だけ鮮明にする */
+    .card:hover .art img {
+      filter: blur(0px) brightness(1.2) contrast(1.2) grayscale(0); /* 鮮明化 */
     }
     
       /* デコード（表示）アニメーション */
@@ -425,11 +431,7 @@
       70% { filter: blur(10px) brightness(0.8); }
       100% { filter: blur(0px) brightness(1.1) contrast(1.1); }
     }
-    
-    /* ★ 追加：ホバー時に明るくする */
-    .card:hover .art img {
-      filter: blur(0px) brightness(1.2) contrast(1.2); 
-    }
+  
 
     .body { padding: 22px; }
 
