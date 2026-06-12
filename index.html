@@ -64,24 +64,25 @@
       animation: noiseShift 0.4s steps(3) infinite;
     }
     
-/* スキャンライン */
-.scan-line {
-  position: fixed;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: rgba(0, 240, 255, 0.2); 
-  box-shadow: 0 0 10px var(--cyan);
-  z-index: 9999;
-  pointer-events: none;
-  animation: scanlineMove 3s linear 1 forwards;
-  animation-delay: 1s; 
-}
-
-@keyframes scanlineMove {
-  0% { top: -100px; }
-  100% { top: 100vh; }
-}
+    /* スキャンライン */
+    .scan-line {
+      position: fixed;
+      left: 0; width: 100%; height: 5px; /* 少し太くしてスキャン感を出す */
+      background: white; /* スキャン中は白く光らせる */
+      box-shadow: 0 0 30px var(--cyan), 0 0 60px var(--cyan);
+      z-index: 9999;
+      pointer-events: none;
+      /* 画像のデコード時間に合わせて3秒で設定 */
+      animation: scanlineMove 3s cubic-bezier(0.15, 0, 0.85, 1) 1 forwards;
+      animation-delay: 0.2s;
+    }
+    
+    @keyframes scanlineMove {
+      0% { top: -10%; opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { top: 110%; opacity: 0; }
+    }
 
     body::after {
       content: "";
@@ -404,18 +405,32 @@
       pointer-events: none;
     }
 
-  .art img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* または contain */
-    object-position: center;
-    filter: brightness(1.08) contrast(1.1);
-  }
-  
-  /* ★ 追加：ホバー時に明るくする */
-  .card:hover .art img {
-    filter: brightness(1.2) contrast(1.2); /* 少し明るく */
-  }
+    .art img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      /* ★ 最初は強くぼかす（モザイク風） */
+      filter: blur(20px) brightness(0.5); 
+      /* ★ 2.5秒かけてじわっと表示されるようにする */
+      animation: decodeImage 2.5s ease-in-out forwards;
+      /* スキャンラインと同期させるため、少し遅らせて開始 */
+      animation-delay: 0.5s; 
+      /* ホバー時の変化（ズームなど）をスムーズにするための transition */
+      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), filter 0.5s;
+    }
+    
+      /* デコード（表示）アニメーション */
+    @keyframes decodeImage {
+      0% { filter: blur(20px) brightness(0.5); }
+      70% { filter: blur(10px) brightness(0.8); }
+      100% { filter: blur(0px) brightness(1.1) contrast(1.1); }
+    }
+    
+    /* ★ 追加：ホバー時に明るくする */
+    .card:hover .art img {
+      filter: blur(0px) brightness(1.2) contrast(1.2); 
+    }
 
     .body { padding: 22px; }
 
