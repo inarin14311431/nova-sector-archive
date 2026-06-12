@@ -356,6 +356,7 @@
       aspect-ratio: 1 / 1; overflow: hidden;
       background: linear-gradient(180deg, #120a2a, #0a0619);
       position: relative;
+      overflow: hidden;
     }
 
     .art::before {
@@ -367,8 +368,36 @@
     .art img {
       width: 100%; height: 100%; object-fit: contain; object-position: center;
       filter: brightness(1.08) contrast(1.1) drop-shadow(0 10px 20px rgba(0,0,0,.7));
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      /* ★ ここで2秒かけて変化するように設定 */
+      transition: opacity 2.0s ease-in-out; 
     }
-
+    
+    /* 2枚目の画像（展開後用）は初期状態で透明 */
+    .active-img {
+      opacity: 0;
+      z-index: 2;
+    }
+    
+    /* 1枚目の画像（通常用） */
+    .default-img {
+      opacity: 1;
+      z-index: 1;
+    }
+    
+    /* ★ セクターが開いた時（.collapsed がなくなった時）の挙動 */
+    .scenario-group:not(.collapsed) .active-img {
+      opacity: 1; /* gazou2 を表示 */
+    }
+    
+    .scenario-group:not(.collapsed) .default-img {
+      opacity: 0; /* gazou1 を非表示 */
+    }
+    
     .body { padding: 22px; }
 
     .topline { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
@@ -957,7 +986,10 @@
            rel="noopener noreferrer">
         <article class="card">
           <div class="art">
-            <img src="assets/characters/Talkie.png" alt="逢坂ユラ">
+            <!-- 通常時の画像（gazou1） -->
+            <img src="assets/tarot/19.png" class="default-img" alt="通常">
+            <!-- 展開時の画像（gazou2）：最初は透明にしておく -->
+            <img src="assets/characters/Talkie.png" class="active-img" alt="展開後">
           </div>
           <div class="body">
             <div class="topline">
