@@ -165,15 +165,18 @@
   gap: 12px; 
   flex-wrap: wrap; 
   margin-top: 12px;
+  flex: 1; /* ★ 横幅いっぱいに広げる */
 }
 
-    
-.handouts {
-  display: flex; 
-  gap: 12px; 
-  flex-wrap: wrap; 
-  margin-top: 12px;
-  flex: 1; /* ★ 横幅いっぱいに広げる */
+.handout {
+  padding: 6px 18px;
+  background: rgba(0,240,255,.1);
+  border: 1px solid rgba(0,240,255,.4);
+  border-radius: 4px;
+  font-size: 15px;
+  color: #a0f8ff;
+  cursor: pointer;
+  position: relative;
 }
 
 .handout:hover {
@@ -207,10 +210,10 @@
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 450px); 
+  grid-template-columns: repeat(auto-fit, minmax(390px, 1fr)); 
   gap: 22px;
   padding: 24px;
-  justify-content: end; /* ★ これで右寄せ */
+  justify-content: start; /* 左寄せに戻す */
 }
 
 
@@ -237,15 +240,13 @@
 }
 
 /* キャストカード */
-.cards {
-  display: grid;
-  /* 450px固定から、1fr（画面に合わせて広がる） */
-  grid-template-columns: repeat(auto-fit, minmax(390px, 1fr)); 
-  gap: 22px;
-  padding: 24px;
-  justify-content: start; /* 左寄せ */
-}
-
+    .card {
+      background: linear-gradient(180deg, rgba(15,8,40,.95), rgba(8,4,25,.98));
+      border: 2px solid rgba(78,229,255,.3);
+      clip-path: var(--cut); overflow: hidden;
+      box-shadow: 0 0 20px rgba(0,0,0,.8), inset 0 0 20px rgba(78,229,255,.1);
+      transition: all .35s ease;
+    }
 
 .card:hover {
   border: 5px solid transparent;
