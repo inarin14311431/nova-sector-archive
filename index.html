@@ -44,7 +44,7 @@
       content: "";
       position: fixed;
       inset: 0;
-      z-index: -1;
+      z-index: 1;
       pointer-events: none;
       background: 
         /* 1. グラデーションを薄く、範囲を狭くする */
@@ -71,7 +71,7 @@
       content: "";
       position: fixed;
       inset: 0;
-      z-index: -1;
+      z-index: 1;
       pointer-events: none;
       /* 
          1. 太めのデジタルグリッド
@@ -125,13 +125,8 @@
       0% { transform: translate(0,0); }
       100% { transform: translate(2px, -2px); }
     }
-    
-  .wrap {
-    width: min(1380px, calc(100% - 30px));
-    margin: 0 auto;
-    position: relative; /* ★ これが必要 */
-    z-index: 10;        /* ★ 背景（1〜2）より高い数値にする */
-  }
+
+    .wrap { width: min(1380px, calc(100% - 30px)); margin: 0 auto; z-index: 5; }
 
     h1 { margin: 0 0 12px; font-size: clamp(44px, 8vw, 96px); line-height: .85; letter-spacing: -.08em; text-transform: uppercase; text-shadow: 0 0 30px var(--cyan); }
 
@@ -356,54 +351,24 @@
       0% { transform: translateY(-120%); }
       100% { transform: translateY(500%); }
     }
-        /* 画像の親要素（土台） */
+
     .art {
-      aspect-ratio: 1 / 1; 
+      aspect-ratio: 1 / 1; overflow: hidden;
       background: linear-gradient(180deg, #120a2a, #0a0619);
       position: relative;
-      overflow: hidden;
-    }
-    
-    /* 共通設定: 切り替えアニメーションを持つ画像 */
-    .art .swap-img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover; 
-      object-position: center;
-      /* ★ 2秒かけてふわっと切り替える */
-      transition: opacity 2.0s ease-in-out;
-    }
-    
-    /* 初期状態: Scanningを表示、顔写真を隠す */
-    .art .default-img {
-      opacity: 1;
-      z-index: 1;
-    }
-    .art .active-img {
-      opacity: 0;
-      z-index: 2;
-    }
-    
-    /* セクター展開時の切り替えロジック */
-    /* セクターが .collapsed ではない（開いている）時に active-img を表示する */
-    .scenario-group:not(.collapsed) .active-img {
-      opacity: 1;
-    }
-    /* セクターが .collapsed ではない（開いている）時に default-img を隠す */
-    .scenario-group:not(.collapsed) .default-img {
-      opacity: 0;
-    }
-    
-    /* 画像が1枚だけのカード用の互換設定 */
-    .art img:not(.swap-img) {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
     }
 
-    
+    .art::before {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(transparent, rgba(0,240,255,.15));
+      pointer-events: none;
+    }
+
+    .art img {
+      width: 100%; height: 100%; object-fit: contain; object-position: center;
+      filter: brightness(1.08) contrast(1.1) drop-shadow(0 10px 20px rgba(0,0,0,.7));
+    }
+
     .body { padding: 22px; }
 
     .topline { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
@@ -485,10 +450,6 @@
     @media (max-width: 768px) {
   .wrap {
     width: calc(100% - 16px);
-  }
-      
-  .art {
-    aspect-ratio: 16 / 9; /* スマホでは少し横長にして高さを抑える */
   }
 
   h1 {
@@ -996,9 +957,7 @@
            rel="noopener noreferrer">
         <article class="card">
           <div class="art">
-            <!-- 両方の画像に swap-img クラスを付与する -->
-            <img src="assets/characters/Scaning.png" class="default-img swap-img">
-            <img src="assets/characters/Talkie.png" class="active-img swap-img">
+            <img src="assets/characters/Talkie.png" alt="逢坂ユラ">
           </div>
           <div class="body">
             <div class="topline">
