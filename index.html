@@ -78,8 +78,8 @@
          2. 少し光っている（グロー）ような質感 
       */
       background: 
-        linear-gradient(rgba(0, 240, 255, 0.25) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 240, 255, 0.25) 1px, transparent 1px);
+        linear-gradient(rgba(0, 240, 255, 0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.15) 1px, transparent 1px);
       background-size: 80px 80px; /* 少し大きめのグリッド */
       
       /* スキャンラインのような質感を追加 */
@@ -297,7 +297,7 @@
 }
 
 .card:hover {
-  animation: glitch 0.2s linear infinite; /* 非常に細かく震える */
+  animation: glitch 0.1s linear 1; 
   box-shadow: 
     -2px 0 var(--magenta), 
     2px 0 var(--cyan), 
