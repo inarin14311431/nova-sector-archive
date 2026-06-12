@@ -15,13 +15,10 @@
       --muted: #88aaff;
       --cut: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
     }
-    .label, .aux, .styles {
-      font-family: 'Orbitron', sans-serif;
-    }
 
     * { box-sizing: border-box; }
 
-    /* 背景画像とオーバーレイの設定（画面右上に配置） */
+    /* --- 1. 背景と基本レイアウト --- */
     html, body {
       margin: 0; padding: 0;
       min-height: 100%;
@@ -30,32 +27,42 @@
       background-color: #0a001f;
       background-image: 
         linear-gradient(rgba(10, 0, 31, 0.5), rgba(10, 0, 31, 0.85)),
-        url('assets/citymap.png'); /* ★ 画像パス */
-      
+        url('assets/characters/NoImage.png'); /* 背景画像パス */
       background-size: auto 120%;
       background-position: right top;
       background-attachment: fixed;
       background-repeat: no-repeat;
     }
 
-
-    /* 背景画像をもっと「遠景」らしく見せるための調整 */
+    /* 背景オーバーレイとグリッド */
     body::before {
       content: "";
       position: fixed;
       inset: 0;
-      z-index: 1;
+      z-index: -1;
+      pointer-events: none;
+      background: radial-gradient(circle at top right, transparent 0%, rgba(10, 0, 31, 0.9) 75%),
+                  linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 240, 255, 0.04) 50%);
+      background-size: 100% 100%, 100% 4px;
+      opacity: 0.8;
+    }
+    
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
       pointer-events: none;
       background: 
-        /* 1. グラデーションを薄く、範囲を狭くする */
-        radial-gradient(circle at top right, transparent 0%, rgba(10, 0, 31, 0.6) 90%),
-        /* 2. 走査線をより細く、薄くする */
-        linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 240, 255, 0.15) 50%);
-      background-size: 100% 100%, 100% 2px; /* ラインを細く */
-      opacity: 0.5; /* 全体の不透明度を下げる */
+        linear-gradient(rgba(0, 240, 255, 0.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.25) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(circle at center, black, transparent 80%);
+      -webkit-mask-image: radial-gradient(circle at center, black, transparent 80%);
+      opacity: 0.6;
     }
 
-    
+    /* 画面全体のノイズ質感 */
     .noise {
       position: fixed; inset: 0; pointer-events: none; opacity: .12; z-index: 2;
       background-image: radial-gradient(circle at 30% 20%, rgba(255,255,255,.3) 0 1px, transparent 1px),
@@ -63,527 +70,201 @@
       background-size: 80px 80px, 120px 120px;
       animation: noiseShift 0.4s steps(3) infinite;
     }
-    
-    /* スキャンライン */
+
+    /* ページ読み込み時に1回走るスキャンライン */
     .scan-line {
       position: fixed;
-      left: 0; width: 100%; height: 5px; /* 少し太くしてスキャン感を出す */
-      background: white; /* スキャン中は白く光らせる */
-      box-shadow: 0 0 30px var(--cyan), 0 0 60px var(--cyan);
+      left: 0; width: 100%; height: 2px;
+      background: rgba(0, 240, 255, 0.4);
+      box-shadow: 0 0 15px var(--cyan);
       z-index: 9999;
       pointer-events: none;
-      /* 画像のデコード時間に合わせて3秒で設定 */
-      animation: scanlineMove 3s cubic-bezier(0.15, 0, 0.85, 1) 1 forwards;
-      animation-delay: 0.2s;
+      animation: scanlineMove 3s ease-out 1 forwards;
     }
-    
+
     @keyframes scanlineMove {
-      0% { top: -10%; opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { top: 110%; opacity: 0; }
-    }
-
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      /* 
-         1. 太めのデジタルグリッド
-         2. 少し光っている（グロー）ような質感 
-      */
-      background: 
-        linear-gradient(rgba(0, 240, 255, 0.15) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 240, 255, 0.15) 1px, transparent 1px);
-      background-size: 80px 80px; /* 少し大きめのグリッド */
-      
-      /* スキャンラインのような質感を追加 */
-      mask-image: radial-gradient(circle at center, black, transparent 80%);
-      -webkit-mask-image: radial-gradient(circle at center, black, transparent 80%);
-      
-      opacity: 0.6;
-      animation: neonScan 60s linear infinite;
-    }
-
-    /* 走査線をもっと目立たせるための追加レイヤー（もし必要なら body に追加） */
-    .noise::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent 0,
-        rgba(0, 240, 255, 0.05) 1px,
-        transparent 2px
-      );
-      background-size: 100% 4px;
-      pointer-events: none;
-    }
-
-
-    @keyframes gridScroll {
-      0% { background-position: 0 0; }
-      100% { background-position: 0 500px; }
-    }
-    
-    @keyframes neonPulse {
-      0%   { opacity: 0.5; transform: scale(1); }
-      100% { opacity: 0.85; transform: scale(1.08); }
-    }
-
-    @keyframes neonScan {
-      0%   { transform: translateX(-30%) translateY(-30%); }
-      100% { transform: translateX(30%) translateY(30%); }
+      0% { top: -10%; }
+      100% { top: 110%; }
     }
 
     @keyframes noiseShift {
       0% { transform: translate(0,0); }
       100% { transform: translate(2px, -2px); }
     }
-    
+
     .wrap { 
       width: min(1380px, calc(100% - 30px)); 
       margin: 0 auto; 
-      position: relative; /* ★ これを追加 */
-      z-index: 10;        /* ★ これを追加 */
+      position: relative; 
+      z-index: 10; 
     }
 
     h1 { margin: 0 0 12px; font-size: clamp(44px, 8vw, 96px); line-height: .85; letter-spacing: -.08em; text-transform: uppercase; text-shadow: 0 0 30px var(--cyan); }
 
-    /* セクターヘッダー */
-.scenario-header {
-  display: flex; 
-  position: relative; 
-  align-items: center; 
-  gap: 24px;
-  padding: 28px 32px;
-  background: rgba(15,5,45,.70);
-  border-bottom: 2px solid var(--cyan);
-  cursor: pointer; 
-  transition: all 0.4s ease;
-}
+    /* --- 2. セクターヘッダー --- */
+    .scenario-header {
+      display: flex; 
+      position: relative; 
+      align-items: center; 
+      gap: 24px;
+      padding: 28px 32px;
+      background: rgba(15,5,45,.70);
+      border-bottom: 2px solid var(--cyan);
+      cursor: pointer; 
+      transition: all 0.4s ease;
+    }
+
+    .scenario-header::before {
+      content: "DATA_ACCESSING... 01010101";
+      position: absolute;
+      top: 6px; right: 60px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px; color: var(--cyan); opacity: 0.2;
+      letter-spacing: 2px; pointer-events: none;
+    }
+
+    .scenario-header:hover { background: rgba(25,10,60,.80); }
+
+    .toggle-btn {
+      width: 36px; height: 36px; 
+      border: 2px solid var(--cyan); color: var(--cyan);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; border-radius: 50%; flex-shrink: 0;
+      transition: transform 0.4s ease;
+    }
+
+    .scenario-group:not(.collapsed) .toggle-btn {
+      color: var(--magenta); border-color: var(--magenta); box-shadow: 0 0 12px var(--magenta);
+      transform: rotate(0deg);
+    }
     
-/* ★ セクターバーの右上に文字を出す設定を追加 */
-.scenario-header::before {
-  content: "DATA_ACCESSING... 01010101";
-  position: absolute;
-  top: 6px;
-  right: 60px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  color: var(--cyan);
-  opacity: 0.2;
-  letter-spacing: 2px;
-  pointer-events: none;
-}
-    
-.scenario-header:hover {
-  background: rgba(25,10,60,.80);
-}
+    .scenario-group.collapsed .toggle-btn { transform: rotate(-90deg); }
 
-.toggle-btn {
-  width: 36px; 
-  height: 36px; 
-  border: 2px solid var(--cyan); 
-  color: var(--cyan);
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
-  font-size: 26px; 
-  border-radius: 50%; 
-  flex-shrink: 0;
-  transition: transform 0.4s ease;
-}
-    
-/* セクター展開時のトグル色変更 */
-.scenario-group:not(.collapsed) .toggle-btn {
-  color: var(--magenta);
-  border-color: var(--magenta);
-  box-shadow: 0 0 12px var(--magenta);
-}
-    
-.scenario-group.collapsed .toggle-btn {
-  transform: rotate(-90deg);
-}
+    .scenario-head-content {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 20px;
+      flex: 1;
+    }
 
-.scenario-head-content {
-  display: flex;
-  flex-direction: row; /* ★ 必ず横並びにする */
-  align-items: center; /* ★ 上下中央に揃える */
-  justify-content: flex-start; /* 基本は左詰め */
-  gap: 20px; /* 要素間の最低限の隙間 */
-  flex: 1;
-}
+    .scenario-head h3 {
+      margin: 0;
+      font-size: clamp(26px, 3.4vw, 34px);
+      letter-spacing: -.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
 
-.scenario-head h3 {
-  margin: 0;
-  font-size: clamp(26px, 3.4vw, 34px);
-  letter-spacing: -.04em;
-  text-transform: uppercase;
-  white-space: nowrap; /* 改行禁止 */
-  flex-shrink: 0;      /* ★ これを追加：絶対に潰れないようにする */
-}
+    .scenario-sub {
+      padding-left: 20px;
+      color: #c8f0ff;
+      font-size: clamp(19px, 2.6vw, 27px);
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-shadow: 0 0 20px var(--cyan);
+      white-space: nowrap;
+    }
 
-.scenario-sub {
-  padding-left: 20px;    /* タイトルとの間に少し隙間を作る */
-  color: #c8f0ff;
-  font-size: clamp(19px, 2.6vw, 27px);
-  font-weight: 500;
-  letter-spacing: .08em;
-  text-shadow: 0 0 20px var(--cyan);
-  white-space: nowrap;
-}
+    .handouts {
+      display: flex; gap: 12px; flex-wrap: nowrap;
+      margin-left: auto; margin-top: 0;
+    }
 
-.handouts {
-  display: flex; 
-  gap: 12px; 
-  flex-wrap: nowrap;
-  margin-left: auto; /* ★ これが最重要：左側の余白を最大にして右に飛ばす */
-  margin-top: 0;     /* 上の隙間を消す */
-}
+    .handout {
+      padding: 6px 18px;
+      background: rgba(0,240,255,.1); border: 1px solid rgba(0,240,255,.4); border-radius: 4px;
+      font-size: 15px; color: #a0f8ff; cursor: pointer; position: relative;
+    }
+    .handout:hover { background: rgba(0,240,255,.25); border-color: var(--cyan); }
 
-.handout {
-  padding: 6px 18px;
-  background: rgba(0,240,255,.1);
-  border: 1px solid rgba(0,240,255,.4);
-  border-radius: 4px;
-  font-size: 15px;
-  color: #a0f8ff;
-  cursor: pointer;
-  position: relative;
-}
+    /* --- 3. キャラクターカード --- */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(390px, 1fr)); 
+      gap: 22px; padding: 24px;
+      justify-content: start;
+    }
 
-.handout:hover {
-  background: rgba(0,240,255,.25);
-  border-color: var(--cyan);
-}
+    .scenario-group.collapsed .cards { display: none; }
 
-.handout::after {
-  content: attr(data-characters);
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(60,5,120,.95);
-  border: 1px solid var(--cyan);
-  padding: 12px 20px;
-  border-radius: 6px;
-  white-space: nowrap;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
-  z-index: 20;
-  box-shadow: 0 0 25px rgba(78,229,255,.6);
-}
+    .card-link { text-decoration: none; color: inherit; display: block; }
 
-.handout:hover::after {
-  opacity: 1;
-  visibility: visible;
-  top: calc(100% + 10px);
-}
-
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(390px, 1fr)); 
-  gap: 22px;
-  padding: 24px;
-  justify-content: start; /* 左寄せに戻す */
-}
-
-.scenario-group.collapsed .cards { 
-  display: none; 
-}
-
-/* カード全体をリンク化 */
-.card-link {
-  text-decoration: none;
-  color: inherit;
-  display: block;
-}
-
-.card-link:hover .card {
-  transform: translateY(-12px) scale(1.02);
-}
-
-/* クリック可能であることを視覚的にわかりやすく */
-.card-link:hover {
-  cursor: pointer;
-}
-
-/* キャストカード */
     .card {
       background: linear-gradient(180deg, rgba(15,8,40,.95), rgba(8,4,25,.98));
-      /* 通常時は薄い水色の枠 */
-      border: 4px solid rgba(0, 240, 255, 0.3); 
-      clip-path: var(--cut); 
-      overflow: hidden;
+      border: 4px solid rgba(0, 240, 255, 0.3);
+      clip-path: var(--cut); overflow: hidden;
       box-shadow: 0 0 20px rgba(0,0,0,.8);
       transition: all .35s ease;
       position: relative;
     }
 
-/* カードホバー時に一瞬だけ左右に揺らす
-@keyframes glitch {
-  0% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(-2px, -2px); }
-  60% { transform: translate(2px, 2px); }
-  80% { transform: translate(2px, -2px); }
-  100% { transform: translate(0); }
-} */
-
-    /* スキャンライン本体 */
-    .card::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 60px; /* ラインの太さ */
-      background: linear-gradient(180deg, 
-        transparent 0%, 
-        rgba(255, 255, 255, 0.9) 50%, 
-        var(--cyan) 50%, 
-        transparent 100%);
-      filter: blur(5px);
-      opacity: 0;
-      z-index: 10; 
-      pointer-events: none;
-    }
-    
-    /* カードをホバーした時の設定 */
     .card:hover {
       transform: translateY(-12px) scale(1.02);
-      /* ★ カード本体の枠線を明滅させる（無限ループ） */
       animation: borderGlow 2s ease-in-out infinite;
     }
 
-    /* ホバーした瞬間にスキャンライン(::after)を走らせる設定 */
+    /* ホバー時のスキャンライン */
+    .card::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 60px;
+      background: linear-gradient(180deg, transparent, #fff 50%, var(--cyan) 50%, transparent);
+      filter: blur(5px); opacity: 0; z-index: 10; pointer-events: none;
+    }
+
     .card:hover::after {
-      /* ★ スキャンラインを1回だけ走らせる */
       animation: singleScan 0.8s ease-out forwards;
     }
-    
-    /* 移動アニメーション */
+
     @keyframes singleScan {
       0% { transform: translateY(-100%); opacity: 0; }
-      /* 最初はじわっと現れる */
-      20% { opacity: 1; } 
-      /* 最後はじわっと消える */
+      20% { opacity: 1; }
       80% { opacity: 1; }
       100% { transform: translateY(800%); opacity: 0; }
     }
 
-    
-    /* ★ 明滅アニメーションの定義 */
     @keyframes borderGlow {
-      0% { 
-        border-color: var(--cyan); 
-        box-shadow: 0 0 15px var(--cyan); 
-      }
-      50% { 
-        border-color: var(--magenta); 
-        box-shadow: 0 0 35px var(--magenta); 
-      }
-      100% { 
-        border-color: var(--cyan); 
-        box-shadow: 0 0 15px var(--cyan); 
-      }
-    }
-    @keyframes scan {
-      0% { transform: translateY(-120%); }
-      100% { transform: translateY(500%); }
+      0%, 100% { border-color: var(--cyan); box-shadow: 0 0 15px var(--cyan); }
+      50% { border-color: var(--magenta); box-shadow: 0 0 35px var(--magenta); }
     }
 
-    
+    /* キャラクター画像 */
     .art {
       aspect-ratio: 1 / 1; overflow: hidden;
       background: linear-gradient(180deg, #120a2a, #0a0619);
       position: relative;
     }
 
-    .art::before {
-      content: ""; position: absolute; inset: 0;
-      background: linear-gradient(transparent, rgba(0,240,255,.15));
-      pointer-events: none;
+    .art img {
+      width: 100%; height: 100%; object-fit: cover;
+      filter: blur(15px) brightness(0.4); 
+      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), filter 0.8s ease-in-out;
     }
 
-    .art img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      /* 初期状態：強くぼかして暗くしておく */
-      filter: blur(15px) brightness(0.4); 
-      /* ★ ホバー時の変化時間をスキャンライン(0.8s)に合わせる */
-      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), 
-                  filter 0.8s ease-in-out; 
-    }
-    
     .card:hover .art img {
-      /* ★ スキャンラインの通過に合わせて、じわっと鮮明にする */
+      transform: scale(1.15);
       filter: blur(0px) brightness(1.2) contrast(1.2);
     }
-    
-      /* デコード（表示）アニメーション */
-    @keyframes decodeImage {
-      0% { filter: blur(20px) brightness(0.5); }
-      70% { filter: blur(10px) brightness(0.8); }
-      100% { filter: blur(0px) brightness(1.1) contrast(1.1); }
-    }
-  
 
+    /* その他装飾 */
+    .label, .aux, .styles { font-family: 'Orbitron', sans-serif; }
     .body { padding: 22px; }
-
-    .topline { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
-
-    .name { font-size: clamp(22px, 2.9vw, 29px); font-weight: 700; letter-spacing: -.03em; text-shadow: 0 0 12px var(--cyan); margin-top: 2px; margin-bottom: 2px; }
-
-    .reading { color: #b0f0ff; margin-top: 2px; font-size: 14.5px; }
-
+    .name { font-size: clamp(22px, 2.9vw, 29px); font-weight: 700; text-shadow: 0 0 12px var(--cyan); }
+    .reading { color: #b0f0ff; font-size: 14.5px; margin-bottom: 4px; }
     .field { margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(78,229,255,.2); }
-
-    .label {
-      color: var(--cyan); font-size: 12.5px; letter-spacing: .2em; text-transform: uppercase;
-      margin-bottom: 8px; font-weight: 700; text-shadow: 0 0 8px var(--cyan);
-    }
-
-    .styles { display: flex; flex-wrap: wrap; gap: 10px; }
-
-    .chip {
-      padding: 9px 18px; border-radius: 4px; font-size: 13.8px;
-      border: 1px solid rgba(255,255,255,.15); background: rgba(50,55,85,.7);
-    }
-
-    .chip.major {
-      background: linear-gradient(135deg, #4ee5ff, #00d0ff);
-      color: #000; font-weight: 900; box-shadow: 0 0 22px #4ee5ff;
-      position: relative;
-    /* 主要スタイルをより強調する */
-      overflow: hidden;
-      border: none;
-    }
-    
-    .chip.major::before {
-      content: "";
-      position: absolute;
-      top: -50%; left: -50%;
-      width: 200%; height: 200%;
-      background: conic-gradient(transparent, var(--cyan), transparent 30%);
-      animation: rotateNeon 3s linear infinite;
-    }
-    
-    @keyframes rotateNeon {
-      100% { transform: rotate(360deg); }
-    }
-
-
+    .label { color: var(--cyan); font-size: 12.5px; letter-spacing: .2em; text-transform: uppercase; margin-bottom: 8px; font-weight: 700; }
+    .chip { padding: 9px 18px; border-radius: 4px; font-size: 13.8px; border: 1px solid rgba(255,255,255,.15); background: rgba(50,55,85,.7); }
+    .chip.major { background: linear-gradient(135deg, #4ee5ff, #00d0ff); color: #000; font-weight: 900; box-shadow: 0 0 22px #4ee5ff; position: relative; }
     .summary { line-height: 1.75; font-size: 15px; color: #d8e8ff; }
-
-    .player-field {
-      margin-top: 20px; padding: 14px 18px;
-      background: rgba(0,240,255,.08); border: 1px solid rgba(78,229,255,.4);
-      border-radius: 6px;
-    }
-
-    .actions { margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap; }
-
-    .btn {
-      padding: 12px 20px; border: 1px solid rgba(78,229,255,.4);
-      background: rgba(10,5,40,.6); border-radius: 4px;
-      transition: all .2s ease;
-    }
-
-    .btn:hover { border-color: var(--cyan); background: rgba(78,229,255,.15); box-shadow: 0 0 15px var(--cyan); }
-
+    .player-field { margin-top: 20px; padding: 14px 18px; background: rgba(0,240,255,.08); border: 1px solid rgba(78,229,255,.4); border-radius: 6px; }
     footer { padding: 60px 0 90px; text-align: center; color: var(--muted); font-size: 14px; }
 
-    .section-title {
-      width: fit-content;
-      margin-left: auto;
-      margin-right: 0;
-      font-size: clamp(19px, 3.2vw, 27px);
-      letter-spacing: 0.3em;
-      color: var(--cyan);
-      text-shadow: 0 0 20px var(--cyan);
-      margin: 15px 0 40px auto;     /* 上・下・左自動・右0 */
-      padding: 0 20px 0 0;          /* 右側に少し余白 */
-      text-align: right;
-    }
-    
-    @keyframes scanlineMove {
-      0% { top: -100px; }
-      100% { top: 100vh; }
-    }
-    
-    /* ★アニメーション定義を追加 */
-    @keyframes borderRotate {
-      100% { filter: hue-rotate(360deg); }
-    }
     @media (max-width: 768px) {
-  .wrap {
-    width: calc(100% - 16px);
-  }
-
-  h1 {
-    font-size: 46px;
-  }
-
-  .scenario-header {
-    padding: 18px 16px;
-    gap: 12px;
-  }
-
-  .scenario-head-content {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .scenario-head h3 {
-    font-size: 24px;
-    white-space: normal;
-  }
-
-  .scenario-sub {
-    font-size: 16px;
-    white-space: normal;
-  }
-
-  .handouts {
-    gap: 8px;
-  }
-
-  .handout {
-    font-size: 13px;
-    padding: 5px 10px;
-  }
-
-  .cards {
-    grid-template-columns: 1fr;
-    padding: 14px;
-    gap: 16px;
-  }
-
-  .card-link:hover .card,
-  .card:hover {
-    transform: none;
-  }
-
-  .body {
-    padding: 16px;
-  }
-
-  .name {
-    font-size: 22px;
-  }
-
-  .summary {
-    font-size: 14px;
-  }
-}
+      .scenario-head-content { flex-direction: column; align-items: flex-start; }
+      .handouts { margin-left: 0; margin-top: 10px; flex-wrap: wrap; }
+    }
   </style>
 </head>
 <body>
