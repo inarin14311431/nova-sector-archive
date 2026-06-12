@@ -136,10 +136,11 @@
 }
 
 .scenario-head-content {
-  display: flex;  /* 横並びではなく、タイトル行とハンドアウト行の2段にする */
-  flex-direction: column; 
-  align-items: flex-start;
-  gap: 4px; /* 上下の隙間を調整 */
+  display: flex;
+  flex-direction: row; /* ★ 必ず横並びにする */
+  align-items: center; /* ★ 上下中央に揃える */
+  justify-content: flex-start; /* 基本は左詰め */
+  gap: 20px; /* 要素間の最低限の隙間 */
   flex: 1;
 }
 
@@ -165,10 +166,9 @@
 .handouts {
   display: flex; 
   gap: 12px; 
-  flex-wrap: nowrap; /* 1行に収めるために nowrap に変更 */
-  flex: 1;        /* ★ 余白をすべて占有する */
-  justify-content: flex-end; /* 右寄せ */
-  margin-top: 0;  /* 横並びなので上のマージンは不要 */
+  flex-wrap: nowrap;
+  margin-left: auto; /* ★ これが最重要：左側の余白を最大にして右に飛ばす */
+  margin-top: 0;     /* 上の隙間を消す */
 }
 
 .handout {
