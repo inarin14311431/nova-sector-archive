@@ -360,27 +360,22 @@
       content: "";
       position: absolute;
       left: -30%; right: -30%;
-      height: 25%;
-      top: -40%;
+      height: 20px; /* スキャンラインを少し太く */
+      top: -20%;
       background: linear-gradient(180deg, 
         transparent 0%, 
-        rgba(0,255,180,.5) 40%, 
-        rgba(80,255,120,.4) 60%, 
+        #fff 40%,        /* 中心を白く光らせる */
+        var(--cyan) 50%, 
         transparent 100%);
-      filter: blur(8px);
+      filter: blur(4px);
       opacity: 0;
-      z-index: 2;
+      z-index: 5;
       pointer-events: none;
-    }
-
-    .card::after {
-      opacity: 0;
-      animation: none;
     }
 
     .card:hover::after {
       opacity: 1;
-      animation: scan 1.8s linear infinite;
+      animation: singleScan 0.8s ease-out forwards; /* 1回だけ高速に走る */
     }
 
     @keyframes borderGlow {
@@ -392,7 +387,11 @@
       0% { transform: translateY(-120%); }
       100% { transform: translateY(500%); }
     }
-
+    @keyframes singleScan {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(2000%); } /* 下まで一気に突き抜ける */
+    }
+    
     .art {
       aspect-ratio: 1 / 1; overflow: hidden;
       background: linear-gradient(180deg, #120a2a, #0a0619);
@@ -411,13 +410,13 @@
       object-fit: cover;
       object-position: center;
       /* ★ 最初は強くぼかす（モザイク風） */
-      filter: blur(20px) brightness(0.5); 
+      filter: blur(15px) brightness(0.4); 
       /* ★ 2.5秒かけてじわっと表示されるようにする */
       animation: decodeImage 2.5s ease-in-out forwards;
       /* スキャンラインと同期させるため、少し遅らせて開始 */
       animation-delay: 0.5s; 
       /* ホバー時の変化（ズームなど）をスムーズにするための transition */
-      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), filter 0.5s;
+      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), filter 0.8s ease-out;
     }
     
       /* デコード（表示）アニメーション */
