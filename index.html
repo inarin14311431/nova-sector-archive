@@ -136,9 +136,10 @@
 }
 
 .scenario-head-content {
-  display: flex;
-  align-items: center;
-  gap: 40px;
+  display: flex;  /* 横並びではなく、タイトル行とハンドアウト行の2段にする */
+  flex-direction: column; 
+  align-items: flex-start;
+  gap: 4px; /* 上下の隙間を調整 */
   flex: 1;
 }
 
@@ -164,7 +165,7 @@
   display: flex; 
   gap: 12px; 
   flex-wrap: wrap; 
-  margin-top: 12px;
+  margin-top: 0px;
   width: 100%; /* 横幅いっぱいを使う */
   justify-content: flex-end;
 }
