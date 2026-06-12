@@ -292,9 +292,6 @@
   justify-content: start; /* 左寄せに戻す */
 }
 
-
-
-
 .scenario-group.collapsed .cards { 
   display: none; 
 }
@@ -334,51 +331,42 @@
   100% { transform: translate(0); }
 } */
 
-    .card:hover {
-      transform: translateY(-12px) scale(1.02);
-      /* 枠線を明滅させる */
-      animation: borderGlow 2s ease-in-out infinite;
-      
-      /* 太いネオンの枠を設定 */
-      border: 4px solid var(--magenta); 
-      box-shadow: 0 0 30px var(--magenta);
-      
-      /* 背景を固定（虹色の conic-gradient を削除） */
-      background: linear-gradient(#0f0828, #080419);
-      background-clip: padding-box;
-    }
-    
-    /* 明滅アニメーションを確実に動作させる設定 */
-    @keyframes borderGlow {
-      0% { border-color: var(--cyan); box-shadow: 0 0 15px var(--cyan); }
-      50% { border-color: var(--magenta); box-shadow: 0 0 30px var(--magenta); }
-      100% { border-color: var(--cyan); box-shadow: 0 0 15px var(--cyan); }
-    }
-            
     /* スキャンライン本体 */
     .card::after {
       content: "";
       position: absolute;
+      top: 0;
       left: 0;
       width: 100%;
-      height: 40px; /* ★ ラインを少し細くする */
-      top: 0;       /* ★ カードの最上部からスタート */
+      height: 60px; /* ラインの太さ */
       background: linear-gradient(180deg, 
         transparent 0%, 
-        #fff 50%, 
+        rgba(255, 255, 255, 0.9) 50%, 
         var(--cyan) 50%, 
         transparent 100%);
-      filter: blur(4px);
+      filter: blur(5px);
       opacity: 0;
-      z-index: 5;
+      /* ★ ここが重要：画像(.art)が z-index: なしの場合は、高い数値を設定 */
+      z-index: 10; 
       pointer-events: none;
     }
     
-    /* アニメーションの移動距離を 100% に固定 */
-    @keyframes singleScan {
-      0% { transform: translateY(-100%); }
-      100% { transform: translateY(calc(100% + 40px)); }
+    /* ホバーした時にアニメーションを実行 */
+    .card:hover::after {
+      /* 透明度を一瞬で 1 にする */
+      opacity: 1;
+      /* forwards を指定して、最後は消えた状態で止める */
+      animation: singleScan 0.7s ease-in-out forwards;
     }
+    
+    /* 移動アニメーション */
+    @keyframes singleScan {
+      0% { transform: translateY(-100%); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(800%); opacity: 0; } /* 800%でカード下まで飛ばす */
+    }
+
 
     @keyframes borderGlow {
       0% { border-color: var(--cyan); box-shadow: 0 0 15px var(--cyan); }
