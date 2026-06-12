@@ -60,7 +60,7 @@
       mask-image: radial-gradient(circle at center, black, transparent 80%);
       -webkit-mask-image: radial-gradient(circle at center, black, transparent 80%);
       opacity: 0.75;
-      animation: gridScroll 10s linear infinite; 
+      animation: gridScroll 5s linear infinite; 
     }
 
     /* セクションタイトル */
@@ -76,6 +76,41 @@
       padding: 0 20px 0 0;          /* 右側に少し余白 */
       text-align: right;
     }
+    
+    /* 背景データストリームの設定 */
+    .bg-data-flow {
+      position: fixed;
+      inset: 0;
+      z-index: 0; /* マス目(1)より奥、背景画像(-1)より手前 */
+      display: flex;
+      justify-content: space-around;
+      pointer-events: none;
+      opacity: 0.15; /* うっすら見える程度 */
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 20px;
+      color: var(--cyan);
+    }
+    
+    .bg-data-flow span {
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      transform: translateY(-100%);
+      /* ★ 「時折」流すために、長い時間をかけてアニメーション */
+      animation: dataBurst 15s linear infinite;
+    }
+    
+    /* 各列のタイミングをズラす（ライブ感を出す） */
+    .bg-data-flow span:nth-child(2) { animation-delay: 5s; animation-duration: 12s; color: var(--magenta); }
+    .bg-data-flow span:nth-child(3) { animation-delay: 8s; animation-duration: 18s; }
+    
+    /* 滝のように一気に流れるアニメーション */
+    @keyframes dataBurst {
+      0% { transform: translateY(-110%); opacity: 0; }
+      5% { opacity: 1; }
+      15% { transform: translateY(110%); opacity: 1; }
+      16% { opacity: 0; }
+      100% { transform: translateY(110%); opacity: 0; } /* 次のループまで待機 */
+    }    
     
     /* 画面全体のノイズ質感 */
     .noise {
@@ -295,6 +330,11 @@
 <body>
   <div class="noise"></div>
   <div class="scan-line"></div> 
+  <div class="bg-data-flow">
+    <span>011011010110010101101101011011110111001001111001</span>
+    <span>101001010101101010110101010101110101011010101011</span>
+    <span>011010101011110101101010110101011100101010111011</span>
+  </div>
   <div class="wrap">
     <section class="hero">
       <h2>トーキョーN◎VA THE AXLERATION<br></h2><h1>"ビフレスト"</h1>
