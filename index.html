@@ -324,7 +324,7 @@
       transition: all .35s ease;
     }
 
-/* カードホバー時に一瞬だけ左右に揺らす */
+/* カードホバー時に一瞬だけ左右に揺らす
 @keyframes glitch {
   0% { transform: translate(0); }
   20% { transform: translate(-2px, 2px); }
@@ -332,57 +332,52 @@
   60% { transform: translate(2px, 2px); }
   80% { transform: translate(2px, -2px); }
   100% { transform: translate(0); }
-}
+} */
 
-.card:hover {
-  background: 
-    linear-gradient(#0f0828, #080419),
-    conic-gradient(
-      #00ffff,
-      #00ccff,
-      #ff00ff,
-      #ff0088,
-      #aa00ff,
-      #00ffff
-    );
-  background-clip: padding-box, border-box;
-  background-origin: padding-box, border-box;
-  transform: translateY(-12px) scale(1.02);
-    /* グリッチとボーダー回転を同時にかける（カンマで区切る） */
-  /* animation: glitch 0.1s linear 1, borderGlow 2s ease-in-out infinite; */
-  border: 4px solid var(--magenta); /* 枠をはっきりさせる */
-  box-shadow: 0 0 30px var(--magenta);
-  background-clip: padding-box; /* 枠線の色と背景を分離する */
-}
+    .card:hover {
+      transform: translateY(-12px) scale(1.02);
+      /* 枠線を明滅させる */
+      animation: borderGlow 2s ease-in-out infinite;
+      
+      /* 太いネオンの枠を設定 */
+      border: 4px solid var(--magenta); 
+      box-shadow: 0 0 30px var(--magenta);
+      
+      /* 背景を固定（虹色の conic-gradient を削除） */
+      background: linear-gradient(#0f0828, #080419);
+      background-clip: padding-box;
+    }
+    
+    /* 明滅アニメーションを確実に動作させる設定 */
+    @keyframes borderGlow {
+      0% { border-color: var(--cyan); box-shadow: 0 0 15px var(--cyan); }
+      50% { border-color: var(--magenta); box-shadow: 0 0 30px var(--magenta); }
+      100% { border-color: var(--cyan); box-shadow: 0 0 15px var(--cyan); }
+    }
             
     /* スキャンライン本体 */
     .card::after {
       content: "";
       position: absolute;
-      left: 0; right: 0; /* 幅をカードに合わせる */
-      height: 100px;     /* ラインの縦幅 */
-      top: -100px;       /* 開始位置（カードのすぐ上） */
+      left: 0;
+      width: 100%;
+      height: 40px; /* ★ ラインを少し細くする */
+      top: 0;       /* ★ カードの最上部からスタート */
       background: linear-gradient(180deg, 
         transparent 0%, 
-        rgba(255, 255, 255, 0.8) 50%, /* 中心を白く */
+        #fff 50%, 
         var(--cyan) 50%, 
         transparent 100%);
-      filter: blur(8px);
+      filter: blur(4px);
       opacity: 0;
       z-index: 5;
       pointer-events: none;
     }
     
-    /* ホバーした時だけスキャンを実行 */
-    .card:hover::after {
-      opacity: 1;
-      animation: singleScan 0.6s ease-in-out forwards;
-    }
-    
-    /* カードの上端(-100px)から下端(100% + 100px)まで動かす */
+    /* アニメーションの移動距離を 100% に固定 */
     @keyframes singleScan {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(calc(100% + 150px)); }
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(calc(100% + 40px)); }
     }
 
     @keyframes borderGlow {
