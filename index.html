@@ -148,7 +148,8 @@
   font-size: clamp(26px, 3.4vw, 34px);
   letter-spacing: -.04em;
   text-transform: uppercase;
-  white-space: nowrap;
+  white-space: nowrap; /* 改行禁止 */
+  flex-shrink: 0;      /* ★ これを追加：絶対に潰れないようにする */
 }
 
 .scenario-sub {
@@ -164,10 +165,10 @@
 .handouts {
   display: flex; 
   gap: 12px; 
-  flex-wrap: wrap; 
-  margin-top: 0px;
-  width: 100%; /* 横幅いっぱいを使う */
-  justify-content: flex-end;
+  flex-wrap: nowrap; /* 1行に収めるために nowrap に変更 */
+  flex: 1;        /* ★ 余白をすべて占有する */
+  justify-content: flex-end; /* 右寄せ */
+  margin-top: 0;  /* 横並びなので上のマージンは不要 */
 }
 
 .handout {
