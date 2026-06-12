@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
   <title>トーキョーＮ◎ＶＡ THE AXLERATION リンク RPG "ビフレスト"</title>
   <style>
     :root {
@@ -26,17 +27,19 @@
       background-color: #0a001f;
       background-image: 
         linear-gradient(rgba(10, 0, 31, 0.5), rgba(10, 0, 31, 0.85)),
-        url('assets/citymap.png');
+        url('assets/citymap.png'); /* 背景画像パス */
       background-size: auto 120%;
       background-position: right top;
       background-attachment: fixed;
       background-repeat: no-repeat;
     }
 
-    /* 背景オーバーレイ（闇） */
+    /* 背景オーバーレイとグリッド */
     body::before {
       content: "";
-      position: fixed; inset: 0; z-index: -2;
+      position: fixed;
+      inset: 0;
+      z-index: -2;
       pointer-events: none;
       background: radial-gradient(circle at top right, transparent 0%, rgba(10, 0, 31, 0.9) 75%),
                   linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 240, 255, 0.04) 50%);
@@ -44,10 +47,11 @@
       opacity: 0.5;
     }
     
-    /* 背景デジタルグリッド（動くマス目） */
     body::after {
       content: "";
-      position: fixed; inset: 0; z-index: -1;
+      position: fixed;
+      inset: 0;
+      z-index: 1;
       pointer-events: none;
       background: 
         linear-gradient(rgba(0, 240, 255, 0.25) 1px, transparent 1px),
@@ -59,6 +63,55 @@
       animation: gridScroll 5s linear infinite; 
     }
 
+    /* セクションタイトル */
+    .section-title {
+      width: fit-content;
+      margin-left: auto;
+      margin-right: 0;
+      font-size: clamp(19px, 3.2vw, 27px);
+      letter-spacing: 0.3em;
+      color: var(--cyan);
+      text-shadow: 0 0 20px var(--cyan);
+      margin: 15px 0 40px auto;     /* 上・下・左自動・右0 */
+      padding: 0 20px 0 0;          /* 右側に少し余白 */
+      text-align: right;
+    }
+    
+    /* 背景データストリームの設定 */
+    .bg-data-flow {
+      position: fixed;
+      inset: 0;
+      z-index: 0; /* マス目(1)より奥、背景画像(-1)より手前 */
+      display: flex;
+      justify-content: space-around;
+      pointer-events: none;
+      opacity: 0.35; /* うっすら見える程度 */
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 20px;
+      color: var(--cyan);
+    }
+    
+    .bg-data-flow span {
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      transform: translateY(-100%);
+      /* ★ 「時折」流すために、長い時間をかけてアニメーション */
+      animation: dataBurst 15s linear infinite;
+    }
+    
+    /* 各列のタイミングをズラす（ライブ感を出す） */
+    .bg-data-flow span:nth-child(2) { animation-delay: 5s; animation-duration: 12s; color: var(--magenta); }
+    .bg-data-flow span:nth-child(3) { animation-delay: 8s; animation-duration: 18s; }
+    
+    /* 滝のように一気に流れるアニメーション */
+    @keyframes dataBurst {
+      0% { transform: translateY(-110%); opacity: 0; }
+      5% { opacity: 1; }
+      15% { transform: translateY(110%); opacity: 1; }
+      16% { opacity: 0; }
+      100% { transform: translateY(110%); opacity: 0; } /* 次のループまで待機 */
+    }    
+    
     /* 画面全体のノイズ質感 */
     .noise {
       position: fixed; inset: 0; pointer-events: none; opacity: .12; z-index: 2;
@@ -68,41 +121,21 @@
       animation: noiseShift 0.4s steps(3) infinite;
     }
 
-    /* 背景データストリーム（滝） */
-    .bg-data-flow {
-      position: fixed; inset: 0; z-index: 0;
-      display: flex; justify-content: space-around;
-      pointer-events: none; opacity: 0.35;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 20px; color: var(--cyan);
-    }
-    
-    .bg-data-flow span {
-      writing-mode: vertical-rl; text-orientation: upright;
-      transform: translateY(-120%);
-      animation: dataBurst 15s linear infinite;
-    }
-    
-    .bg-data-flow span:nth-child(2) { animation-delay: 5s; animation-duration: 12s; color: var(--magenta); }
-    .bg-data-flow span:nth-child(3) { animation-delay: 8s; animation-duration: 18s; }
-    
-    @keyframes dataBurst {
-      0% { transform: translateY(-120%); opacity: 0; }
-      5% { opacity: 1; }
-      20% { transform: translateY(120%); opacity: 1; }
-      21% { opacity: 0; }
-      100% { transform: translateY(120%); opacity: 0; }
-    }    
-
+    /* ページ読み込み時に1回走るスキャンライン */
     .scan-line {
-      position: fixed; left: 0; width: 100%; height: 2px;
+      position: fixed;
+      left: 0; width: 100%; height: 2px;
       background: rgba(146, 255, 146, 0.4);
       box-shadow: 0 0 15px var(--cyan);
-      z-index: 9999; pointer-events: none;
+      z-index: 9999;
+      pointer-events: none;
       animation: scanlineMove 3s ease-out 1 forwards;
     }
     
+    /* マス目を縦にスライドさせる動き */
     @keyframes gridScroll {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 80px; } /* マス目1つ分動かしてループ */
       from { background-position: 0 0; }
       to { background-position: 0 80px; }
     }
@@ -119,21 +152,30 @@
     
     .wrap { 
       width: min(1380px, calc(100% - 30px)); 
-      margin: 0 auto; position: relative; z-index: 10; 
+      margin: 0 auto; 
+      position: relative; 
+      z-index: 10; 
     }
 
     h1 { margin: 0 0 12px; font-size: clamp(44px, 8vw, 96px); line-height: .85; letter-spacing: -.08em; text-transform: uppercase; text-shadow: 0 0 30px var(--cyan); }
 
     /* --- 2. セクターヘッダー --- */
     .scenario-header {
-      display: flex; position: relative; align-items: center; gap: 24px;
-      padding: 28px 32px; background: rgba(15,5,45,.70);
-      border-bottom: 2px solid var(--cyan); cursor: pointer; transition: all 0.4s ease;
+      display: flex; 
+      position: relative; 
+      align-items: center; 
+      gap: 24px;
+      padding: 28px 32px;
+      background: rgba(15,5,45,.70);
+      border-bottom: 2px solid var(--cyan);
+      cursor: pointer; 
+      transition: all 0.4s ease;
     }
 
     .scenario-header::before {
       content: "DATA_ACCESSING... 01010101";
-      position: absolute; top: 6px; right: 60px;
+      position: absolute;
+      top: 6px; right: 60px;
       font-family: 'Share Tech Mono', monospace;
       font-size: 10px; color: var(--cyan); opacity: 0.2;
       letter-spacing: 2px; pointer-events: none;
@@ -146,7 +188,7 @@
       border: 2px solid var(--cyan); color: var(--cyan);
       display: flex; align-items: center; justify-content: center;
       font-size: 26px; border-radius: 50%; flex-shrink: 0;
-      transition: all 0.4s ease;
+      transition: transform 0.4s ease;
     }
 
     .scenario-group:not(.collapsed) .toggle-btn {
@@ -156,30 +198,67 @@
     
     .scenario-group.collapsed .toggle-btn { transform: rotate(-90deg); }
 
-    .scenario-head-content { display: flex; flex-direction: row; align-items: center; gap: 20px; flex: 1; }
-    .scenario-head h3 { margin: 0; font-size: clamp(26px, 3.4vw, 34px); letter-spacing: -.04em; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; }
-    .scenario-sub { padding-left: 20px; color: #c8f0ff; font-size: clamp(19px, 2.6vw, 27px); font-weight: 500; letter-spacing: .08em; text-shadow: 0 0 20px var(--cyan); white-space: nowrap; }
+    .scenario-head-content {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 20px;
+      flex: 1;
+    }
 
-    .handouts { display: flex; gap: 12px; flex-wrap: nowrap; margin-left: auto; }
-    .handout { padding: 6px 18px; background: rgba(0,240,255,.1); border: 1px solid rgba(0,240,255,.4); border-radius: 4px; font-size: 15px; color: #a0f8ff; cursor: pointer; position: relative; }
+    .scenario-head h3 {
+      margin: 0;
+      font-size: clamp(26px, 3.4vw, 34px);
+      letter-spacing: -.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .scenario-sub {
+      padding-left: 20px;
+      color: #c8f0ff;
+      font-size: clamp(19px, 2.6vw, 27px);
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-shadow: 0 0 20px var(--cyan);
+      white-space: nowrap;
+    }
+
+    .handouts {
+      display: flex; gap: 12px; flex-wrap: nowrap;
+      margin-left: auto; margin-top: 0;
+    }
+
+    .handout {
+      padding: 6px 18px;
+      background: rgba(0,240,255,.1); border: 1px solid rgba(0,240,255,.4); border-radius: 4px;
+      font-size: 15px; color: #a0f8ff; cursor: pointer; position: relative;
+    }
     .handout:hover { background: rgba(0,240,255,.25); border-color: var(--cyan); }
 
     /* --- 3. キャラクターカード --- */
     .cards {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(390px, 1fr)); 
-      gap: 22px; padding: 24px; justify-content: start;
+      gap: 22px; padding: 24px;
+      justify-content: start;
     }
 
     .scenario-group.collapsed .cards { display: none; }
 
+    .card-link { text-decoration: none; color: inherit; display: block; }
+
     .card {
       background: linear-gradient(180deg, rgba(15,8,40,0.7), rgba(8,4,25,0.8));
-      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px); 
+      -webkit-backdrop-filter: blur(8px);
       border: 4px solid rgba(0, 240, 255, 0.3);
-      clip-path: var(--cut); overflow: hidden;
+      clip-path: var(--cut); 
+      overflow: hidden;
       box-shadow: 0 0 20px rgba(0,0,0,.8);
-      transition: all .35s ease; position: relative;
+      transition: all .35s ease;
+      position: relative;
     }
 
     .card:hover {
@@ -187,13 +266,18 @@
       animation: borderGlow 2s ease-in-out infinite;
     }
 
+    /* ホバー時のスキャンライン */
     .card::after {
-      content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 60px;
+      content: "";
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 60px;
       background: linear-gradient(180deg, transparent, #fff 50%, var(--cyan) 50%, transparent);
       filter: blur(5px); opacity: 0; z-index: 10; pointer-events: none;
     }
 
-    .card:hover::after { animation: singleScan 0.8s ease-out forwards; }
+    .card:hover::after {
+      animation: singleScan 0.8s ease-out forwards;
+    }
 
     @keyframes singleScan {
       0% { transform: translateY(-100%); opacity: 0; }
@@ -207,24 +291,52 @@
       50% { border-color: var(--magenta); box-shadow: 0 0 35px var(--magenta); }
     }
 
-    .art { aspect-ratio: 1 / 1; overflow: hidden; background: linear-gradient(180deg, #120a2a, #0a0619); position: relative; }
-    .art img { width: 100%; height: 100%; object-fit: cover; filter: blur(15px) brightness(0.4); transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), filter 0.8s ease-in-out; }
-    .card:hover .art img { filter: blur(0px) brightness(1.2) contrast(1.2); transform: scale(1.15); }
+    /* キャラクター画像 */
+    .art {
+      aspect-ratio: 1 / 1; overflow: hidden;
+      background: linear-gradient(180deg, #120a2a, #0a0619);
+      position: relative;
+    }
 
-    /* --- 4. スタイルチップ装飾 --- */
+    .art img {
+      width: 100%; height: 100%; object-fit: cover;
+      filter: blur(15px) brightness(0.4); 
+      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), filter 0.8s ease-in-out;
+    }
+
+    .card:hover .art img {
+      filter: blur(0px) brightness(1.2) contrast(1.2);
+    }
+    /* --- その他装飾（修正版） --- */
+    .label, .aux, .styles { font-family: 'Orbitron', sans-serif; }
+    .body { padding: 22px; position: relative; z-index: 5; }
+    .name { font-size: clamp(22px, 2.9vw, 29px); font-weight: 700; text-shadow: 0 0 12px var(--cyan); }
+    .reading { color: #b0f0ff; font-size: 14.5px; margin-bottom: 4px; }
+    .field { margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(78,229,255,.2); position: relative; }
+    
+    /* ラベルの重なり防止 */
+    .label { 
+      color: var(--cyan); font-size: 12.5px; letter-spacing: .2em; 
+      text-transform: uppercase; margin-bottom: 12px; font-weight: 700; 
+      display: block; /* 改行させて下のチップと離す */
+    }
+    
+    .styles { display: flex; flex-wrap: wrap; gap: 10px; position: relative; }
+    
+    /* スタイルチップ基本設定 */
     .chip { 
       padding: 9px 18px; border-radius: 4px; font-size: 13.8px; 
       border: 1px solid rgba(255,255,255,.15); background: rgba(50,55,85,.7); 
       position: relative; z-index: 1;
     }
 
+    /* 主要スタイルのソナー演出 */
     .chip.major { 
       background: linear-gradient(135deg, #4ee5ff, #00d0ff); 
       color: #000; font-weight: 900; box-shadow: 0 0 22px #4ee5ff; 
-      border: none; overflow: hidden;
+      border: none; overflow: hidden; position: relative;
     }
 
-    /* 主要スタイルのソナー（回転）エフェクト */
     .chip.major::before {
       content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
       background: conic-gradient(transparent, rgba(255,255,255,0.6), transparent 30%);
@@ -235,18 +347,9 @@
       100% { transform: rotate(360deg); }
     }
 
-    /* 文字やその他の装飾 */
-    .label, .aux, .styles { font-family: 'Orbitron', sans-serif; }
-    .body { padding: 22px; position: relative; z-index: 5; }
-    .name { font-size: clamp(22px, 2.9vw, 29px); font-weight: 700; text-shadow: 0 0 12px var(--cyan); }
-    .reading { color: #b0f0ff; font-size: 14.5px; margin-bottom: 4px; }
-    .field { margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(78,229,255,.2); position: relative; }
-    .label { color: var(--cyan); font-size: 12.5px; letter-spacing: .2em; text-transform: uppercase; margin-bottom: 12px; font-weight: 700; display: block; }
-    .styles { display: flex; flex-wrap: wrap; gap: 10px; position: relative; }
     .summary { line-height: 1.75; font-size: 15px; color: #d8e8ff; }
     .player-field { margin-top: 20px; padding: 14px 18px; background: rgba(0,240,255,.08); border: 1px solid rgba(78,229,255,.4); border-radius: 6px; }
     footer { padding: 60px 0 90px; text-align: center; color: var(--muted); font-size: 14px; }
-
     @media (max-width: 768px) {
       .scenario-head-content { flex-direction: column; align-items: flex-start; }
       .handouts { margin-left: 0; margin-top: 10px; flex-wrap: wrap; }
@@ -257,13 +360,11 @@
   <div class="noise"></div>
   <div class="scan-line"></div> 
   <div class="bg-data-flow">
-    <span>011011010110010101101101011011110111001001111001011011010110010101101101011011110111001001111001</span>
-    <span>101001010101101010110101010101110101011010101011101001010101101010110101010101110101011010101011</span>
-    <span>011010101011110101101010110101011100101010111011011010101011110101101010110101011100101010111011</span>
+    <span>011011010110010101101101011011110111001001111001</span>
+    <span>101001010101101010110101010101110101011010101011</span>
+    <span>011010101011110101101010110101011100101010111011</span>
   </div>
-
   <div class="wrap">
-    
     <section class="hero">
       <h2>トーキョーN◎VA THE AXLERATION<br></h2><h1>"ビフレスト"</h1>
       <p class="lead">かくて運命の扉は閉じられた。――開くのはどうか君の手で。</p>
