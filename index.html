@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>トーキョーＮ◎ＶＡ THE AXLERATION リンク RPG "ビフレスト"</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  
+
+  <title>トーキョーＮ◎ＶＡ THE AXLERATION リンク RPG "ビフレスト"</title>
   <style>
     :root {
       --cyan: #00f0ff;
@@ -15,13 +15,12 @@
       --muted: #88aaff;
       --cut: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
     }
-
-    * { box-sizing: border-box; }
-    
     .label, .aux, .styles {
       font-family: 'Orbitron', sans-serif;
     }
-    
+
+    * { box-sizing: border-box; }
+
     /* 背景画像とオーバーレイの設定（画面右上に配置） */
     html, body {
       margin: 0; padding: 0;
@@ -69,18 +68,18 @@
 
 
     
-  body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    background: 
-      linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
-    background-size: 50px 50px; /* デジタルなグリッド線 */
-    opacity: 0.3;
-  }
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: 
+        linear-gradient(90deg, transparent 0%, rgba(0,240,255,0.03) 50%, transparent 100%),
+        linear-gradient(180deg, transparent 0%, rgba(255,0,170,0.03) 50%, transparent 100%);
+      animation: neonScan 40s linear infinite;
+      opacity: 0.4;
+    }
 
     @keyframes neonPulse {
       0%   { opacity: 0.5; transform: scale(1); }
@@ -256,23 +255,8 @@
       box-shadow: 0 0 20px rgba(0,0,0,.8), inset 0 0 20px rgba(78,229,255,.1);
       transition: all .35s ease;
     }
-    
-/* カードホバー時に一瞬だけ左右に揺らす */
-@keyframes glitch {
-  0% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(-2px, -2px); }
-  60% { transform: translate(2px, 2px); }
-  80% { transform: translate(2px, -2px); }
-  100% { transform: translate(0); }
-}
-    
+
 .card:hover {
-  animation: glitch 0.2s linear infinite; /* 非常に細かく震える */
-  box-shadow: 
-    -2px 0 var(--magenta), 
-    2px 0 var(--cyan), 
-    0 0 20px rgba(0, 240, 255, 0.6);
   border: 5px solid transparent;
   background: 
     linear-gradient(#0f0828, #080419),
@@ -286,6 +270,10 @@
     );
   background-clip: padding-box, border-box;
   background-origin: padding-box, border-box;
+  box-shadow: 
+    0 0 30px #00ffff,
+    0 0 60px #ff00ff,
+    0 0 95px rgba(170, 0, 255, 0.85);
   transform: translateY(-12px) scale(1.02);
 }
         
@@ -366,6 +354,22 @@
       background: linear-gradient(135deg, #4ee5ff, #00d0ff);
       color: #000; font-weight: 900; box-shadow: 0 0 22px #4ee5ff;
       position: relative;
+    /* 主要スタイルをより強調する */
+      overflow: hidden;
+      border: none;
+    }
+    
+    .chip.major::before {
+      content: "";
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: conic-gradient(transparent, var(--cyan), transparent 30%);
+      animation: rotateNeon 3s linear infinite;
+    }
+    
+    @keyframes rotateNeon {
+      100% { transform: rotate(360deg); }
     }
 
 
