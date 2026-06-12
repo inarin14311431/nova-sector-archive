@@ -74,7 +74,8 @@
   box-shadow: 0 0 10px var(--cyan);
   z-index: 9999;
   pointer-events: none;
-  animation: scanlineMove 8s linear infinite;
+  animation: scanlineMove 3s linear 1 forwards;
+  animation-delay: 1s; 
 }
 
 @keyframes scanlineMove {
@@ -347,9 +348,10 @@
   background-origin: padding-box, border-box;
   transform: translateY(-12px) scale(1.02);
     /* グリッチとボーダー回転を同時にかける（カンマで区切る） */
-  animation: glitch 0.1s linear 1, borderRotate 5s linear infinite; 
-  border: 2px solid var(--magenta); /* 枠をはっきりさせる */
+  animation: glitch 0.1s linear 1, borderGlow 2s ease-in-out infinite;
+  border: 4px solid var(--magenta); /* 枠をはっきりさせる */
   box-shadow: 0 0 30px var(--magenta);
+  background-clip: padding-box; /* 枠線の色と背景を分離する */
 }
         
 /* スキャンラインアニメーション */
@@ -380,7 +382,11 @@
       animation: scan 1.8s linear infinite;
     }
 
-
+    @keyframes borderGlow {
+      0% { border-color: var(--cyan); box-shadow: 0 0 15px var(--cyan); }
+      50% { border-color: var(--magenta); box-shadow: 0 0 30px var(--magenta); }
+      100% { border-color: var(--cyan); box-shadow: 0 0 15px var(--cyan); }
+    }
     @keyframes scan {
       0% { transform: translateY(-120%); }
       100% { transform: translateY(500%); }
