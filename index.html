@@ -408,12 +408,33 @@
     .summary { line-height: 1.75; font-size: 15px; color: #d8e8ff; }
     .player-field { margin-top: 20px; padding: 14px 18px; background: rgba(0,240,255,.08); border: 1px solid rgba(78,229,255,.4); border-radius: 6px; }
     footer { padding: 60px 0 90px; text-align: center; color: var(--muted); font-size: 14px; }
+
+@media (hover: none) {
+  .card:hover {
+    transform: none;
+    animation: none;
+  }
+
+  .card:hover::after {
+    display: none;
+  }
+}
+    
 @media screen and (max-width: 768px) {
 
   html {
     font-size: 14px;
   }
+  .card::after,
+  .card:hover::after {
+    display: none;
+    animation: none;
+    opacity: 0;
+  }
 
+  .card:hover .art img {
+    filter: blur(0px) brightness(1.1) contrast(1.0);
+  }
   .wrap {
     width: calc(100% - 12px);
   }
