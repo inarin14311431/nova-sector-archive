@@ -408,10 +408,90 @@
     .summary { line-height: 1.75; font-size: 15px; color: #d8e8ff; }
     .player-field { margin-top: 20px; padding: 14px 18px; background: rgba(0,240,255,.08); border: 1px solid rgba(78,229,255,.4); border-radius: 6px; }
     footer { padding: 60px 0 90px; text-align: center; color: var(--muted); font-size: 14px; }
-    @media (max-width: 768px) {
-      .scenario-head-content { flex-direction: column; align-items: flex-start; }
-      .handouts { margin-left: 0; margin-top: 10px; flex-wrap: wrap; }
-    }
+@media screen and (max-width: 768px) {
+
+  html {
+    font-size: 14px;
+  }
+
+  .wrap {
+    width: calc(100% - 12px);
+  }
+
+  h1 {
+    font-size: 48px;
+  }
+
+  .section-title {
+    margin-right: 0;
+    padding-right: 0;
+    text-align: center;
+  }
+
+  .scenario-header {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .scenario-head-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .scenario-sub {
+    padding-left: 0;
+    font-size: 15px;
+    white-space: normal;
+  }
+
+  .handouts {
+    width: 100%;
+    margin-left: 0;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .handout {
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+    padding: 10px;
+    gap: 14px;
+  }
+
+  .card {
+    width: 100%;
+  }
+
+  .body {
+    padding: 14px;
+  }
+
+  .name {
+    font-size: 20px;
+  }
+
+  .summary {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .bg-data-flow,
+  .noise,
+  .scan-line {
+    display: none;
+  }
+
+  .card:hover {
+    transform: none;
+    animation: none;
+  }
+}
   </style>
 </head>
 <body>
@@ -495,20 +575,21 @@
         </article>
       </a>
 
-      <a href="https://character-sheets.appspot.com/tnx/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByGgsSDUNoYXJhY3RlckRhdGEYgICQqcOnnQsM"
-           class="card-link" 
-           target="_blank" 
-           rel="noopener noreferrer">
         <article class="card">
           <div class="art">
             <img src="assets/characters/Kabuto.webp" alt="ステビア">
           </div>
           <div class="body">
             <div class="topline">
+          <a href="https://character-sheets.appspot.com/tnx/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByGgsSDUNoYXJhY3RlckRhdGEYgICQqcOnnQsM"
+               class="card-link" 
+               target="_blank" 
+               rel="noopener noreferrer">
               <div>
                 <p class="reading">ステビア</p>
                 <h3 class="name">ステビア</h3>
               </div>
+          </a>
             </div>
 
             <div class="field">
@@ -536,7 +617,6 @@
             </div>
           </div>
         </article>
-      </a>
 
         
       <a href="https://character-sheets.appspot.com/tnx/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByGgsSDUNoYXJhY3RlckRhdGEYgICQ1aHosAoM"
