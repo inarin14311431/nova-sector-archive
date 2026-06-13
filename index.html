@@ -249,7 +249,32 @@
       gap: 22px; padding: 24px;
       justify-content: start;
     }
-
+    
+    /* サマリーの短縮 */
+    .summary.js-summary {
+      max-height: 7.2em;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .summary.js-summary.expanded {
+      max-height: none;
+    }
+    
+    .summary-toggle {
+      margin-top: 8px;
+      padding: 6px 12px;
+      background: rgba(0,240,255,.12);
+      border: 1px solid rgba(0,240,255,.45);
+      color: var(--cyan);
+      cursor: pointer;
+      font-size: 12px;
+    }
+    
+    .summary-toggle:hover {
+      background: rgba(0,240,255,.25);
+    }
+    
     /* ホバー時に所属キャラクター名を表示するツールチップ */
     .handout::after {
       content: attr(data-characters); /* HTMLの data-characters から文字を読み取る */
@@ -845,7 +870,7 @@
 
             <div class="field">
               <span class="label">PROFILE SUMMARY</span>
-              <p class="summary">老若男女に声をかける全方位性癖ヒモ野郎。所属店の他、パトロンも居るとか居ないとか。なよなよしたという形容の如く、細っちろい優男。<BR>
+              <p class="summary js-summary">老若男女に声をかける全方位性癖ヒモ野郎。所属店の他、パトロンも居るとか居ないとか。なよなよしたという形容の如く、細っちろい優男。<BR>
 少女の唇に耳を寄せていたかと思えば、壮年男性の家に転がり込んでいる尻の軽い男。<BR>
 本業はそこそこ売れているがめちゃくちゃ売れっ子ではない劇作家。元々N◎VAで舞台演劇はほぼほぼマニアの趣味扱い。ファンも大抵「チャヅケ」の方で覚えているため、マネキン店の「オクウ」の名を聞いてもピンと来ない。そも文字媒体にしか名前が出ないので読みをヤトリなどと勘違いされていることも多い。<BR>
 ツラとシナリオが気に入られて複数のパトロンに飼われている。つまり、ヒモであることには変わりない。<BR>
@@ -853,6 +878,9 @@
 <BR>
 ひとの作り上げた舞台を愛している。<BR>
 屋烏 茶漬けは筆名。</p>
+              <button type="button" class="summary-toggle">
+                READ MORE
+              </button>
             </div>
 
             <div class="field">
@@ -1269,6 +1297,7 @@
     const text = element.getAttribute('data-text');
     element.innerHTML = '';
     let i = 0;
+
     function type() {
       if (i < text.length) {
         element.innerHTML += text.charAt(i);
@@ -1276,21 +1305,28 @@
         setTimeout(type, 45);
       }
     }
+
     type();
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+
+    /* Sectorサブタイトル演出 */
     document.querySelectorAll('.scenario-header').forEach(header => {
       const sub = header.querySelector('.scenario-sub');
+
       if (sub) {
         sub.style.opacity = '0';
+
         header.addEventListener('mouseenter', () => {
           sub.style.opacity = '1';
+
           if (!sub.hasAttribute('data-typed')) {
             typeText(sub);
             sub.setAttribute('data-typed', 'true');
           }
         });
+
         header.addEventListener('mouseleave', () => {
           if (header.parentElement.classList.contains('collapsed')) {
             sub.innerHTML = '';
@@ -1300,6 +1336,38 @@
         });
       }
     });
+
+    /* Summary開閉：長い場合だけ自動でボタン表示 */
+    document.querySelectorAll('.summary').forEach(summary => {
+      summary.classList.add('js-summary');
+
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'summary-toggle';
+      button.textContent = 'READ MORE';
+
+      summary.after(button);
+
+      const needsToggle = summary.scrollHeight > summary.clientHeight;
+
+      if (!needsToggle) {
+        button.remove();
+        summary.classList.remove('js-summary');
+        return;
+      }
+
+      button.addEventListener('click', event => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        summary.classList.toggle('expanded');
+
+        button.textContent = summary.classList.contains('expanded')
+          ? 'CLOSE'
+          : 'READ MORE';
+      });
+    });
+
   });
 </script>
 </body>
