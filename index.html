@@ -231,17 +231,35 @@
     }
 
     .handouts {
-      display: flex; gap: 12px; flex-wrap: nowrap;
-      margin-left: auto; margin-top: 0;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-left: auto;
+      border: 1px solid rgba(0,240,255,.25);
+      background: rgba(0,0,0,.25);
     }
-
+    
+    .handouts::before {
+      content: "HANDOUTS //";
+      padding: 7px 12px;
+      color: rgba(0,240,255,.65);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .18em;
+      border-right: 1px solid rgba(0,240,255,.25);
+    }
+    
     .handout {
-      padding: 6px 18px;
-      background: rgba(0,240,255,.1); border: 1px solid rgba(0,240,255,.4); border-radius: 4px;
-      font-size: 15px; color: #a0f8ff; cursor: pointer; position: relative;
+      padding: 7px 12px;
+      border-right: 1px solid rgba(0,240,255,.18);
+      background: transparent;
+      color: #d8fbff;
+      font-size: 13px;
     }
-    .handout:hover { background: rgba(0,240,255,.25); border-color: var(--cyan); }
-
+    
+    .handout:last-child {
+      border-right: none;
+    }
     /* --- 3. キャラクターカード --- */
     .cards {
       display: grid;
