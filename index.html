@@ -560,6 +560,28 @@
     animation: none;
   }
 }
+  @media (hover: none), (pointer: coarse) {
+  .art img,
+  .card:hover .art img {
+    filter: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .card,
+  .card:hover {
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .card::after,
+  .card:hover::after {
+    content: none !important;
+    display: none !important;
+    animation: none !important;
+    opacity: 0 !important;
+  }
+}
   </style>
 </head>
 <body>
