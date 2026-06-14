@@ -235,12 +235,20 @@
       margin-left: auto; margin-top: 0;
     }
 
-    .handout {
-      padding: 6px 18px;
-      background: rgba(0,240,255,.1); border: 1px solid rgba(0,240,255,.4); border-radius: 4px;
-      font-size: 15px; color: #a0f8ff; cursor: pointer; position: relative;
+    .handout{
+      position:relative;
+      padding:8px 18px;
     }
-    .handout:hover { background: rgba(0,240,255,.25); border-color: var(--cyan); }
+    
+    .handout::before{
+      content:"■";
+      color:var(--cyan);
+      margin-right:6px;
+    }
+    
+    .handout:hover{
+      transform:translateY(-2px);
+    }
 
     /* --- 3. キャラクターカード --- */
     .cards {
