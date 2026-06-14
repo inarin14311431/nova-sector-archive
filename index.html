@@ -229,37 +229,36 @@
       text-shadow: 0 0 20px var(--cyan);
       white-space: nowrap;
     }
-
-    .handouts {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      margin-left: auto;
-      border: 1px solid rgba(0,240,255,.25);
-      background: rgba(0,0,0,.25);
-    }
-    
-    .handouts::before {
-      content: "HANDOUTS //";
-      padding: 7px 12px;
-      color: rgba(0,240,255,.65);
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 11px;
-      letter-spacing: .18em;
-      border-right: 1px solid rgba(0,240,255,.25);
-    }
-    
-    .handout {
-      padding: 7px 12px;
-      border-right: 1px solid rgba(0,240,255,.18);
-      background: transparent;
-      color: #d8fbff;
-      font-size: 13px;
-    }
-    
-    .handout:last-child {
-      border-right: none;
-    }
+            
+            .handouts {
+              display: flex;
+              gap: 6px;
+              margin-left: auto;
+            }
+            
+            .handout {
+              padding: 8px 16px;
+              background: linear-gradient(180deg, rgba(0,240,255,.16), rgba(0,240,255,.04));
+              border: 1px solid rgba(0,240,255,.35);
+              border-bottom: 3px solid rgba(0,240,255,.7);
+              color: #e8fdff;
+              font-weight: 700;
+              font-size: 13px;
+              transform: skewX(-10deg);
+            }
+            
+            .handout:hover {
+              border-bottom-color: var(--magenta);
+              box-shadow: 0 0 18px rgba(255,0,170,.35);
+            }
+            
+            .handout {
+              display: inline-block;
+            }
+            
+            .handout::first-letter {
+              color: var(--cyan);
+            }
     /* --- 3. キャラクターカード --- */
     .cards {
       display: grid;
