@@ -298,10 +298,32 @@
     }
 
     /* マウスを乗せたら表示する */
+    .handout::after {
+      content: "ASSIGNED CAST : " attr(data-characters);
+      position: absolute;
+      top: calc(100% + 12px);
+      left: 50%;
+      transform: translateX(-50%) translateY(-6px);
+      background: rgba(5,8,28,.96);
+      border: 1px solid rgba(0,240,255,.7);
+      color: #e8fbff;
+      padding: 10px 16px;
+      font-size: 12px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 100;
+      box-shadow:
+        0 0 18px rgba(0,240,255,.35),
+        inset 0 0 12px rgba(0,240,255,.12);
+      clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+      pointer-events: none;
+    }
+    
     .handout:hover::after {
       opacity: 1;
       visibility: visible;
-      top: calc(100% + 12px); /* 少し下にずらして表示 */
+      transform: translateX(-50%) translateY(0);
     }
     
     .scenario-group.collapsed .cards { display: none; }
@@ -412,13 +434,10 @@
       display: block;
       margin-top: 10px;
       padding-left: 14px;
-    
       color: #7f8794;
       font-size: 0.92em;
       letter-spacing: .05em;
-    
       border-left: 3px solid rgba(160,160,160,.35);
-    
       text-shadow: none;
     }
     
@@ -451,129 +470,162 @@
     .summary { line-height: 1.75; font-size: 15px; color: #d8e8ff; }
     .player-field { margin-top: 20px; padding: 14px 18px; background: rgba(0,240,255,.08); border: 1px solid rgba(78,229,255,.4); border-radius: 6px; }
     footer { padding: 60px 0 90px; text-align: center; color: var(--muted); font-size: 14px; }
-
-@media (hover: none) {
-  .card:hover {
-    transform: none;
-    animation: none;
-  }
-
-  .card:hover::after {
-    display: none;
-  }
-}
     
-@media screen and (max-width: 768px) {
+    @media (hover: none) {
+      .card:hover {
+        transform: none;
+        animation: none;
+      }
+    
+      .card:hover::after {
+        display: none;
+      }
+    }
+        
+    @media screen and (max-width: 768px) {
+    
+      html {
+        font-size: 14px;
+      }
+      .card::after,
+      .card:hover::after {
+        display: none;
+        animation: none;
+        opacity: 0;
+      }
+      
+      body {
+        background-attachment: scroll;
+        background-position: center top;
+        background-size: cover;
+      }
+      .card:hover .art img {
+        filter: blur(0px) brightness(1.1) contrast(1.0);
+      }
+      .wrap {
+        width: calc(100% - 12px);
+      }
+    
+      h1 {
+        font-size: 48px;
+      }
+    
+      .section-title {
+        margin-right: 0;
+        padding-right: 0;
+        text-align: center;
+      }
+    
+      .scenario-header {
+        padding: 16px;
+        gap: 12px;
+      }
+    
+      .scenario-head-content {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+    
+      .scenario-sub {
+        padding-left: 0;
+        font-size: 15px;
+        white-space: normal;
+      }
+      
+/* ハンドアウト装飾 */
+    .handouts {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-left: auto;
+    }
+    
+    .handout {
+      position: relative;
+      padding: 7px 14px 7px 28px;
+      background:
+        linear-gradient(90deg, rgba(0,240,255,.18), rgba(255,0,170,.08)),
+        rgba(5,10,35,.7);
+      border: 1px solid rgba(0,240,255,.45);
+      color: #c8f8ff;
+      font-size: 12px;
+      font-family: 'Share Tech Mono', monospace;
+      letter-spacing: .12em;
+      clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+      box-shadow: inset 0 0 12px rgba(0,240,255,.12);
+    }
+    
+    .handout::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      width: 7px;
+      height: 7px;
+      transform: translateY(-50%);
+      background: var(--cyan);
+      box-shadow: 0 0 10px var(--cyan);
+    }
+    
+    .handout:hover {
+      background:
+        linear-gradient(90deg, rgba(0,240,255,.28), rgba(255,0,170,.18)),
+        rgba(5,10,35,.9);
+      border-color: var(--magenta);
+      color: #ffffff;
+    }
 
-  html {
-    font-size: 14px;
-  }
-  .card::after,
-  .card:hover::after {
-    display: none;
-    animation: none;
-    opacity: 0;
-  }
+      
+  /* キャラクターカード装飾 */
+      .cards {
+        grid-template-columns: 1fr;
+        padding: 10px;
+        gap: 14px;
+      }
+    
+      .card {
+        width: 100%;
+      }
+    
+      .body {
+        padding: 14px;
+      }
+    
+      .name {
+        font-size: 20px;
+      }
+    
+      .summary {
+        font-size: 13px;
+        line-height: 1.6;
+      }
+    
+      .bg-data-flow,
+      .noise,
+      .scan-line {
+        display: none;
+      }
+    
+      .card:hover {
+        transform: none;
+        animation: none;
+      }
+    }
+    @media (hover: none), (pointer: coarse) {
+    .art img,
+    .card:hover .art img {
+      filter: none !important;
+      transition: none !important;
+      transform: none !important;
+    }
   
-  body {
-    background-attachment: scroll;
-    background-position: center top;
-    background-size: cover;
-  }
-  .card:hover .art img {
-    filter: blur(0px) brightness(1.1) contrast(1.0);
-  }
-  .wrap {
-    width: calc(100% - 12px);
-  }
-
-  h1 {
-    font-size: 48px;
-  }
-
-  .section-title {
-    margin-right: 0;
-    padding-right: 0;
-    text-align: center;
-  }
-
-  .scenario-header {
-    padding: 16px;
-    gap: 12px;
-  }
-
-  .scenario-head-content {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .scenario-sub {
-    padding-left: 0;
-    font-size: 15px;
-    white-space: normal;
-  }
-
-  .handouts {
-    width: 100%;
-    margin-left: 0;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .handout {
-    font-size: 12px;
-    padding: 4px 10px;
-  }
-
-  .cards {
-    grid-template-columns: 1fr;
-    padding: 10px;
-    gap: 14px;
-  }
-
-  .card {
-    width: 100%;
-  }
-
-  .body {
-    padding: 14px;
-  }
-
-  .name {
-    font-size: 20px;
-  }
-
-  .summary {
-    font-size: 13px;
-    line-height: 1.6;
-  }
-
-  .bg-data-flow,
-  .noise,
-  .scan-line {
-    display: none;
-  }
-
-  .card:hover {
-    transform: none;
-    animation: none;
-  }
-}
-  @media (hover: none), (pointer: coarse) {
-  .art img,
-  .card:hover .art img {
-    filter: none !important;
-    transition: none !important;
-    transform: none !important;
-  }
-
-  .card,
-  .card:hover {
-    transform: none !important;
-    animation: none !important;
-  }
+    .card,
+    .card:hover {
+      transform: none !important;
+      animation: none !important;
+    }
 
   .card::after,
   .card:hover::after {
@@ -633,7 +685,6 @@
           <div class="body">
             <div class="topline">
               <div>
-                <div class="idcode">BLACKHOUND-INU-XX</div>
                 <p class="reading">クロガネ=ラン</p>
                 <h3 class="name">″使命官″ 市原 隆介</h3>
               </div>
