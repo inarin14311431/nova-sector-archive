@@ -78,46 +78,42 @@
       padding: 0 20px 0 0;          /* 右側に少し余白 */
       text-align: right;
     }
-    
-    /* 背景データストリームの設定 */
+    /* =====================================================
+   背景データストリーム
+   - JavaScriptでspanを自動生成する
+   - 位置・速度・遅延・文字サイズ・色はJS側でランダム設定
+   ===================================================== */
     .bg-data-flow {
       position: fixed;
       inset: 0;
       z-index: 0;
-      display: block; /* 横並びをやめて自由配置にする */
+      display: block;
       pointer-events: none;
       opacity: 0.5;
       font-family: 'Share Tech Mono', monospace;
-      font-size: 28px;
       color: var(--cyan);
     }
     
+    /* JSで生成されるデータ列 */
     .bg-data-flow span {
-      position: absolute; /* 自由配置 */
+      position: absolute;
       top: -200px;
       writing-mode: vertical-rl;
       text-orientation: upright;
       transform: translateY(-120%);
-      animation: dataBurst 12s linear infinite;
+      animation-name: dataBurst;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
     }
     
-    /* 各列の出現位置・速さ・色をランダムに設定 */
-    .bg-data-flow span:nth-child(1) { left: 5%;  animation-duration: 10s; animation-delay: 2s; }
-    .bg-data-flow span:nth-child(2) { left: 18%; animation-duration: 14s; animation-delay: 8s; color: var(--magenta); font-size: 15px; opacity: 0.5; }
-    .bg-data-flow span:nth-child(3) { left: 35%; animation-duration: 11s; animation-delay: 0s; }
-    .bg-data-flow span:nth-child(4) { left: 55%; animation-duration: 15s; animation-delay: 5s; opacity: 0.4; }
-    .bg-data-flow span:nth-child(5) { left: 72%; animation-duration: 9s;  animation-delay: 10s; color: var(--magenta); }
-    .bg-data-flow span:nth-child(6) { left: 90%; animation-duration: 13s; animation-delay: 3s; font-size: 14px; }
-
-    
-    /* 滝のように一気に流れるアニメーション */
+    /* データ列が上から下へ流れるアニメーション */
     @keyframes dataBurst {
-      0% { transform: translateY(-110%); opacity: 0; }
-      5% { opacity: 1; }
-      15% { transform: translateY(110%); opacity: 1; }
-      16% { opacity: 0; }
-      100% { transform: translateY(110%); opacity: 0; } /* 次のループまで待機 */
-    }    
+      0% {transform: translateY(-110%); opacity: 0; }
+      5% {opacity: 1; }
+      15% {transform: translateY(110%); opacity: 1; }
+      16% {opacity: 0; }
+      100% {transform: translateY(110%); opacity: 0; }
+    }
     
     /* 画面全体のノイズ質感 */
     .noise {
@@ -663,14 +659,7 @@
 <body>
   <div class="noise"></div>
   <div class="scan-line"></div> 
-  <div class="bg-data-flow">
-    <span>011011010110010101101101011011110111001001111001011011010110010101101101011011110111001001111001</span>
-    <span>10100101010110101011010101010111010101101010101110101101010110101010101110101011010101011</span>
-    <span>011010101011110101101010110101011100101010111011011010101011110101101010110101011100101010111011</span>
-    <span>0011010101001011010010111010101101010100110101010001011101010110100010111010101101001011010010111010101101010100</span>
-    <span>111010110101101111101011010110110001010101111010110101101111101011010110110001010</span>
-    <span>101010101010110101010101010111101010101010101101010101010101111010</span>
-  </div>
+  <div class="bg-data-flow"></div>
   <div class="wrap">
     <section class="hero">
       <h2>トーキョーN◎VA THE AXLERATION<br></h2><h1>"ビフレスト"</h1>
@@ -1884,7 +1873,54 @@
       summary.dataset.summaryReady = 'true';
     });
   }
+  
+/* =====================================================
+   背景データストリーム生成処理
 
+   .bg-data-flow 内にデータ列を自動生成する。
+   各列の位置・速度・遅延・文字サイズ・色・透明度を
+   ランダムに設定し、機械的すぎない流れを作る。
+   ===================================================== */
+    function setupDataFlow() {
+      const flow = document.querySelector('.bg-data-flow');
+      if (!flow) return;
+    
+      const lineCount = 24;
+      const colors = [
+        'var(--cyan)',
+        'var(--cyan)',
+        'var(--cyan)',
+        'var(--magenta)'
+      ];
+    
+      flow.innerHTML = '';
+    
+      for (let i = 0; i < lineCount; i++) {
+        const span = document.createElement('span');
+    
+        span.textContent = createBinaryText(80 + Math.floor(Math.random() * 80));
+    
+        span.style.left = `${Math.random() * 100}%`;
+        span.style.animationDuration = `${8 + Math.random() * 10}s`;
+        span.style.animationDelay = `${Math.random() * 14}s`;
+        span.style.fontSize = `${10 + Math.random() * 20}px`;
+        span.style.color = colors[Math.floor(Math.random() * colors.length)];
+        span.style.opacity = `${0.25 + Math.random() * 0.55}`;
+    
+        flow.appendChild(span);
+      }
+    }
+    
+    /* 0と1の文字列を生成 */
+    function createBinaryText(length) {
+      let text = '';
+    
+      for (let i = 0; i < length; i++) {
+        text += Math.random() > 0.5 ? '1' : '0';
+      }
+    
+      return text;
+    }
   
 /* =====================================================
    ページ初期化処理
@@ -1895,6 +1931,8 @@
    ・各種UI演出の初期化
    ===================================================== */
   document.addEventListener('DOMContentLoaded', () => {
+    setupDataFlow();
+    
     document.querySelectorAll('.scenario-header').forEach(header => {
       const sub = header.querySelector('.scenario-sub');
 
