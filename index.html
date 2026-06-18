@@ -230,35 +230,37 @@
       white-space: nowrap;
     }
             
-            .handouts {
-              display: flex;
-              gap: 6px;
-              margin-left: auto;
-            }
-            
-            .handout {
-              padding: 8px 16px;
-              background: linear-gradient(180deg, rgba(0,240,255,.16), rgba(0,240,255,.04));
-              border: 1px solid rgba(0,240,255,.35);
-              border-bottom: 3px solid rgba(0,240,255,.7);
-              color: #e8fdff;
-              font-weight: 700;
-              font-size: 13px;
-              transform: skewX(-10deg);
-            }
-            
-            .handout:hover {
-              border-bottom-color: var(--magenta);
-              box-shadow: 0 0 18px rgba(255,0,170,.35);
-            }
-            
-            .handout {
-              display: inline-block;
-            }
-            
-            .handout::first-letter {
-              color: var(--cyan);
-            }
+    .handouts {
+      display: flex;
+      gap: 6px;
+      margin-left: auto;
+    }
+    
+    .handout {
+      padding: 8px 16px;
+      background: linear-gradient(180deg, rgba(0,240,255,.16), rgba(0,240,255,.04));
+      border: 1px solid rgba(0,240,255,.35);
+      border-bottom: 3px solid rgba(0,240,255,.7);
+      color: #e8fdff;
+      font-weight: 700;
+      font-size: 13px;
+      transform: skewX(-10deg);
+      position: relative;
+    }
+    
+    .handout:hover {
+      border-bottom-color: var(--magenta);
+      box-shadow: 0 0 18px rgba(255,0,170,.35);
+    }
+    
+    .handout {
+      display: inline-block;
+    }
+    
+    .handout::first-letter {
+      color: var(--cyan);
+    }
+    
     /* --- 3. キャラクターカード --- */
     .cards {
       display: grid;
@@ -291,16 +293,15 @@
     .summary-toggle:hover {
       background: rgba(0,240,255,.25);
     }
-    
-    /* マウスを乗せたら表示する */
+    /* ハンドアウト：所属キャラクター名ツールチップ */
     .handout::after {
       content: "ASSIGNED CAST : " attr(data-characters);
       position: absolute;
       top: calc(100% + 12px);
       left: 50%;
       transform: translateX(-50%) translateY(-6px);
-      background: rgba(5,8,28,.96);
-      border: 1px solid rgba(0,240,255,.7);
+      background: rgba(5, 8, 28, .96);
+      border: 1px solid rgba(0, 240, 255, .7);
       color: #e8fbff;
       padding: 10px 16px;
       font-size: 12px;
@@ -308,13 +309,14 @@
       opacity: 0;
       visibility: hidden;
       z-index: 100;
-      box-shadow:
-        0 0 18px rgba(0,240,255,.35),
-        inset 0 0 12px rgba(0,240,255,.12);
-      clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
       pointer-events: none;
+      box-shadow:
+        0 0 18px rgba(0, 240, 255, .35),
+        inset 0 0 12px rgba(0, 240, 255, .12);
+      clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+      transition: all 0.3s ease;
     }
-    
+
     .handout:hover::after {
       opacity: 1;
       visibility: visible;
