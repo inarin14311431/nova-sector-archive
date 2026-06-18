@@ -18,7 +18,9 @@
 
     * { box-sizing: border-box; }
 
-    /* --- 1. 背景と基本レイアウト --- */
+/* =====================================================
+   01. 共通設定
+   ===================================================== */
     html, body {
       margin: 0; padding: 0;
       min-height: 100%;
@@ -164,7 +166,9 @@
 
     h1 { margin: 0 0 12px; font-size: clamp(44px, 8vw, 96px); line-height: .85; letter-spacing: -.08em; text-transform: uppercase; text-shadow: 0 0 30px var(--cyan); }
 
-    /* --- 2. セクターヘッダー --- */
+/* =====================================================
+   02. セクターヘッダー
+   ===================================================== */
     .scenario-header {
       display: flex; 
       position: relative; 
@@ -257,7 +261,10 @@
     .handout::first-letter {
       color: var(--cyan);
     }
-    /* --- 3. キャラクターカード --- */
+    
+/* =====================================================
+   03. キャストーカード
+   ===================================================== */
     .cards {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(390px, 1fr)); 
@@ -290,7 +297,7 @@
       background: rgba(0,240,255,.25);
     }
     
-    /* ハンドアウト：所属キャラクター表示ツールチップ */
+    /* ハンドアウト：所属キャスト表示ツールチップ */
     .handout::after {
       content: "ASSIGNED CAST : " attr(data-characters);
     
@@ -424,7 +431,10 @@
     .card:hover .art img {
       filter: blur(0px) brightness(1.1) contrast(1.0);
     }
-    /* --- その他装飾 --- */
+    
+/* =====================================================
+   04. その他装飾
+   ===================================================== */
     .label, .aux, .styles { font-family: 'Orbitron', sans-serif; }
     .body { padding: 22px; position: relative; z-index: 5; }
     .name { font-size: clamp(22px, 2.9vw, 29px); font-weight: 700; text-shadow: 0 0 12px var(--cyan); }
@@ -479,7 +489,11 @@
     .summary { line-height: 1.75; font-size: 15px; color: #d8e8ff; }
     .player-field { margin-top: 20px; padding: 14px 18px; background: rgba(0,240,255,.08); border: 1px solid rgba(78,229,255,.4); border-radius: 6px; }
     footer { padding: 60px 0 90px; text-align: center; color: var(--muted); font-size: 14px; }
+
     
+/* =====================================================
+   05. スマホ対応
+   ===================================================== */
     @media (hover: none) {
       .card:hover {
         transform: none;
@@ -665,7 +679,11 @@
 
     <div class="section-title">N◎VAリンクオンライン</div>
 
-    <!-- 警察 Sector -->
+<!-- ==================================================
+     警察 SECTOR
+     担当スタイル：
+     イヌ / カブト / ミストレス / カブトワリ
+     ================================================== -->
     <section class="scenario-group collapsed" id="police">
       <div class="scenario-header" onclick="toggleSector('police')">
         <div class="toggle-btn">▼</div>
@@ -682,6 +700,7 @@
       </div>
       <div class="cards">
 
+<!-- ==== キャストカード ======================================= -->
         <article class="card">
           <a href="https://character-sheets.appspot.com/tnx/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByGgsSDUNoYXJhY3RlckRhdGEYgICQ-Zng6wkM"
            class="card-link" 
@@ -734,6 +753,7 @@
         </article>
 
 
+<!-- ==== キャストカード ======================================= -->
         <article class="card">
           <a href="https://character-sheets.appspot.com/tnx/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByGgsSDUNoYXJhY3RlckRhdGEYgICQqcOnnQsM"
                class="card-link" 
@@ -783,8 +803,7 @@
           </div>
         </article>
 
-        
-
+<!-- ==== キャストカード ======================================= -->
         <article class="card">
           <a href="https://character-sheets.appspot.com/tnx/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByGgsSDUNoYXJhY3RlckRhdGEYgICQ1aHosAoM"
            class="card-link" 
@@ -835,7 +854,7 @@
           </div>
         </article>
 
-
+<!-- ==== キャストカード ======================================= -->
         <article class="card">
           <a href=""
            class="card-link" 
@@ -890,7 +909,11 @@
       </div>
     </section>
 
-    <!-- 企業 Sector -->
+<!-- ==================================================
+     企業 SECTOR
+     担当スタイル：
+     クグツ / エグゼク / カタナ
+     ================================================== -->
     <section class="scenario-group collapsed" id="company">
       <div class="scenario-header" onclick="toggleSector('company')">
         <div class="toggle-btn">▼</div>
@@ -906,6 +929,7 @@
       </div>
       <div class="cards">
 
+<!-- ==== キャストカード ======================================= -->
         <article class="card">
           <a href="https://character-sheets.appspot.com/tnx/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByGgsSDUNoYXJhY3RlckRhdGEYgICQ8b3jjwkM"
              class="card-link" 
@@ -964,7 +988,8 @@
             </div>
           </div>
         </article>
-        
+
+<!-- ==== キャストカード ======================================= -->
         <article class="card">
           <a href="https://character-sheets.appspot.com/tnx/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByGgsSDUNoYXJhY3RlckRhdGEYgICQxeCSqwoM"
              class="card-link" 
@@ -1016,8 +1041,7 @@
           </div>
         </article>
 
-        
-
+<!-- ==== キャストカード ======================================= -->
         <article class="card">
           <a href="https://character-sheets.appspot.com/tnx/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByGgsSDUNoYXJhY3RlckRhdGEYgICQyZKR7gkM"
              class="card-link" 
@@ -1071,7 +1095,11 @@
       </div>
     </section>
 
-    <!-- ストリート Sector -->
+<!-- ==================================================
+     ストリート SECTOR
+     担当スタイル：
+     フェイト / レッガー / マネキン
+     ================================================== -->
     <section class="scenario-group collapsed" id="street">
       <div class="scenario-header" onclick="toggleSector('street')">
         <div class="toggle-btn">▼</div>
@@ -1087,6 +1115,7 @@
       </div>
       <div class="cards">
 
+<!-- ==== キャストカード ======================================= -->
         <article class="card">
           <a href="https://character-sheets.appspot.com/tnx/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByGgsSDUNoYXJhY3RlckRhdGEYgICQifr-rwoM"
            class="card-link" 
@@ -1149,7 +1178,8 @@
             </div>
           </div>
         </article>
-        
+
+<!-- ==== キャストカード ======================================= -->
         <article class="card">
           <a href="https://character-sheets.appspot.com/tnx/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByGgsSDUNoYXJhY3RlckRhdGEYgICQ-cfCrgkM"
              class="card-link" 
@@ -1199,8 +1229,8 @@
           </div>
         </article>
 
-        
 
+<!-- ==== キャストカード ======================================= -->
         <article class="card">
           <a href="https://character-sheets.appspot.com/tnx/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByGgsSDUNoYXJhY3RlckRhdGEYgICQxZ7vjQoM"
              class="card-link" 
@@ -1260,7 +1290,11 @@
       </div>
     </section>
 
-    <!-- アストラル Sector -->
+<!-- ==================================================
+     アストラル SECTOR
+     担当スタイル：
+     バサラ / マヤカシ / チャクラ
+     ================================================== -->
     <section class="scenario-group collapsed" id="astral">
       <div class="scenario-header" onclick="toggleSector('astral')">
         <div class="toggle-btn">▼</div>
@@ -1276,6 +1310,7 @@
       </div>
       <div class="cards">
 
+<!-- ==== キャストカード ======================================= -->
         <article class="card">
           <a href="https://character-sheets.appspot.com/tnx/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByGgsSDUNoYXJhY3RlckRhdGEYgICQ5dD50ggM"
              class="card-link" 
@@ -1326,12 +1361,19 @@
         </article>
 
 
+<!-- ==== キャストカード ======================================= -->
         <article class="card blank"></article>
+<!-- ==== キャストカード ======================================= -->
         <article class="card blank"></article>
       </div>
     </section>
 
-    <!-- テクノロジー Sector -->
+    
+<!-- ==================================================
+     テクノロジー SECTOR
+     担当スタイル：
+     タタラ / ニューロ / カゼ
+     ================================================== -->
     <section class="scenario-group collapsed" id="tech">
       <div class="scenario-header" onclick="toggleSector('tech')">
         <div class="toggle-btn">▼</div>
@@ -1348,6 +1390,7 @@
       <div class="cards">
 
 
+<!-- ==== キャストカード ======================================= -->
         <article class="card">
           <a href="https://character-sheets.appspot.com/tnx/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByGgsSDUNoYXJhY3RlckRhdGEYgICQucKE6woM"
              class="card-link" 
@@ -1396,9 +1439,7 @@
           </div>
         </article>
 
-
-        
-
+<!-- ==== キャストカード ======================================= -->
         <article class="card">
           <a href="https://character-sheets.appspot.com/tnx/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByGgsSDUNoYXJhY3RlckRhdGEYgICQsYjNqQgM"
              class="card-link" 
@@ -1451,7 +1492,7 @@
         </article>
 
 
-
+<!-- ==== キャストカード ======================================= -->
         <article class="card">
           <a href="https://character-sheets.appspot.com/tnx/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByGgsSDUNoYXJhY3RlckRhdGEYgICQ-cz61gkM"
              class="card-link" 
@@ -1508,7 +1549,11 @@
       </div>
     </section>
 
-    <!-- メディア Sector -->
+<!-- ==================================================
+     メディア SECTOR
+     担当スタイル：
+     カブキ / トーキー / カゲ
+     ================================================== -->
     <section class="scenario-group collapsed" id="media">
       <div class="scenario-header" onclick="toggleSector('media')">
         <div class="toggle-btn">▼</div>
@@ -1523,9 +1568,9 @@
         </div>
       </div>
 
-      
       <div class="cards">
         
+<!-- ==== キャストカード ======================================= -->
         <article class="card">
           <a href="https://character-sheets.appspot.com/tnx/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByGgsSDUNoYXJhY3RlckRhdGEYgICQ-cSnxggM"
              class="card-link" 
@@ -1576,6 +1621,7 @@
         </article>
 
 
+<!-- ==== キャストカード ======================================= -->
         <article class="card">
           <a href="https://character-sheets.appspot.com/tnx/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByGgsSDUNoYXJhY3RlckRhdGEYgICQyZ3I0woM" 
              class="card-link" 
@@ -1625,6 +1671,7 @@
         </article>
 
 
+<!-- ==== キャストカード ======================================= -->
         <article class="card">
           <a href="https://character-sheets.appspot.com/tnx/edit.html?key=ahVzfmNoYXJhY3Rlci1zaGVldHMtbXByGgsSDUNoYXJhY3RlckRhdGEYgICQ2fma0AkM"
              class="card-link" 
@@ -1681,7 +1728,11 @@
       </div>
     </section>
 
-    <!-- 社交界 Sector -->
+<!-- ==================================================
+     社交界 SECTOR
+     担当スタイル：
+     ハイランダー / クロマク / カリスマ
+     ================================================== -->
     <section class="scenario-group collapsed" id="social">
       <div class="scenario-header" onclick="toggleSector('social')">
         <div class="toggle-btn">▼</div>
@@ -1696,9 +1747,14 @@
         </div>
       </div>
       <div class="cards">
+        
+<!-- ==== キャストカード ======================================= -->
         <article class="card blank"></article>
+<!-- ==== キャストカード ======================================= -->
         <article class="card blank"></article>
 
+        
+<!-- ==== キャストカード ======================================= -->
         <article class="card">
           <a href=""
              class="card-link" 
@@ -1758,6 +1814,10 @@
   </div>
 
 <script>
+
+  /* =====================================================
+   セクター開閉処理
+   ===================================================== */
   function toggleSector(id) {
     const group = document.getElementById(id);
     if (!group) return;
@@ -1769,6 +1829,9 @@
     }
   }
 
+/* =====================================================
+   タイプライター演出
+   ===================================================== */
   function typeText(element) {
     const text = element.getAttribute('data-text');
     element.innerHTML = '';
@@ -1785,6 +1848,9 @@
     type();
   }
 
+/* =====================================================
+   サマリー折りたたみ処理
+   ===================================================== */
   function setupSummaries(root = document) {
     root.querySelectorAll('.summary').forEach(summary => {
       if (summary.dataset.summaryReady === 'true') return;
@@ -1819,6 +1885,15 @@
     });
   }
 
+  
+/* =====================================================
+   ページ初期化処理
+
+   HTMLの読み込み完了後に実行される。
+   ・Sectorヘッダーのイベント登録
+   ・サマリー折りたたみ処理の初期化
+   ・各種UI演出の初期化
+   ===================================================== */
   document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.scenario-header').forEach(header => {
       const sub = header.querySelector('.scenario-sub');
@@ -1844,7 +1919,9 @@
         });
       }
     });
-
+    
+    /* 初期状態で開いているSectorがある場合のみ実行
+       現在のサイトでは全Sectorがcollapsedのため実質未使用 */
     document.querySelectorAll('.scenario-group:not(.collapsed)').forEach(group => {
       setupSummaries(group);
     });
