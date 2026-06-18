@@ -229,36 +229,34 @@
       text-shadow: 0 0 20px var(--cyan);
       white-space: nowrap;
     }
-            
-            .handouts {
-              display: flex;
-              gap: 6px;
-              margin-left: auto;
-            }
-            
-            .handout {
-              padding: 8px 16px;
-              background: linear-gradient(180deg, rgba(0,240,255,.16), rgba(0,240,255,.04));
-              border: 1px solid rgba(0,240,255,.35);
-              border-bottom: 3px solid rgba(0,240,255,.7);
-              color: #e8fdff;
-              font-weight: 700;
-              font-size: 13px;
-              transform: skewX(-10deg);
-            }
-            
-            .handout:hover {
-              border-bottom-color: var(--magenta);
-              box-shadow: 0 0 18px rgba(255,0,170,.35);
-            }
-            
-            .handout {
-              display: inline-block;
-            }
-            
-            .handout::first-letter {
-              color: var(--cyan);
-            }
+    
+    .handouts {
+      display: flex;
+      gap: 6px;
+      margin-left: auto;
+    }
+    
+    .handout {
+      padding: 8px 16px;
+      background: linear-gradient(180deg, rgba(0,240,255,.16), rgba(0,240,255,.04));
+      border: 1px solid rgba(0,240,255,.35);
+      border-bottom: 3px solid rgba(0,240,255,.7);
+      color: #e8fdff;
+      font-weight: 700;
+      font-size: 13px;
+      transform: skewX(-10deg);
+      display: inline-block;
+      position: relative;
+    }
+    
+    .handout:hover {
+      border-bottom-color: var(--magenta);
+      box-shadow: 0 0 18px rgba(255,0,170,.35);
+    }
+        
+    .handout::first-letter {
+      color: var(--cyan);
+    }
     /* --- 3. キャラクターカード --- */
     .cards {
       display: grid;
@@ -292,51 +290,45 @@
       background: rgba(0,240,255,.25);
     }
     
-    /* ホバー時に所属キャラクター名を表示するツールチップ */
-    .handout::after {
-      content: attr(data-characters); /* HTMLの data-characters から文字を読み取る */
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(15, 8, 45, 0.95); /* 深い紺色 */
-      border: 1px solid var(--cyan);
-      color: #fff;
-      padding: 10px 18px;
-      border-radius: 4px;
-      font-size: 14px;
-      white-space: nowrap;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s ease;
-      z-index: 100; /* 最前面に出す */
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
-      pointer-events: none;
-    }
-
-    /* マウスを乗せたら表示する */
+    /* ハンドアウト：所属キャラクター表示ツールチップ */
     .handout::after {
       content: "ASSIGNED CAST : " attr(data-characters);
+    
       position: absolute;
       top: calc(100% + 12px);
       left: 50%;
       transform: translateX(-50%) translateY(-6px);
+    
       background: rgba(5,8,28,.96);
       border: 1px solid rgba(0,240,255,.7);
       color: #e8fbff;
+    
       padding: 10px 16px;
       font-size: 12px;
       white-space: nowrap;
+    
       opacity: 0;
       visibility: hidden;
+      pointer-events: none;
       z-index: 100;
+    
+      transition: all 0.3s ease;
+    
       box-shadow:
         0 0 18px rgba(0,240,255,.35),
         inset 0 0 12px rgba(0,240,255,.12);
-      clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
-      pointer-events: none;
+    
+      clip-path: polygon(
+        8px 0,
+        100% 0,
+        100% calc(100% - 8px),
+        calc(100% - 8px) 100%,
+        0 100%,
+        0 8px
+      );
     }
     
+    /* ホバー時に表示 */
     .handout:hover::after {
       opacity: 1;
       visibility: visible;
