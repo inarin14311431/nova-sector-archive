@@ -292,28 +292,6 @@
       background: rgba(0,240,255,.25);
     }
     
-    /* ホバー時に所属キャラクター名を表示するツールチップ */
-    .handout::after {
-      content: attr(data-characters); /* HTMLの data-characters から文字を読み取る */
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(15, 8, 45, 0.95); /* 深い紺色 */
-      border: 1px solid var(--cyan);
-      color: #fff;
-      padding: 10px 18px;
-      border-radius: 4px;
-      font-size: 14px;
-      white-space: nowrap;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s ease;
-      z-index: 100; /* 最前面に出す */
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
-      pointer-events: none;
-    }
-
     /* マウスを乗せたら表示する */
     .handout::after {
       content: "ASSIGNED CAST : " attr(data-characters);
@@ -702,7 +680,7 @@
           <div class="body">
             <div class="topline">
               <div>
-                <p class="reading">クロガネ=ラン</p>
+                <p class="reading">"シメイカン"イチハラリュウスケ</p>
                 <h3 class="name">″使命官″ 市原 隆介</h3>
               </div>
             </div>
@@ -722,7 +700,7 @@
             </div>
 
             <div class="field">
-              <span class="label">AFFILIATIONR</span>
+              <span class="label">AFFILIATION</span>
               <div class="aux">ブラックハウンド機動捜査課</div>
             </div>
             
@@ -774,8 +752,9 @@
             </div>
 
             <div class="field">
-              <span class="label">AFFILIATIONR</span>
-            <div class="aux">ナイトワーデン</div>
+              <span class="label">AFFILIATION</span>
+              <div class="aux">ナイトワーデン</div>
+            </div>
                           
             </div>
             <div class="field">
@@ -825,8 +804,9 @@
             </div>
 
             <div class="field">
-              <span class="label">AFFILIATIONR</span>
-            <div class="aux">トモエプロダクション</div>
+              <span class="label">AFFILIATION</span>
+              <div class="aux">トモエプロダクション</div>
+            </div>
              
             <div class="field">
               <span class="label">PROFILE SUMMARY</span>
@@ -875,8 +855,9 @@
             </div>
 
             <div class="field">
-              <span class="label">AFFILIATIONR</span>
-            <div class="aux">Unknown</div>
+              <span class="label">AFFILIATION</span>
+              <div class="aux">Unknown</div>
+            </div>
              
             <div class="field">
               <span class="label">PROFILE SUMMARY</span>
@@ -944,8 +925,9 @@
             </div>
 
             <div class="field">
-              <span class="label">AFFILIATIONR</span>
-            <div class="aux">千早重工　後方処理課</div>
+              <span class="label">AFFILIATION</span>
+              <div class="aux">千早重工　後方処理課</div>
+            </div>
              
             <div class="field">
               <span class="label">PROFILE SUMMARY</span>
@@ -1002,8 +984,9 @@
             </div>
 
             <div class="field">
-              <span class="label">AFFILIATIONR</span>
-            <div class="aux">千早重工　後方処理課</div>
+              <span class="label">AFFILIATION</span>
+              <div class="aux">千早重工　後方処理課</div>
+            </div>
              
             <div class="field">
               <span class="label">PROFILE SUMMARY</span>
@@ -1054,8 +1037,9 @@
             </div>
 
             <div class="field">
-              <span class="label">AFFILIATIONR</span>
-            <div class="aux">フリーランス</div>
+              <span class="label">AFFILIATION</span>
+              <div class="aux">フリーランス</div>  
+            </div>
              
             <div class="field">
               <span class="label">PROFILE SUMMARY</span>
@@ -1103,7 +1087,7 @@
             <div class="topline">
               <div>
                 <p class="reading">”ライク・ア・ライオン” とがのう れお</p>
-                <h3 class="name">″使命官″ 市原 隆介</h3>
+                <h3 class="name">”like a lion” 門叶 礼央"</h3>
               </div>
             </div>
 
@@ -1122,8 +1106,9 @@
             </div>
 
             <div class="field">
-              <span class="label">AFFILIATIONR</span>
-            <div class="aux">レオーネ探偵社（個人事務所）</div>
+              <span class="label">AFFILIATION</span>
+              <div class="aux">レオーネ探偵社（個人事務所）</div>
+            </div>
              
             <div class="field">
               <span class="label">PROFILE SUMMARY</span>
@@ -1184,8 +1169,9 @@
             </div>
 
             <div class="field">
-              <span class="label">AFFILIATIONR</span>
-            <div class="aux">川渡連合藤咲組客分</div>
+              <span class="label">AFFILIATION</span>
+              <div class="aux">川渡連合藤咲組客分</div>
+            </div>
              
             <div class="field">
               <span class="label">PROFILE SUMMARY</span>
@@ -1234,8 +1220,9 @@
             </div>
 
             <div class="field">
-              <span class="label">AFFILIATIONR</span>
-            <div class="aux">ー</div>
+              <span class="label">AFFILIATION</span>
+              <div class="aux">ー</div>
+            </div>
              
             <div class="field">
               <span class="label">PROFILE SUMMARY</span>
@@ -1308,8 +1295,9 @@
             </div>
 
             <div class="field">
-              <span class="label">AFFILIATIONR</span>
-            <div class="aux">Unknown</div>
+              <span class="label">AFFILIATION</span>
+              <div class="aux">Unknown</div>
+            </div>
              
             <div class="field">
               <span class="label">PROFILE SUMMARY</span>
@@ -1379,8 +1367,9 @@
             </div>
 
             <div class="field">
-              <span class="label">AFFILIATIONR</span>
-            <div class="aux">フリーランス</div>
+              <span class="label">AFFILIATION</span>
+              <div class="aux">フリーランス</div>
+            </div>
              
             <div class="field">
               <span class="label">PROFILE SUMMARY</span>
@@ -1429,8 +1418,9 @@
             </div>
 
             <div class="field">
-              <span class="label">AFFILIATIONR</span>
-            <div class="aux">元N.I.K.加盟</div>
+              <span class="label">AFFILIATION</span>
+              <div class="aux">元N.I.K.加盟</div>
+            </div>
              
             <div class="field">
               <span class="label">PROFILE SUMMARY</span>
@@ -1481,8 +1471,9 @@
             </div>
 
             <div class="field">
-              <span class="label">AFFILIATIONR</span>
-            <div class="aux">フリーランス</div>
+              <span class="label">AFFILIATION</span>
+              <div class="aux">フリーランス</div>
+            </div>
              
             <div class="field">
               <span class="label">PROFILE SUMMARY</span>
@@ -1554,8 +1545,9 @@
             </div>
 
             <div class="field">
-              <span class="label">AFFILIATIONR</span>
-            <div class="aux">フリーランス</div>
+              <span class="label">AFFILIATION</span>
+              <div class="aux">フリーランス</div>
+            </div>
              
             <div class="field">
               <span class="label">PROFILE SUMMARY</span>
@@ -1603,8 +1595,9 @@
             </div>
 
             <div class="field">
-              <span class="label">AFFILIATIONR</span>
-            <div class="aux">フリーランス/N.I.K.</div>
+              <span class="label">AFFILIATION</span>
+              <div class="aux">フリーランス/N.I.K.</div>
+            </div>
              
             <div class="field">
               <span class="label">PROFILE SUMMARY</span>
@@ -1651,8 +1644,9 @@
             </div>
 
             <div class="field">
-              <span class="label">AFFILIATIONR</span>
-            <div class="aux">Unknown</div>
+              <span class="label">AFFILIATION</span>
+              <div class="aux">Unknown</div>
+            </div>
              
             <div class="field">
               <span class="label">PROFILE SUMMARY</span>
@@ -1724,8 +1718,9 @@
             </div>
 
             <div class="field">
-              <span class="label">AFFILIATIONR</span>
-            <div class="aux">剣十字修道会</div>
+              <span class="label">AFFILIATION</span>
+              <div class="aux">剣十字修道会</div>
+            </div>
              
             <div class="field">
               <span class="label">PROFILE SUMMARY</span>
