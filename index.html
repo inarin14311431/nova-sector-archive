@@ -230,37 +230,36 @@
       white-space: nowrap;
     }
             
-    .handouts {
-      display: flex;
-      gap: 6px;
-      margin-left: auto;
-    }
-    
-    .handout {
-      padding: 8px 16px;
-      background: linear-gradient(180deg, rgba(0,240,255,.16), rgba(0,240,255,.04));
-      border: 1px solid rgba(0,240,255,.35);
-      border-bottom: 3px solid rgba(0,240,255,.7);
-      color: #e8fdff;
-      font-weight: 700;
-      font-size: 13px;
-      transform: skewX(-10deg);
-    }
-    
-    .handout:hover {
-      border-bottom-color: var(--magenta);
-      box-shadow: 0 0 18px rgba(255,0,170,.35);
-    }
-    
-    .handout {
-      display: inline-block;
-    }
-    
-    .handout::first-letter {
-      color: var(--cyan);
-    }
-    
-    /* --- 3. キャストカード --- */
+            .handouts {
+              display: flex;
+              gap: 6px;
+              margin-left: auto;
+            }
+            
+            .handout {
+              padding: 8px 16px;
+              background: linear-gradient(180deg, rgba(0,240,255,.16), rgba(0,240,255,.04));
+              border: 1px solid rgba(0,240,255,.35);
+              border-bottom: 3px solid rgba(0,240,255,.7);
+              color: #e8fdff;
+              font-weight: 700;
+              font-size: 13px;
+              transform: skewX(-10deg);
+            }
+            
+            .handout:hover {
+              border-bottom-color: var(--magenta);
+              box-shadow: 0 0 18px rgba(255,0,170,.35);
+            }
+            
+            .handout {
+              display: inline-block;
+            }
+            
+            .handout::first-letter {
+              color: var(--cyan);
+            }
+    /* --- 3. キャラクターカード --- */
     .cards {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(390px, 1fr)); 
@@ -292,8 +291,8 @@
     .summary-toggle:hover {
       background: rgba(0,240,255,.25);
     }
-
-    /* ホバー時に所属キャスト名を表示するツールチップ */
+    
+    /* ホバー時に所属キャラクター名を表示するツールチップ */
     .handout::after {
       content: attr(data-characters); /* HTMLの data-characters から文字を読み取る */
       position: absolute;
@@ -314,7 +313,7 @@
       box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
       pointer-events: none;
     }
-    
+
     /* マウスを乗せたら表示する */
     .handout::after {
       content: "ASSIGNED CAST : " attr(data-characters);
@@ -414,7 +413,7 @@
       50% { border-color: var(--magenta); box-shadow: 0 0 35px var(--magenta); }
     }
 
-    /* キャスト画像 */
+    /* キャラクター画像 */
     .art {
       aspect-ratio: 1 / 1;  
       overflow: hidden;
@@ -596,7 +595,7 @@
     }
 
       
-  /* キャストカード装飾 */
+  /* キャラクターカード装飾 */
       .cards {
         grid-template-columns: 1fr;
         padding: 10px;
@@ -703,7 +702,7 @@
           <div class="body">
             <div class="topline">
               <div>
-                <p class="reading">"シメイカン"イチハラリュウスケ</p>
+                <p class="reading">クロガネ=ラン</p>
                 <h3 class="name">″使命官″ 市原 隆介</h3>
               </div>
             </div>
@@ -981,14 +980,14 @@
              target="_blank" 
              rel="noopener noreferrer">
           <div class="art">
-            <img src="assets/characters/Exec.png" alt="“スパイダー”新国">
+            <img src="assets/characters/Exec.png" alt="“スパイダー” 新国">
           </div>
           </a>
           <div class="body">
             <div class="topline">
               <div>
                 <p class="reading">アラクニ</p>
-                <h3 class="name">“スパイダー”新国</h3>
+                <h3 class="name">“スパイダー” 新国</h3>
               </div>
             </div>
 
@@ -1061,7 +1060,7 @@
 
             <div class="field">
               <span class="label">AFFILIATION</span>
-              <div class="aux">フリーランス</div>  
+              <div class="aux">フリーランス</div>
             </div>
              
             <div class="field">
@@ -1089,7 +1088,7 @@
           <h3>ストリート Sector</h3>
           <div class="scenario-sub" data-text="飽無闇窖"></div>
           <div class="handouts">
-            <span class="handout" data-characters="”like a lion” 門叶 礼央"">フェイト</span>
+            <span class="handout" data-characters="“like a lion” 門叶 礼央"">フェイト</span>
             <span class="handout" data-characters="“Mr.Disco”キラメキ・イッセー">レッガー</span>
             <span class="handout" data-characters="“尻軽野郎” 屋烏 茶漬け">マネキン</span>
           </div>
@@ -1103,14 +1102,14 @@
            target="_blank" 
            rel="noopener noreferrer">
           <div class="art">
-            <img src="assets/characters/Fate.webp" alt="”like a lion” 門叶 礼央">
+            <img src="assets/characters/Fate.webp" alt="“like a lion” 門叶 礼央">
           </div>
           </a>
           <div class="body">
             <div class="topline">
               <div>
-                <p class="reading">”ライク・ア・ライオン” とがのう れお</p>
-                <h3 class="name">”like a lion” 門叶 礼央"</h3>
+                <p class="reading">“ライク・ア・ライオン” とがのう れお</p>
+                <h3 class="name">“like a lion” 門叶 礼央"</h3>
               </div>
             </div>
 
@@ -1166,7 +1165,7 @@
              target="_blank" 
              rel="noopener noreferrer">
           <div class="art">
-            <img src="assets/characters/Regger.png" alt="“Mr.Disco”キラメキ・イッセー">
+            <img src="assets/characters/Regger.png" alt="“Mr.Disco” キラメキ・イッセー">
           </div>
           </a>
           <div class="body">
@@ -1350,8 +1349,8 @@
           <div class="scenario-sub" data-text="屑鉄のエクリプス"></div>
           <div class="handouts">
             <span class="handout" data-characters="“教授” フェッサー">タタラ</span>
-            <span class="handout" data-characters="”Electro-Service”">ニューロ</span>
-            <span class="handout" data-characters="″鋼鉄嵐″ 鐡嵐">カゼ</span>
+            <span class="handout" data-characters="“Electro-Service”">ニューロ</span>
+            <span class="handout" data-characters="“鋼鉄嵐” 鐡嵐">カゼ</span>
           </div>
         </div>
       </div>
@@ -1468,14 +1467,14 @@
              target="_blank" 
              rel="noopener noreferrer">
           <div class="art">
-            <img src="assets/characters/Kaze.png" alt="″鋼鉄嵐″ 鐡嵐">
+            <img src="assets/characters/Kaze.png" alt="“鋼鉄嵐” 鐡嵐">
           </div>
           </a>
           <div class="body">
             <div class="topline">
               <div>
                 <p class="reading">クロガネ=ラン</p>
-                <h3 class="name">″鋼鉄嵐″ 鐡嵐</h3>
+                <h3 class="name">“鋼鉄嵐” 鐡嵐</h3>
               </div>
             </div>
 
@@ -1527,8 +1526,8 @@
           <div class="scenario-sub" data-text="トゥモロー・ワンスモア"></div>
           <div class="handouts">
             <span class="handout" data-characters="“新世代” エリック・メイレン">カブキ</span>
-            <span class="handout" data-characters="”枯れ尾花” 逢坂 ユラ">トーキー</span>
-            <span class="handout" data-characters="”ウォーウルフ”　シン">カゲ</span>
+            <span class="handout" data-characters="“枯れ尾花” 逢坂 ユラ">トーキー</span>
+            <span class="handout" data-characters="“ウォーウルフ”　シン">カゲ</span>
           </div>
         </div>
       </div>
@@ -1598,8 +1597,8 @@
           <div class="body">
             <div class="topline">
               <div>
-                <p class="reading">”ファントム・ウォッチャー” ゆらゆら</p>
-                <h3 class="name">”枯れ尾花” 逢坂 ユラ</h3>
+                <p class="reading">“ファントム・ウォッチャー” ゆらゆら</p>
+                <h3 class="name">“枯れ尾花” 逢坂 ユラ</h3>
               </div>
             </div>
 
@@ -1641,14 +1640,14 @@
              target="_blank" 
              rel="noopener noreferrer">
           <div class="art">
-            <img src="assets/characters/Kage.png" alt="”ウォーウルフ”　シン">
+            <img src="assets/characters/Kage.png" alt="“ウォーウルフ”　シン">
           </div>
           </a>
           <div class="body">
             <div class="topline">
               <div>
-                <p class="reading">”ウォーウルフ”　シン</p>
-                <h3 class="name">”War Wolf”　シン</h3>
+                <p class="reading">“ウォーウルフ”　シン</p>
+                <h3 class="name">“War Wolf”　シン</h3>
               </div>
             </div>
 
