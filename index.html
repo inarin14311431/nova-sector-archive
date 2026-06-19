@@ -6,576 +6,733 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
   <title>トーキョーＮ◎ＶＡ THE AXLERATION リンク RPG "ビフレスト"</title>
-  <style>
-    :root {
-      --cyan: #00f0ff;
-      --magenta: #ff00aa;
-      --yellow: #ffe700;
-      --text: #e0f8ff;
-      --muted: #88aaff;
-      --cut: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+<style>
+  /* =====================================================
+     01. 共通設定
+     - 色・共通変数
+     - ページ全体の基本設定
+     ===================================================== */
+  :root {
+    --cyan: #00f0ff;
+    --magenta: #ff00aa;
+    --yellow: #ffe700;
+    --text: #e0f8ff;
+    --muted: #88aaff;
+    --cut: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    color: var(--text);
+    font-family: Inter, "Noto Sans JP", system-ui, sans-serif;
+    background-color: #0a001f;
+    background-image:
+      linear-gradient(rgba(10, 0, 31, 0.5), rgba(10, 0, 31, 0.85)),
+      url('assets/citymap.png');
+    background-size: auto 120%;
+    background-position: right top;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+  }
+
+  /* =====================================================
+     02. 背景演出
+     - 背景オーバーレイ
+     - グリッド
+     - データストリーム
+     - ノイズ
+     - スキャンライン
+     ===================================================== */
+
+  /* 背景オーバーレイ */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at top right, transparent 0%, rgba(10, 0, 31, 0.9) 75%),
+      linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 240, 255, 0.04) 50%);
+    background-size: 100% 100%, 100% 4px;
+    opacity: 0.5;
+  }
+
+  /* 背景グリッド */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      linear-gradient(rgba(0, 240, 255, 0.25) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 240, 255, 0.25) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(circle at center, black, transparent 80%);
+    -webkit-mask-image: radial-gradient(circle at center, black, transparent 80%);
+    opacity: 0.75;
+    animation: gridScroll 5s linear infinite;
+  }
+
+  /* 背景データストリーム：JavaScriptでspanを自動生成 */
+  .bg-data-flow {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    display: block;
+    pointer-events: none;
+    opacity: 0.5;
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--cyan);
+  }
+
+  /* JSで生成されるデータ列 */
+  .bg-data-flow span {
+    position: absolute;
+    top: -200px;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    transform: translateY(-120%);
+    animation-name: dataBurst;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  /* 画面全体のノイズ質感 */
+  .noise {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: .12;
+    z-index: 2;
+    background-image:
+      radial-gradient(circle at 30% 20%, rgba(255, 255, 255, .3) 0 1px, transparent 1px),
+      radial-gradient(circle at 70% 60%, rgba(255, 0, 170, .25) 0 1px, transparent 1px);
+    background-size: 80px 80px, 120px 120px;
+    animation: noiseShift 0.4s steps(3) infinite;
+  }
+
+  /* ページ読み込み時に1回走るスキャンライン */
+  .scan-line {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: rgba(146, 255, 146, 0.4);
+    box-shadow: 0 0 15px var(--cyan);
+    z-index: 9999;
+    pointer-events: none;
+    animation: scanlineMove 3s ease-out 1 forwards;
+  }
+
+  /* =====================================================
+     03. ページレイアウト
+     - 全体幅
+     - タイトル
+     - セクションタイトル
+     ===================================================== */
+  .wrap {
+    width: min(1380px, calc(100% - 30px));
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+  }
+
+  h1 {
+    margin: 0 0 12px;
+    font-size: clamp(44px, 8vw, 96px);
+    line-height: .85;
+    letter-spacing: -.08em;
+    text-transform: uppercase;
+    text-shadow: 0 0 30px var(--cyan);
+  }
+
+  .section-title {
+    width: fit-content;
+    margin: 15px 0 40px auto;
+    padding: 0 20px 0 0;
+    font-size: clamp(19px, 3.2vw, 27px);
+    letter-spacing: 0.3em;
+    color: var(--cyan);
+    text-align: right;
+    text-shadow: 0 0 20px var(--cyan);
+  }
+
+  /* =====================================================
+     04. セクターヘッダー
+     - Sectorの開閉見出し
+     - サブタイトル
+     - 開閉ボタン
+     ===================================================== */
+  .scenario-header {
+    display: flex;
+    position: relative;
+    align-items: center;
+    gap: 24px;
+    padding: 28px 32px;
+    background: rgba(15, 5, 45, .70);
+    border-bottom: 2px solid var(--cyan);
+    cursor: pointer;
+    transition: all 0.4s ease;
+  }
+
+  .scenario-header::before {
+    content: "DATA_ACCESSING... ";
+    position: absolute;
+    top: 6px;
+    right: 60px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--cyan);
+    opacity: 0.2;
+    letter-spacing: 2px;
+    pointer-events: none;
+  }
+
+  .scenario-header:hover {
+    background: rgba(25, 10, 60, .80);
+  }
+
+  .toggle-btn {
+    width: 36px;
+    height: 36px;
+    border: 2px solid var(--cyan);
+    color: var(--cyan);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: transform 0.4s ease;
+  }
+
+  .scenario-group:not(.collapsed) .toggle-btn {
+    color: var(--magenta);
+    border-color: var(--magenta);
+    box-shadow: 0 0 12px var(--magenta);
+    transform: rotate(0deg);
+  }
+
+  .scenario-group.collapsed .toggle-btn {
+    transform: rotate(-90deg);
+  }
+
+  .scenario-head-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+  }
+
+  .scenario-head h3 {
+    margin: 0;
+    font-size: clamp(26px, 3.4vw, 34px);
+    letter-spacing: -.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .scenario-sub {
+    padding-left: 20px;
+    color: #c8f0ff;
+    font-size: clamp(19px, 2.6vw, 27px);
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-shadow: 0 0 20px var(--cyan);
+    white-space: nowrap;
+  }
+
+  .scenario-group.collapsed .cards {
+    display: none;
+  }
+
+  /* =====================================================
+     05. ハンドアウト
+     - Sectorヘッダー内の役割タグ
+     - hover時に担当キャストを表示
+     ===================================================== */
+  .handouts {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+  }
+
+  .handout {
+    padding: 8px 16px;
+    background: linear-gradient(180deg, rgba(0, 240, 255, .16), rgba(0, 240, 255, .04));
+    border: 1px solid rgba(0, 240, 255, .35);
+    border-bottom: 3px solid rgba(0, 240, 255, .7);
+    color: #e8fdff;
+    font-weight: 700;
+    font-size: 13px;
+    transform: skewX(-10deg);
+    display: inline-block;
+    position: relative;
+  }
+
+  .handout:hover {
+    border-bottom-color: var(--magenta);
+    box-shadow: 0 0 18px rgba(255, 0, 170, .35);
+  }
+
+  .handout::first-letter {
+    color: var(--cyan);
+  }
+
+  /* ハンドアウト：所属キャスト表示ツールチップ */
+  .handout::after {
+    content: "ASSIGNED CAST : " attr(data-characters);
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-6px);
+    background: rgba(5, 8, 28, .96);
+    border: 1px solid rgba(0, 240, 255, .7);
+    color: #e8fbff;
+    padding: 10px 16px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 100;
+    transition: all 0.3s ease;
+    box-shadow:
+      0 0 18px rgba(0, 240, 255, .35),
+      inset 0 0 12px rgba(0, 240, 255, .12);
+    clip-path: polygon(
+      8px 0,
+      100% 0,
+      100% calc(100% - 8px),
+      calc(100% - 8px) 100%,
+      0 100%,
+      0 8px
+    );
+  }
+
+  .handout:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* =====================================================
+     06. キャストカード
+     - カード一覧
+     - カード本体
+     - hover演出
+     ===================================================== */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
+    gap: 22px;
+    padding: 24px;
+    justify-content: start;
+  }
+
+  .card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .card {
+    background: linear-gradient(180deg, rgba(15, 8, 40, 0.7), rgba(8, 4, 25, 0.8));
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 4px solid rgba(0, 240, 255, 0.3);
+    clip-path: var(--cut);
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, .8);
+    transition: all .35s ease;
+    position: relative;
+  }
+
+  .card:hover {
+    transform: translateY(-12px) scale(1.02);
+    animation: borderGlow 2s ease-in-out infinite;
+  }
+
+  /* hover時のカードスキャンライン */
+  .card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(90deg,
+      transparent,
+      #00ff88,
+      #fff,
+      #00ff88,
+      transparent
+    );
+    box-shadow:
+      0 0 15px #00ff88,
+      0 0 30px rgba(0, 255, 136, 0.4),
+      0 0 60px rgba(0, 255, 136, 0.2);
+    opacity: 0;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .card:hover::after {
+    animation: singleScan 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  /* =====================================================
+     07. キャスト画像
+     - 画像表示領域
+     - hover時のボケ解除
+     ===================================================== */
+  .art {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: linear-gradient(180deg, #120a2a, #0a0619);
+    position: relative;
+  }
+
+  .art img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    filter: blur(15px) brightness(0.4);
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), filter 0.8s ease-in-out;
+  }
+
+  .card:hover .art img {
+    filter: blur(0px) brightness(1.1) contrast(1.0);
+  }
+
+  /* =====================================================
+     08. キャスト情報
+     - カード本文
+     - 名前・読み
+     - スタイルチップ
+     - サマリー
+     ===================================================== */
+  .label,
+  .aux,
+  .styles {
+    font-family: 'Orbitron', sans-serif;
+  }
+
+  .body {
+    padding: 22px;
+    position: relative;
+    z-index: 5;
+  }
+
+  .name {
+    font-size: clamp(22px, 2.9vw, 29px);
+    font-weight: 700;
+    text-shadow: 0 0 12px var(--cyan);
+  }
+
+  .reading {
+    color: #b0f0ff;
+    font-size: 14.5px;
+    margin-bottom: 4px;
+  }
+
+  .field {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(78, 229, 255, .2);
+    position: relative;
+  }
+
+  .idcode {
+    margin-bottom: 6px;
+    color: #88aaff;
+    font-size: 11px;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: .18em;
+    opacity: .75;
+    text-shadow: 0 0 8px rgba(136, 170, 255, .45);
+  }
+
+  .label {
+    color: var(--cyan);
+    font-size: 12.5px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    font-weight: 700;
+    display: block;
+  }
+
+  .styles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    position: relative;
+  }
+
+  .chip {
+    padding: 9px 18px;
+    border-radius: 4px;
+    font-size: 13.8px;
+    border: 1px solid rgba(255, 255, 255, .15);
+    background: rgba(50, 55, 85, .7);
+    position: relative;
+    z-index: 1;
+  }
+
+  .chip.major {
+    background: linear-gradient(135deg, #4ee5ff, #00d0ff);
+    color: #000;
+    font-weight: 900;
+    box-shadow: 0 0 22px #4ee5ff;
+    border: none;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .chip.major::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(transparent, rgba(255, 255, 255, 0.6), transparent 30%);
+    animation: rotateSonar 3s linear infinite;
+  }
+
+  .summary {
+    line-height: 1.75;
+    font-size: 15px;
+    color: #d8e8ff;
+  }
+
+  .summary.js-summary {
+    max-height: 7.2em;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .summary.js-summary.expanded {
+    max-height: none;
+  }
+
+  .summary-toggle {
+    margin-top: 8px;
+    padding: 6px 12px;
+    background: rgba(0, 240, 255, .12);
+    border: 1px solid rgba(0, 240, 255, .45);
+    color: var(--cyan);
+    cursor: pointer;
+    font-size: 12px;
+  }
+
+  .summary-toggle:hover {
+    background: rgba(0, 240, 255, .25);
+  }
+
+  .quote-text {
+    display: block;
+    margin-top: 10px;
+    padding-left: 14px;
+    color: #7f8794;
+    font-size: 0.92em;
+    letter-spacing: .05em;
+    border-left: 3px solid rgba(160, 160, 160, .35);
+    text-shadow: none;
+  }
+
+  .player-field {
+    margin-top: 20px;
+    padding: 14px 18px;
+    background: rgba(0, 240, 255, .08);
+    border: 1px solid rgba(78, 229, 255, .4);
+    border-radius: 6px;
+  }
+
+  footer {
+    padding: 60px 0 90px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  /* =====================================================
+     09. アニメーション定義
+     ===================================================== */
+  @keyframes dataBurst {
+    0% {
+      transform: translateY(-110%);
+      opacity: 0;
     }
 
-    * { box-sizing: border-box; }
-
-/* =====================================================
-   01. 共通設定
-   ===================================================== */
-    html, body {
-      margin: 0; padding: 0;
-      min-height: 100%;
-      color: var(--text);
-      font-family: Inter, "Noto Sans JP", system-ui, sans-serif;
-      background-color: #0a001f;
-      background-image: 
-        linear-gradient(rgba(10, 0, 31, 0.5), rgba(10, 0, 31, 0.85)),
-        url('assets/citymap.png'); /* 背景画像パス */
-      background-size: auto 120%;
-      background-position: right top;
-      background-attachment: fixed;
-      background-repeat: no-repeat;
+    5% {
+      opacity: 1;
     }
 
-    /* 背景オーバーレイとグリッド */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      pointer-events: none;
-      background: radial-gradient(circle at top right, transparent 0%, rgba(10, 0, 31, 0.9) 75%),
-                  linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 240, 255, 0.04) 50%);
-      background-size: 100% 100%, 100% 4px;
-      opacity: 0.5;
-    }
-    
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      background: 
-        linear-gradient(rgba(0, 240, 255, 0.25) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 240, 255, 0.25) 1px, transparent 1px);
-      background-size: 80px 80px;
-      mask-image: radial-gradient(circle at center, black, transparent 80%);
-      -webkit-mask-image: radial-gradient(circle at center, black, transparent 80%);
-      opacity: 0.75;
-      animation: gridScroll 5s linear infinite; 
+    15% {
+      transform: translateY(110%);
+      opacity: 1;
     }
 
-    /* セクションタイトル */
-    .section-title {
-      width: fit-content;
-      margin-left: auto;
-      margin-right: 0;
-      font-size: clamp(19px, 3.2vw, 27px);
-      letter-spacing: 0.3em;
-      color: var(--cyan);
-      text-shadow: 0 0 20px var(--cyan);
-      margin: 15px 0 40px auto;     /* 上・下・左自動・右0 */
-      padding: 0 20px 0 0;          /* 右側に少し余白 */
-      text-align: right;
-    }
-    /* =====================================================
-   背景データストリーム
-   - JavaScriptでspanを自動生成する
-   - 位置・速度・遅延・文字サイズ・色はJS側でランダム設定
-   ===================================================== */
-    .bg-data-flow {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      display: block;
-      pointer-events: none;
-      opacity: 0.5;
-      font-family: 'Share Tech Mono', monospace;
-      color: var(--cyan);
-    }
-    
-    /* JSで生成されるデータ列 */
-    .bg-data-flow span {
-      position: absolute;
-      top: -200px;
-      writing-mode: vertical-rl;
-      text-orientation: upright;
-      transform: translateY(-120%);
-      animation-name: dataBurst;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-    }
-    
-    /* データ列が上から下へ流れるアニメーション */
-    @keyframes dataBurst {
-      0% {transform: translateY(-110%); opacity: 0; }
-      5% {opacity: 1; }
-      15% {transform: translateY(110%); opacity: 1; }
-      16% {opacity: 0; }
-      100% {transform: translateY(110%); opacity: 0; }
-    }
-    
-    /* 画面全体のノイズ質感 */
-    .noise {
-      position: fixed; inset: 0; pointer-events: none; opacity: .12; z-index: 2;
-      background-image: radial-gradient(circle at 30% 20%, rgba(255,255,255,.3) 0 1px, transparent 1px),
-                        radial-gradient(circle at 70% 60%, rgba(255,0,170,.25) 0 1px, transparent 1px);
-      background-size: 80px 80px, 120px 120px;
-      animation: noiseShift 0.4s steps(3) infinite;
+    16% {
+      opacity: 0;
     }
 
-    /* ページ読み込み時に1回走るスキャンライン */
-    .scan-line {
-      position: fixed;
-      left: 0; width: 100%; height: 2px;
-      background: rgba(146, 255, 146, 0.4);
+    100% {
+      transform: translateY(110%);
+      opacity: 0;
+    }
+  }
+
+  @keyframes gridScroll {
+    0% {
+      background-position: 0 0;
+    }
+
+    100% {
+      background-position: 0 80px;
+    }
+  }
+
+  @keyframes scanlineMove {
+    0% {
+      top: -10%;
+    }
+
+    100% {
+      top: 110%;
+    }
+  }
+
+  @keyframes noiseShift {
+    0% {
+      transform: translate(0, 0);
+    }
+
+    100% {
+      transform: translate(2px, -2px);
+    }
+  }
+
+  @keyframes singleScan {
+    0% {
+      transform: translateY(0);
+      opacity: 0;
+    }
+
+    15% {
+      opacity: 1;
+    }
+
+    100% {
+      transform: translateY(500px);
+      opacity: 0;
+    }
+  }
+
+  @keyframes borderGlow {
+    0%,
+    100% {
+      border-color: var(--cyan);
       box-shadow: 0 0 15px var(--cyan);
-      z-index: 9999;
-      pointer-events: none;
-      animation: scanlineMove 3s ease-out 1 forwards;
-    }
-    
-    /* マス目を縦にスライドさせる動き */
-    @keyframes gridScroll {
-      0% { background-position: 0 0; }
-      100% { background-position: 0 80px; } /* マス目1つ分動かしてループ */
-      from { background-position: 0 0; }
-      to { background-position: 0 80px; }
-    }
-    
-    @keyframes scanlineMove {
-      0% { top: -10%; }
-      100% { top: 110%; }
     }
 
-    @keyframes noiseShift {
-      0% { transform: translate(0,0); }
-      100% { transform: translate(2px, -2px); }
+    50% {
+      border-color: var(--magenta);
+      box-shadow: 0 0 35px var(--magenta);
     }
-    
-    .wrap { 
-      width: min(1380px, calc(100% - 30px)); 
-      margin: 0 auto; 
-      position: relative; 
-      z-index: 10; 
+  }
+
+  @keyframes rotateSonar {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* =====================================================
+     10. スマホ対応
+     - 画面幅768px以下
+     - カードを1列化
+     - 背景演出を停止
+     ===================================================== */
+  @media screen and (max-width: 768px) {
+    html {
+      font-size: 14px;
     }
 
-    h1 { margin: 0 0 12px; font-size: clamp(44px, 8vw, 96px); line-height: .85; letter-spacing: -.08em; text-transform: uppercase; text-shadow: 0 0 30px var(--cyan); }
+    body {
+      background-attachment: scroll;
+      background-position: center top;
+      background-size: cover;
+    }
 
-/* =====================================================
-   02. セクターヘッダー
-   ===================================================== */
+    .wrap {
+      width: calc(100% - 12px);
+    }
+
+    h1 {
+      font-size: 48px;
+    }
+
+    .section-title {
+      margin-right: 0;
+      padding-right: 0;
+      text-align: center;
+    }
+
     .scenario-header {
-      display: flex; 
-      position: relative; 
-      align-items: center; 
-      gap: 24px;
-      padding: 28px 32px;
-      background: rgba(15,5,45,.70);
-      border-bottom: 2px solid var(--cyan);
-      cursor: pointer; 
-      transition: all 0.4s ease;
+      padding: 16px;
+      gap: 12px;
     }
-
-    .scenario-header::before {
-      content: "DATA_ACCESSING... ";
-      position: absolute;
-      top: 6px; right: 60px;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 10px; color: var(--cyan); opacity: 0.2;
-      letter-spacing: 2px; pointer-events: none;
-    }
-
-    .scenario-header:hover { background: rgba(25,10,60,.80); }
-
-    .toggle-btn {
-      width: 36px; height: 36px; 
-      border: 2px solid var(--cyan); color: var(--cyan);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 26px; border-radius: 50%; flex-shrink: 0;
-      transition: transform 0.4s ease;
-    }
-
-    .scenario-group:not(.collapsed) .toggle-btn {
-      color: var(--magenta); border-color: var(--magenta); box-shadow: 0 0 12px var(--magenta);
-      transform: rotate(0deg);
-    }
-    
-    .scenario-group.collapsed .toggle-btn { transform: rotate(-90deg); }
 
     .scenario-head-content {
       display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 20px;
-      flex: 1;
-    }
-
-    .scenario-head h3 {
-      margin: 0;
-      font-size: clamp(26px, 3.4vw, 34px);
-      letter-spacing: -.04em;
-      text-transform: uppercase;
-      white-space: nowrap;
-      flex-shrink: 0;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
     }
 
     .scenario-sub {
-      padding-left: 20px;
-      color: #c8f0ff;
-      font-size: clamp(19px, 2.6vw, 27px);
-      font-weight: 500;
-      letter-spacing: .08em;
-      text-shadow: 0 0 20px var(--cyan);
-      white-space: nowrap;
-    }
-    
-    .handouts {
-      display: flex;
-      gap: 6px;
-      margin-left: auto;
-    }
-    
-    .handout {
-      padding: 8px 16px;
-      background: linear-gradient(180deg, rgba(0,240,255,.16), rgba(0,240,255,.04));
-      border: 1px solid rgba(0,240,255,.35);
-      border-bottom: 3px solid rgba(0,240,255,.7);
-      color: #e8fdff;
-      font-weight: 700;
-      font-size: 13px;
-      transform: skewX(-10deg);
-      display: inline-block;
-      position: relative;
-    }
-    
-    .handout:hover {
-      border-bottom-color: var(--magenta);
-      box-shadow: 0 0 18px rgba(255,0,170,.35);
-    }
-        
-    .handout::first-letter {
-      color: var(--cyan);
-    }
-    
-/* =====================================================
-   03. キャストーカード
-   ===================================================== */
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(390px, 1fr)); 
-      gap: 22px; padding: 24px;
-      justify-content: start;
-    }
-    
-    /* サマリーの短縮 */
-    .summary.js-summary {
-      max-height: 7.2em;
-      overflow: hidden;
-      position: relative;
-    }
-    
-    .summary.js-summary.expanded {
-      max-height: none;
-    }
-    
-    .summary-toggle {
-      margin-top: 8px;
-      padding: 6px 12px;
-      background: rgba(0,240,255,.12);
-      border: 1px solid rgba(0,240,255,.45);
-      color: var(--cyan);
-      cursor: pointer;
-      font-size: 12px;
-    }
-    
-    .summary-toggle:hover {
-      background: rgba(0,240,255,.25);
-    }
-    
-    /* ハンドアウト：所属キャスト表示ツールチップ */
-    .handout::after {
-      content: "ASSIGNED CAST : " attr(data-characters);
-    
-      position: absolute;
-      top: calc(100% + 12px);
-      left: 50%;
-      transform: translateX(-50%) translateY(-6px);
-    
-      background: rgba(5,8,28,.96);
-      border: 1px solid rgba(0,240,255,.7);
-      color: #e8fbff;
-    
-      padding: 10px 16px;
-      font-size: 12px;
-      white-space: nowrap;
-    
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      z-index: 100;
-    
-      transition: all 0.3s ease;
-    
-      box-shadow:
-        0 0 18px rgba(0,240,255,.35),
-        inset 0 0 12px rgba(0,240,255,.12);
-    
-      clip-path: polygon(
-        8px 0,
-        100% 0,
-        100% calc(100% - 8px),
-        calc(100% - 8px) 100%,
-        0 100%,
-        0 8px
-      );
-    }
-    
-    /* ホバー時に表示 */
-    .handout:hover::after {
-      opacity: 1;
-      visibility: visible;
-      transform: translateX(-50%) translateY(0);
-    }
-    
-    .scenario-group.collapsed .cards { display: none; }
-
-    .card-link { text-decoration: none; color: inherit; display: block; }
-
-    .card {
-      background: linear-gradient(180deg, rgba(15,8,40,0.7), rgba(8,4,25,0.8));
-      backdrop-filter: blur(8px); 
-      -webkit-backdrop-filter: blur(8px);
-      border: 4px solid rgba(0, 240, 255, 0.3);
-      clip-path: var(--cut); 
-      overflow: hidden;
-      box-shadow: 0 0 20px rgba(0,0,0,.8);
-      transition: all .35s ease;
-      position: relative;
+      padding-left: 0;
+      font-size: 15px;
+      white-space: normal;
     }
 
-    .card:hover {
-      transform: translateY(-12px) scale(1.02);
-      animation: borderGlow 2s ease-in-out infinite;
-    }
-
-    /* ホバー時のスキャンライン */
-     .card::after {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 6px; /* ★ ラインを鋭く（細く）する */
-      /* 鋭いグリーンの光を表現するグラデーション */
-      background: linear-gradient(90deg, 
-        transparent, 
-        #00ff88, /* エレクトリック・グリーン */
-        #fff,    /* 閃光（中心） */
-        #00ff88, 
-        transparent
-      );
-      /* ★ 光の「尾を引く」ようなグロー効果 */
-      box-shadow: 
-        0 0 15px #00ff88, 
-        0 0 30px rgba(0, 255, 136, 0.4),
-        0 0 60px rgba(0, 255, 136, 0.2);
-      
-      opacity: 0;
-      z-index: 10;
-      pointer-events: none;
-      }
-  
-      .card:hover::after {
-        animation: singleScan 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; /* ★ 速度を上げて鋭く */
-      }
-
-    @keyframes singleScan {
-      0% { 
-        transform: translateY(0); 
-        opacity: 0; 
-      }
-      15% { 
-        opacity: 1; 
-      }
-      /* ★ 移動距離を十分に大きく（120%）取ることで、確実に下まで走らせる */
-      100% { 
-        transform: translateY(500px); 
-        opacity: 0; 
-      }
-    }
-
-
-    @keyframes borderGlow {
-      0%, 100% { border-color: var(--cyan); box-shadow: 0 0 15px var(--cyan); }
-      50% { border-color: var(--magenta); box-shadow: 0 0 35px var(--magenta); }
-    }
-
-    /* キャラクター画像 */
-    .art {
-      aspect-ratio: 1 / 1;  
-      overflow: hidden;
-      background: linear-gradient(180deg, #120a2a, #0a0619);
-      position: relative;
-    }
-
-    .art img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      object-position: top center;
-      filter: blur(15px) brightness(0.4); 
-      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), filter 0.8s ease-in-out;
-    }
-
-    .card:hover .art img {
-      filter: blur(0px) brightness(1.1) contrast(1.0);
-    }
-    
-/* =====================================================
-   04. その他装飾
-   ===================================================== */
-    .label, .aux, .styles { font-family: 'Orbitron', sans-serif; }
-    .body { padding: 22px; position: relative; z-index: 5; }
-    .name { font-size: clamp(22px, 2.9vw, 29px); font-weight: 700; text-shadow: 0 0 12px var(--cyan); }
-    .reading { color: #b0f0ff; font-size: 14.5px; margin-bottom: 4px; }
-    .field { margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(78,229,255,.2); position: relative; }
-    .idcode { margin-bottom: 6px; color: #88aaff; font-size: 11px; font-family: 'Share Tech Mono', monospace; letter-spacing: .18em; opacity: .75; text-shadow: 0 0 8px rgba(136,170,255,.45); }
-
-    /* ラベルの重なり防止 */
-    .label { 
-      color: var(--cyan); font-size: 12.5px; letter-spacing: .2em; 
-      text-transform: uppercase; margin-bottom: 12px; font-weight: 700; 
-      display: block; /* 改行させて下のチップと離す */
-    }
-
-    .quote-text {
-      display: block;
-      margin-top: 10px;
-      padding-left: 14px;
-      color: #7f8794;
-      font-size: 0.92em;
-      letter-spacing: .05em;
-      border-left: 3px solid rgba(160,160,160,.35);
-      text-shadow: none;
-    }
-    
-    .styles { display: flex; flex-wrap: wrap; gap: 10px; position: relative; }
-    
-    /* スタイルチップ基本設定 */
-    .chip { 
-      padding: 9px 18px; border-radius: 4px; font-size: 13.8px; 
-      border: 1px solid rgba(255,255,255,.15); background: rgba(50,55,85,.7); 
-      position: relative; z-index: 1;
-    }
-
-    /* 主要スタイルのソナー演出 */
-    .chip.major { 
-      background: linear-gradient(135deg, #4ee5ff, #00d0ff); 
-      color: #000; font-weight: 900; box-shadow: 0 0 22px #4ee5ff; 
-      border: none; overflow: hidden; position: relative;
-    }
-
-    .chip.major::before {
-      content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-      background: conic-gradient(transparent, rgba(255,255,255,0.6), transparent 30%);
-      animation: rotateSonar 3s linear infinite;
-    }
-
-    @keyframes rotateSonar {
-      100% { transform: rotate(360deg); }
-    }
-
-    .summary { line-height: 1.75; font-size: 15px; color: #d8e8ff; }
-    .player-field { margin-top: 20px; padding: 14px 18px; background: rgba(0,240,255,.08); border: 1px solid rgba(78,229,255,.4); border-radius: 6px; }
-    footer { padding: 60px 0 90px; text-align: center; color: var(--muted); font-size: 14px; }
-
-    
-/* =====================================================
-   05. スマホ対応
-   ===================================================== */
-    @media (hover: none) {
-      .card:hover {
-        transform: none;
-        animation: none;
-      }
-    
-      .card:hover::after {
-        display: none;
-      }
-    }
-        
-    @media screen and (max-width: 768px) {
-    
-      html {
-        font-size: 14px;
-      }
-      .card::after,
-      .card:hover::after {
-        display: none;
-        animation: none;
-        opacity: 0;
-      }
-      
-      body {
-        background-attachment: scroll;
-        background-position: center top;
-        background-size: cover;
-      }
-      .card:hover .art img {
-        filter: blur(0px) brightness(1.1) contrast(1.0);
-      }
-      .wrap {
-        width: calc(100% - 12px);
-      }
-    
-      h1 {
-        font-size: 48px;
-      }
-    
-      .section-title {
-        margin-right: 0;
-        padding-right: 0;
-        text-align: center;
-      }
-    
-      .scenario-header {
-        padding: 16px;
-        gap: 12px;
-      }
-    
-      .scenario-head-content {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-    
-      .scenario-sub {
-        padding-left: 0;
-        font-size: 15px;
-        white-space: normal;
-      }
-      
-/* ハンドアウト装飾 */
     .handouts {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
       margin-left: auto;
     }
-    
+
     .handout {
       position: relative;
       padding: 7px 14px 7px 28px;
       background:
-        linear-gradient(90deg, rgba(0,240,255,.18), rgba(255,0,170,.08)),
-        rgba(5,10,35,.7);
-      border: 1px solid rgba(0,240,255,.45);
+        linear-gradient(90deg, rgba(0, 240, 255, .18), rgba(255, 0, 170, .08)),
+        rgba(5, 10, 35, .7);
+      border: 1px solid rgba(0, 240, 255, .45);
       color: #c8f8ff;
       font-size: 12px;
       font-family: 'Share Tech Mono', monospace;
       letter-spacing: .12em;
       clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
-      box-shadow: inset 0 0 12px rgba(0,240,255,.12);
+      box-shadow: inset 0 0 12px rgba(0, 240, 255, .12);
     }
-    
+
     .handout::before {
       content: "";
       position: absolute;
@@ -587,74 +744,90 @@
       background: var(--cyan);
       box-shadow: 0 0 10px var(--cyan);
     }
-    
+
     .handout:hover {
       background:
-        linear-gradient(90deg, rgba(0,240,255,.28), rgba(255,0,170,.18)),
-        rgba(5,10,35,.9);
+        linear-gradient(90deg, rgba(0, 240, 255, .28), rgba(255, 0, 170, .18)),
+        rgba(5, 10, 35, .9);
       border-color: var(--magenta);
       color: #ffffff;
     }
 
-      
-  /* キャラクターカード装飾 */
-      .cards {
-        grid-template-columns: 1fr;
-        padding: 10px;
-        gap: 14px;
-      }
-    
-      .card {
-        width: 100%;
-      }
-    
-      .body {
-        padding: 14px;
-      }
-    
-      .name {
-        font-size: 20px;
-      }
-    
-      .summary {
-        font-size: 13px;
-        line-height: 1.6;
-      }
-    
-      .bg-data-flow,
-      .noise,
-      .scan-line {
-        display: none;
-      }
-    
-      .card:hover {
-        transform: none;
-        animation: none;
-      }
+    .cards {
+      grid-template-columns: 1fr;
+      padding: 10px;
+      gap: 14px;
     }
-    @media (hover: none), (pointer: coarse) {
+
+    .card {
+      width: 100%;
+    }
+
+    .body {
+      padding: 14px;
+    }
+
+    .name {
+      font-size: 20px;
+    }
+
+    .summary {
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .bg-data-flow,
+    .noise,
+    .scan-line {
+      display: none;
+    }
+
+    .card:hover {
+      transform: none;
+      animation: none;
+    }
+
+    .card::after,
+    .card:hover::after {
+      display: none;
+      animation: none;
+      opacity: 0;
+    }
+
+    .card:hover .art img {
+      filter: blur(0px) brightness(1.1) contrast(1.0);
+    }
+  }
+
+  /* =====================================================
+     11. タッチデバイス対応
+     - hover演出を無効化
+     - スマホで画像が白くなる問題への対策
+     ===================================================== */
+  @media (hover: none), (pointer: coarse) {
     .art img,
     .card:hover .art img {
       filter: none !important;
       transition: none !important;
       transform: none !important;
     }
-  
+
     .card,
     .card:hover {
       transform: none !important;
       animation: none !important;
     }
 
-  .card::after,
-  .card:hover::after {
-    content: none !important;
-    display: none !important;
-    animation: none !important;
-    opacity: 0 !important;
+    .card::after,
+    .card:hover::after {
+      content: none !important;
+      display: none !important;
+      animation: none !important;
+      opacity: 0 !important;
+    }
   }
-}
-  </style>
+</style>
+
 </head>
 <body>
   <div class="noise"></div>
