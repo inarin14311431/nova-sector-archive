@@ -61,25 +61,32 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;bac
 </style>
 </head>
 <body>
-<header class="top"><h1>TNX <span class="glyph">CAST HTML</span> GENERATOR</h1><div class="subtitle">URLまたは一覧ページHTMLソースからキャストリストHTMLを生成</div></header>
+<header class="top"><h1>TNX <span class="glyph">CAST HTML</span> GENERATOR</h1><div class="subtitle">URL を貼り付けてキャストリストHTMLを生成</div></header>
 <main class="wrap">
 <section class="panel">
   <div class="panel-head">INPUT</div>
   <div class="panel-body">
-
     <div class="field"><label>キャラクター一覧URL</label><input id="sourceUrl" type="url" value="https://character-sheets.appspot.com/tnx/?player=%E7%A8%B2%E8%8D%B7%E7%A7%8B&name=&searchtype=1"></div>
-
-<div class="row">
+    <div class="row">
       <div class="field"><label>タイトル</label><input id="titleText" type="text" value="トーキョーＮ◎ＶＡ キャストリスト" style="width:100%;border:1px solid #ffffff1a;border-radius:12px;background:#050409cc;color:#fff;padding:12px 14px;font:inherit;outline:none"></div>
       <div class="field"><label>背景画像ファイル（任意・出力HTMLに埋め込み）</label><input id="bgFile" class="file" type="file" accept="image/*"><div class="small">背景画像URLと両方設定された場合は、URLを優先します。</div></div>
     </div>
-    <div class="field"><label>取得できない場合のHTML貼り付け欄（任意）</label><textarea id="manualHtml" placeholder="URL取得が失敗する場合、キャラクター一覧ページのHTMLソースをここに貼り付けてください。"></textarea></div>
+    <div class="field"><label>自動取得できない場合のHTML貼り付け欄（任意）</label><textarea id="manualHtml" placeholder="ブラウザのCORS制限等で取得できない場合、一覧ページのHTMLソースをここに貼り付けると解析できます。"></textarea></div>
     
           <div class="field-group">
             <label for="bgUrl">背景画像URL（外部参照・優先）</label>
             <input id="bgUrl" type="url" placeholder="例: ./assets/citymap.png または https://example.com/citymap.png">
           </div>
 </div>
+
+          
+          <div class="option-check">
+            <input id="fetchCastDetails" type="checkbox">
+            <div>
+              <label for="fetchCastDetails">各キャストURLから経験値・所属を取得する</label>
+              <div class="small">個別キャストページを順番に取得し、経験値と所属情報をカードへ追加します。403が出る場合は一覧情報のみで生成します。</div>
+            </div>
+          </div>
 
           <div class="option-check">
             <input id="showAllStyleGroups" type="checkbox">
@@ -91,7 +98,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;bac
 
 <div class="actions"><button id="generateBtn">HTML生成</button><button class="secondary" id="downloadBtn" disabled>生成HTMLをダウンロード</button><button class="secondary" id="copyBtn" disabled>HTMLをコピー</button></div>
     <div id="status" class="status">待機中</div>
-    <div class="preview"><div class="small">仕様：指定URL、または貼り付けた一覧ページHTML内のリンク、STYLE、ID、AGE、GENDERを抽出。STYLE内の「=」は区切りとして扱います。◎または◎●のスタイルを所属グループとして優先。チェックにより所有する全スタイルの各グループへ複製表示可能。100件以上は未対応。</div></div>
+    <div class="preview"><div class="small">仕様：キャラクター一覧URLから自動取得したHTML、または貼り付けた一覧ページHTML内のリンク、STYLE、ID、AGE、GENDERを抽出。STYLE内の「=」は区切りとして扱います。「各キャストURLから経験値・所属を取得する」チェック時は、個別URLから経験値・所属も抽出します。◎または◎●のスタイルを所属グループとして優先。チェックにより所有する全スタイルの各グループへ複製表示可能。100件以上は未対応。</div></div>
   </div>
 </section>
 </main>
@@ -114,32 +121,15 @@ function splitStyles(styleText){
 function textLen(v){return Array.from(norm(v)).length;}
 function metaWideClass(value, limit){return textLen(value) > limit ? ' is-wide' : '';}
 function absUrl(href,base){try{return new URL(href,base).href}catch(e){return href||""}}
-
-
 async function fetchText(url){
-  const tries=[
-    url,
-    'https://api.allorigins.win/raw?url='+encodeURIComponent(url),
-    'https://corsproxy.io/?'+encodeURIComponent(url)
-  ];
+  const tries=[url, 'https://api.allorigins.win/raw?url='+encodeURIComponent(url), 'https://corsproxy.io/?'+encodeURIComponent(url)];
   let last='';
-  for(const u of tries){
-    try{
-      const r=await fetch(u);
-      if(!r.ok) throw new Error(r.status+' '+r.statusText);
-      const t=await r.text();
-      if(t && /STYLE:|Profile|Cast|キャスト/i.test(t)) return t;
-      last='取得内容が一覧ページに見えません';
-    }catch(e){
-      last=e.message;
-    }
-  }
+  for(const u of tries){try{const r=await fetch(u); if(!r.ok) throw new Error(r.status+' '+r.statusText); const t=await r.text(); if(t && /STYLE:|Profile|Cast/i.test(t)) return t; last='取得内容が一覧ページに見えません';}catch(e){last=e.message}}
   throw new Error((last && /403/.test(last)) ? '403 Forbidden：取得先サイトがブラウザからの自動取得を拒否しています。HTMLソース貼り付け欄を使用してください。' : (last||'取得失敗'));
 }
-
 function extractFromDocument(html,baseUrl){
   const doc=new DOMParser().parseFromString(html,'text/html');
-  let player=''; try{player=new URL(baseUrl||location.href).searchParams.get('player')||''}catch(e){}
+  const player=new URL(baseUrl).searchParams.get('player') || '';
   const anchors=[...doc.querySelectorAll('a')].filter(a=>{
     const tx=norm(a.textContent); const href=a.getAttribute('href')||'';
     if(!tx || tx==='トップへ戻る' || tx==='新規作成') return false;
@@ -169,6 +159,84 @@ function extractFromDocument(html,baseUrl){
   }
   return casts;
 }
+
+function extractFieldByLabels(doc, labels){
+  const normLabel = s => norm(String(s||'').replace(/[：:]/g,''));
+  const targetLabels = labels.map(normLabel);
+
+  for(const tr of doc.querySelectorAll('tr')){
+    const cells=[...tr.children].map(c=>norm(c.innerText||c.textContent));
+    if(cells.length < 2) continue;
+    const label=normLabel(cells[0]);
+    if(targetLabels.some(t=>label===t || label.includes(t))){
+      const value=norm(cells.slice(1).join(' '));
+      if(value) return value;
+    }
+  }
+
+  const selectors='dt,th,label,b,strong,.label,.item-name,.profile-label';
+  for(const el of doc.querySelectorAll(selectors)){
+    const label=normLabel(el.innerText||el.textContent);
+    if(!targetLabels.some(t=>label===t || label.includes(t))) continue;
+    let next=el.nextElementSibling;
+    while(next && !norm(next.innerText||next.textContent)) next=next.nextElementSibling;
+    if(next){
+      const value=norm(next.innerText||next.textContent);
+      if(value && !targetLabels.includes(normLabel(value))) return value;
+    }
+    const parent=el.parentElement;
+    if(parent){
+      let txt=norm(parent.innerText||parent.textContent);
+      for(const raw of labels){
+        txt=norm(txt.replace(new RegExp(raw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[：:\\s]*','i'),''));
+      }
+      if(txt && !targetLabels.includes(normLabel(txt))) return txt;
+    }
+  }
+
+  const text=(doc.body?.innerText || doc.body?.textContent || '').replace(/\r/g,'');
+  for(const raw of labels){
+    const escaped=raw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const rx=new RegExp(escaped+'\\s*[：:]\\s*([^\\n\\r]+)','i');
+    const hit=text.match(rx);
+    if(hit && norm(hit[1])) return norm(hit[1]);
+  }
+  return '';
+}
+function extractCastDetailInfo(detailHtml){
+  const doc=new DOMParser().parseFromString(detailHtml,'text/html');
+  const affiliation=extractFieldByLabels(doc, ['所属','所属情報','所属組織','所属団体','所属機関','組織','組織名','Organization','ORG']);
+  let exp=extractFieldByLabels(doc, ['経験値','消費経験点','使用経験点','取得経験点','EXP','Experience','Experience Point']);
+  if(exp){
+    const expHit=exp.match(/[-+]?\d+(?:\.\d+)?/);
+    if(expHit) exp=expHit[0];
+  }else{
+    const text=(doc.body?.innerText || doc.body?.textContent || '');
+    const hit=text.match(/(?:経験値|消費経験点|使用経験点|EXP|Experience)\s*[：:\s]*([-+]?\d+(?:\.\d+)?)/i);
+    if(hit) exp=hit[1];
+  }
+  return {affiliation:norm(affiliation), exp:norm(exp)};
+}
+async function enrichCastsWithDetails(casts, onProgress){
+  const enriched=[];
+  let failed=0;
+  for(let i=0;i<casts.length;i++){
+    const c={...casts[i]};
+    try{
+      if(onProgress) onProgress(i+1, casts.length, c.pcname);
+      const detailHtml=await fetchText(c.url);
+      const info=extractCastDetailInfo(detailHtml);
+      c.affiliation=info.affiliation || '';
+      c.exp=info.exp || '';
+    }catch(e){
+      failed++;
+      c.detailError=e.message || '取得失敗';
+    }
+    enriched.push(c);
+  }
+  return {casts:enriched, failed};
+}
+
 function groupKey(c){
   const primary=c.styles.find(s=>/◎/.test(s)) || c.styles[0] || 'Common';
   const b=styleBase(primary);
@@ -192,9 +260,13 @@ function buildCastCard(c,group){
   const rankValue=c.id||'-';
   const genderValue=c.gender||'-';
   const ageValue=c.age||'-';
+  const orgValue=c.affiliation||'';
+  const expValue=c.exp||'';
+  const orgMeta=orgValue ? `<div class="meta-org${metaWideClass(orgValue,6)}"><dt>ORG</dt><dd>${esc(orgValue)}</dd></div>` : '';
+  const expBox=expValue ? `<div class="cast-exp"><span>EXP</span><strong>${esc(expValue)}</strong></div>` : '';
 return `<a class="cast-card" data-style="${esc(group)}" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">
-  <header class="cast-head"><div class="cast-name"><div class="cast-yomi">${esc(c.yomi)}</div><div class="cast-pcname">${esc(c.pcname)}</div></div></header>
-  <dl class="cast-meta"><div class="meta-rank${metaWideClass(rankValue,2)}"><dt>RANK</dt><dd>${esc(rankValue)}</dd></div><div class="meta-gender${metaWideClass(genderValue,6)}"><dt>GENDER</dt><dd>${esc(genderValue)}</dd></div><div class="meta-age${metaWideClass(ageValue,6)}"><dt>AGE</dt><dd>${esc(ageValue)}</dd></div></dl>
+  <header class="cast-head"><div class="cast-name"><div class="cast-yomi">${esc(c.yomi)}</div><div class="cast-pcname">${esc(c.pcname)}</div></div>${expBox}</header>
+  <dl class="cast-meta"><div class="meta-rank${metaWideClass(rankValue,2)}"><dt>RANK</dt><dd>${esc(rankValue)}</dd></div><div class="meta-gender${metaWideClass(genderValue,6)}"><dt>GENDER</dt><dd>${esc(genderValue)}</dd></div><div class="meta-age${metaWideClass(ageValue,6)}"><dt>AGE</dt><dd>${esc(ageValue)}</dd></div>${orgMeta}</dl>
   <div class="chip-row">${c.styles.map(chipHtml).join('')}</div>
 </a>`;}
 function buildOutput(casts,title,bgData,includeAllStyleGroups=false){
@@ -252,10 +324,10 @@ function buildOutput(casts,title,bgData,includeAllStyleGroups=false){
   margin-top:4px;
 }
 
-</style></head><body><header class="top"><h1>${esc(title).replace('Ｎ◎ＶＡ','<span class="glyph">Ｎ◎ＶＡ</span>')}</h1><div class="subtitle">— CAST INDEX —</div><div class="subline">STYLE-GROUPED ・ CLICK TO OPEN</div><div class="badge">CASTS ${casts.length} / ${casts.length}</div></header><main>${sections.join('\n')}</main><footer>GENERATED FROM CHARACTER-SHEETS URL / PASTED HTML</footer><script>document.querySelectorAll('.style-head').forEach(btn=>btn.addEventListener('click',()=>{const block=btn.closest('.style-block');const open=block.classList.toggle('is-open');btn.setAttribute('aria-expanded',open?'true':'false')}));<\/script>
+</style></head><body><header class="top"><h1>${esc(title).replace('Ｎ◎ＶＡ','<span class="glyph">Ｎ◎ＶＡ</span>')}</h1><div class="subtitle">— CAST INDEX —</div><div class="subline">STYLE-GROUPED ・ CLICK TO OPEN</div><div class="badge">CASTS ${casts.length} / ${casts.length}</div></header><main>${sections.join('\n')}</main><footer>GENERATED FROM CHARACTER-SHEETS URL</footer><script>document.querySelectorAll('.style-head').forEach(btn=>btn.addEventListener('click',()=>{const block=btn.closest('.style-block');const open=block.classList.toggle('is-open');btn.setAttribute('aria-expanded',open?'true':'false')}));<\/script>
 </body></html>`;
 }
-const OUTPUT_CSS = `*,*::before,*::after{box-sizing:border-box}html,body{margin:0;padding:0}body{font-family:ui-sans-serif,system-ui,"Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif;background:linear-gradient(180deg,rgba(5,4,9,.82) 0%,rgba(10,9,19,.70) 44%,rgba(5,4,9,.90) 100%),url("__BG_URL__") center center/cover fixed no-repeat,#050409;color:#e8e6f3;min-height:100vh;overflow-x:hidden}::selection{background:#ff3b6b88;color:#fff}.top{position:relative;padding:64px 28px 40px;text-align:center}.top h1{font-weight:900;letter-spacing:.06em;font-size:clamp(28px,4.6vw,54px);margin:0;background:linear-gradient(90deg,#ff3b6b,#7c5cff 40%,#29c7ff 75%,#3dffa1);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 24px #7c5cff55);animation:titleGlow 6s ease-in-out infinite}.top h1 .glyph{display:inline-block;transform:translateY(-.06em);background:linear-gradient(180deg,#fff,#ffd23b);-webkit-background-clip:text;background-clip:text;color:transparent}.top .subtitle{margin-top:14px;color:#bfb8e0;font-size:14px;letter-spacing:.18em}.top .subline{margin-top:8px;color:#8c84ad;font-size:12px;letter-spacing:.3em}.top .badge{display:inline-block;margin-top:18px;padding:6px 14px;border:1px solid #ffffff22;border-radius:999px;font-size:12px;letter-spacing:.18em;background:#ffffff08;color:#cfc6f0;animation:badgePulse 3.2s ease-in-out infinite}@keyframes titleGlow{0%,100%{filter:drop-shadow(0 2px 24px #7c5cff55)}50%{filter:drop-shadow(0 4px 36px #29c7ff77)}}@keyframes badgePulse{0%,100%{box-shadow:0 0 0 0 #ff3b6b22}50%{box-shadow:0 0 0 10px #ff3b6b00}}body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;background:repeating-linear-gradient(0deg,transparent 0 3px,#ffffff04 3px 4px);mix-blend-mode:overlay;animation:scan 8s linear infinite}@keyframes scan{from{background-position:0 0}to{background-position:0 200px}}main{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:8px 28px 120px}.style-block{margin:18px 0;border-radius:16px;background:linear-gradient(180deg,#110d1c88,#0b0913aa);border:1px solid #ffffff10;position:relative;opacity:0;transform:translateY(20px);animation:blockIn .7s cubic-bezier(.2,.7,.2,1) forwards;overflow:hidden}.style-block::before{content:"";position:absolute;inset:-1px;border-radius:18px;background:linear-gradient(120deg,var(--accent,#7c5cff55),transparent 40%,transparent 60%,var(--accent,#7c5cff55));background-size:200% 100%;z-index:-1;opacity:.45;animation:edgeSlide 8s linear infinite;pointer-events:none}@keyframes edgeSlide{0%{background-position:0% 50%}100%{background-position:200% 50%}}@keyframes blockIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}.style-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:transparent;border:0;color:#fff;text-align:left;cursor:pointer;padding:18px 22px;font:inherit;transition:background .2s ease}.style-head:hover{background:#ffffff08}.style-tag{display:flex;align-items:baseline;gap:10px}.style-mark{color:var(--accent,#ff3b6b);font-size:18px;filter:drop-shadow(0 0 8px var(--accent,#ff3b6b));animation:pulseDot 1.6s ease-in-out infinite}@keyframes pulseDot{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}.style-name{font-weight:800;font-size:22px;letter-spacing:.04em;color:#fff;text-shadow:0 1px 0 #00000080}.style-kanji{font-size:13px;color:#cfc6f0aa;letter-spacing:.1em}.style-end{display:flex;align-items:center;gap:10px}.style-count{font-size:12px;padding:4px 10px;border-radius:999px;background:#ffffff10;border:1px solid #ffffff1a;color:#cfc6f0cc}.style-caret{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#ffffff10;border:1px solid #ffffff1a;color:#cfc6f0;font-size:12px;transition:transform .3s ease,color .3s ease,background .3s ease}.style-block.is-open .style-caret{transform:rotate(180deg);color:var(--accent,#ff3b6b);background:color-mix(in srgb,var(--accent,#7c5cff) 18%,transparent)}.style-body{max-height:0;opacity:0;overflow:hidden;transition:max-height .45s cubic-bezier(.2,.7,.2,1),opacity .35s ease,padding .35s ease;padding:0 22px}.style-block.is-open .style-body{max-height:5000px;opacity:1;padding:6px 22px 22px}.cast-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}.cast-card{display:block;text-decoration:none;color:inherit;position:relative;border-radius:14px;padding:14px 14px 12px;background:linear-gradient(180deg,#1a1530cc,#0f0c1fcc);border:1px solid #ffffff14;overflow:hidden;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;opacity:0;transform:translateY(14px);animation:cardIn .55s cubic-bezier(.2,.7,.2,1) forwards}.cast-card::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,transparent 30%,#ffffff10 50%,transparent 70%);transform:translateX(-120%);transition:transform .8s ease}.cast-card:hover{transform:translateY(-4px);border-color:var(--accent,#7c5cff77);box-shadow:0 14px 28px -10px var(--accent,#7c5cff66),inset 0 0 0 1px var(--accent,#7c5cff33)}.cast-card:hover::after{transform:translateX(120%)}@keyframes cardIn{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}.cast-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.cast-name{line-height:1.3;color:#fff;font-weight:800;font-size:17px;letter-spacing:.02em}.cast-yomi{font-size:12px;color:#a9a2c9;font-weight:700;letter-spacing:.04em;margin-bottom:3px}.cast-pcname{font-size:17px;color:#fff}.cast-meta{display:flex;flex-wrap:wrap;gap:6px 10px;margin:10px 0 0;padding:0}.cast-meta>div{display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:8px;background:#ffffff08;border:1px solid #ffffff10;font-size:12px;min-width:0}.cast-meta .meta-rank{flex:0 0 86px}.cast-meta .meta-gender{flex:1 1 132px}.cast-meta .meta-age{flex:0 0 112px}.cast-meta>div.is-wide{flex:1 1 100%;}.cast-meta dt{color:#8a83b8;font-weight:700;letter-spacing:.1em;min-width:auto;white-space:nowrap}.cast-meta dd{margin:0;color:#fff;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cast-meta>div.is-wide dd{white-space:normal;overflow:visible;text-overflow:clip;word-break:break-word}.chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.chip{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:4px 9px;border-radius:8px;background:#ffffff0a;border:1px solid #ffffff1a;color:#cfc6f0d0;letter-spacing:.04em;transition:transform .15s ease,border-color .15s ease,background .15s ease,color .15s ease}.chip:hover{transform:translateY(-1px);border-color:#ffffff40}.chip-primary{color:#06121a;background:linear-gradient(135deg,var(--accent,#ffd23b) 0%,color-mix(in srgb,var(--accent,#ffd23b) 70%,#fff 30%) 100%);border-color:transparent;box-shadow:0 0 0 1px #ffffff66 inset,0 4px 12px -4px var(--accent,#ff3b6b88);text-shadow:0 1px 0 #ffffff55;font-weight:800}.chip-secondary{color:#fff;background:color-mix(in srgb,var(--accent,#7c5cff) 32%,transparent);border-color:color-mix(in srgb,var(--accent,#7c5cff) 60%,transparent);font-weight:700}.cast-empty{color:#8c84ad;border:1px dashed #ffffff20;border-radius:12px;padding:16px;text-align:center;background:#ffffff06}footer{margin-top:40px;text-align:center;color:#6e6a8d;font-size:11px;letter-spacing:.18em;padding:20px}@media(max-width:720px){.cast-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}.top{padding:48px 18px 28px}.style-head{padding:14px 16px}.style-kanji{display:none}.style-body{padding:0 16px}.style-block.is-open .style-body{padding:4px 16px 16px}.cast-meta>div,.cast-meta .meta-rank,.cast-meta .meta-gender,.cast-meta .meta-age{flex:1 1 100%}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition:none!important}.style-block,.cast-card{opacity:1!important;transform:none!important}}`;
+const OUTPUT_CSS = `*,*::before,*::after{box-sizing:border-box}html,body{margin:0;padding:0}body{font-family:ui-sans-serif,system-ui,"Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif;background:linear-gradient(180deg,rgba(5,4,9,.82) 0%,rgba(10,9,19,.70) 44%,rgba(5,4,9,.90) 100%),url("__BG_URL__") center center/cover fixed no-repeat,#050409;color:#e8e6f3;min-height:100vh;overflow-x:hidden}::selection{background:#ff3b6b88;color:#fff}.top{position:relative;padding:64px 28px 40px;text-align:center}.top h1{font-weight:900;letter-spacing:.06em;font-size:clamp(28px,4.6vw,54px);margin:0;background:linear-gradient(90deg,#ff3b6b,#7c5cff 40%,#29c7ff 75%,#3dffa1);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 24px #7c5cff55);animation:titleGlow 6s ease-in-out infinite}.top h1 .glyph{display:inline-block;transform:translateY(-.06em);background:linear-gradient(180deg,#fff,#ffd23b);-webkit-background-clip:text;background-clip:text;color:transparent}.top .subtitle{margin-top:14px;color:#bfb8e0;font-size:14px;letter-spacing:.18em}.top .subline{margin-top:8px;color:#8c84ad;font-size:12px;letter-spacing:.3em}.top .badge{display:inline-block;margin-top:18px;padding:6px 14px;border:1px solid #ffffff22;border-radius:999px;font-size:12px;letter-spacing:.18em;background:#ffffff08;color:#cfc6f0;animation:badgePulse 3.2s ease-in-out infinite}@keyframes titleGlow{0%,100%{filter:drop-shadow(0 2px 24px #7c5cff55)}50%{filter:drop-shadow(0 4px 36px #29c7ff77)}}@keyframes badgePulse{0%,100%{box-shadow:0 0 0 0 #ff3b6b22}50%{box-shadow:0 0 0 10px #ff3b6b00}}body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;background:repeating-linear-gradient(0deg,transparent 0 3px,#ffffff04 3px 4px);mix-blend-mode:overlay;animation:scan 8s linear infinite}@keyframes scan{from{background-position:0 0}to{background-position:0 200px}}main{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:8px 28px 120px}.style-block{margin:18px 0;border-radius:16px;background:linear-gradient(180deg,#110d1c88,#0b0913aa);border:1px solid #ffffff10;position:relative;opacity:0;transform:translateY(20px);animation:blockIn .7s cubic-bezier(.2,.7,.2,1) forwards;overflow:hidden}.style-block::before{content:"";position:absolute;inset:-1px;border-radius:18px;background:linear-gradient(120deg,var(--accent,#7c5cff55),transparent 40%,transparent 60%,var(--accent,#7c5cff55));background-size:200% 100%;z-index:-1;opacity:.45;animation:edgeSlide 8s linear infinite;pointer-events:none}@keyframes edgeSlide{0%{background-position:0% 50%}100%{background-position:200% 50%}}@keyframes blockIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}.style-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:transparent;border:0;color:#fff;text-align:left;cursor:pointer;padding:18px 22px;font:inherit;transition:background .2s ease}.style-head:hover{background:#ffffff08}.style-tag{display:flex;align-items:baseline;gap:10px}.style-mark{color:var(--accent,#ff3b6b);font-size:18px;filter:drop-shadow(0 0 8px var(--accent,#ff3b6b));animation:pulseDot 1.6s ease-in-out infinite}@keyframes pulseDot{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}.style-name{font-weight:800;font-size:22px;letter-spacing:.04em;color:#fff;text-shadow:0 1px 0 #00000080}.style-kanji{font-size:13px;color:#cfc6f0aa;letter-spacing:.1em}.style-end{display:flex;align-items:center;gap:10px}.style-count{font-size:12px;padding:4px 10px;border-radius:999px;background:#ffffff10;border:1px solid #ffffff1a;color:#cfc6f0cc}.style-caret{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#ffffff10;border:1px solid #ffffff1a;color:#cfc6f0;font-size:12px;transition:transform .3s ease,color .3s ease,background .3s ease}.style-block.is-open .style-caret{transform:rotate(180deg);color:var(--accent,#ff3b6b);background:color-mix(in srgb,var(--accent,#7c5cff) 18%,transparent)}.style-body{max-height:0;opacity:0;overflow:hidden;transition:max-height .45s cubic-bezier(.2,.7,.2,1),opacity .35s ease,padding .35s ease;padding:0 22px}.style-block.is-open .style-body{max-height:5000px;opacity:1;padding:6px 22px 22px}.cast-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}.cast-card{display:block;text-decoration:none;color:inherit;position:relative;border-radius:14px;padding:14px 14px 12px;background:linear-gradient(180deg,#1a1530cc,#0f0c1fcc);border:1px solid #ffffff14;overflow:hidden;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;opacity:0;transform:translateY(14px);animation:cardIn .55s cubic-bezier(.2,.7,.2,1) forwards}.cast-card::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,transparent 30%,#ffffff10 50%,transparent 70%);transform:translateX(-120%);transition:transform .8s ease}.cast-card:hover{transform:translateY(-4px);border-color:var(--accent,#7c5cff77);box-shadow:0 14px 28px -10px var(--accent,#7c5cff66),inset 0 0 0 1px var(--accent,#7c5cff33)}.cast-card:hover::after{transform:translateX(120%)}@keyframes cardIn{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}.cast-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.cast-name{line-height:1.3;color:#fff;font-weight:800;font-size:17px;letter-spacing:.02em}.cast-yomi{font-size:12px;color:#a9a2c9;font-weight:700;letter-spacing:.04em;margin-bottom:3px}.cast-pcname{font-size:17px;color:#fff}.cast-meta{display:flex;flex-wrap:wrap;gap:6px 10px;margin:10px 0 0;padding:0}.cast-meta>div{display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:8px;background:#ffffff08;border:1px solid #ffffff10;font-size:12px;min-width:0}.cast-meta .meta-rank{flex:0 0 86px}.cast-meta .meta-gender{flex:1 1 132px}.cast-meta .meta-age{flex:0 0 112px}.cast-meta .meta-org{flex:1 1 100%}.cast-exp{flex:0 0 auto;align-self:flex-start;display:flex;align-items:center;gap:7px;padding:5px 9px;border-radius:10px;background:linear-gradient(135deg,var(--accent,#ffd23b) 0%,color-mix(in srgb,var(--accent,#ffd23b) 62%,#fff 38%) 100%);color:#06121a;border:1px solid #ffffff66;box-shadow:0 0 0 1px #ffffff55 inset,0 8px 18px -12px var(--accent,#ffd23b);font-weight:900}.cast-exp span{font-size:10px;letter-spacing:.12em;opacity:.78}.cast-exp strong{font-size:14px;line-height:1}.cast-meta>div.is-wide{flex:1 1 100%;}.cast-meta dt{color:#8a83b8;font-weight:700;letter-spacing:.1em;min-width:auto;white-space:nowrap}.cast-meta dd{margin:0;color:#fff;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cast-meta>div.is-wide dd{white-space:normal;overflow:visible;text-overflow:clip;word-break:break-word}.chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.chip{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:4px 9px;border-radius:8px;background:#ffffff0a;border:1px solid #ffffff1a;color:#cfc6f0d0;letter-spacing:.04em;transition:transform .15s ease,border-color .15s ease,background .15s ease,color .15s ease}.chip:hover{transform:translateY(-1px);border-color:#ffffff40}.chip-primary{color:#06121a;background:linear-gradient(135deg,var(--accent,#ffd23b) 0%,color-mix(in srgb,var(--accent,#ffd23b) 70%,#fff 30%) 100%);border-color:transparent;box-shadow:0 0 0 1px #ffffff66 inset,0 4px 12px -4px var(--accent,#ff3b6b88);text-shadow:0 1px 0 #ffffff55;font-weight:800}.chip-secondary{color:#fff;background:color-mix(in srgb,var(--accent,#7c5cff) 32%,transparent);border-color:color-mix(in srgb,var(--accent,#7c5cff) 60%,transparent);font-weight:700}.cast-empty{color:#8c84ad;border:1px dashed #ffffff20;border-radius:12px;padding:16px;text-align:center;background:#ffffff06}footer{margin-top:40px;text-align:center;color:#6e6a8d;font-size:11px;letter-spacing:.18em;padding:20px}@media(max-width:720px){.cast-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}.top{padding:48px 18px 28px}.style-head{padding:14px 16px}.style-kanji{display:none}.style-body{padding:0 16px}.style-block.is-open .style-body{padding:4px 16px 16px}.cast-meta>div,.cast-meta .meta-rank,.cast-meta .meta-gender,.cast-meta .meta-age{flex:1 1 100%}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition:none!important}.style-block,.cast-card{opacity:1!important;transform:none!important}}`;
 function readFileAsDataURL(file){return new Promise((res,rej)=>{if(!file)return res('');const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(r.error);r.readAsDataURL(file)})}
 function setGeneratedState(done){
   $('generateBtn').disabled = done;
@@ -278,22 +350,36 @@ function resetGeneratedState(){
   setGeneratedState(false);
   $('status').innerHTML='待機中';
 }
-['sourceUrl','titleText','manualHtml','bgFile','bgUrl','showAllStyleGroups'].forEach(id=>{const el=$(id); if(el) el.addEventListener('input', resetGeneratedState);});
+['sourceUrl','titleText','manualHtml','bgFile','bgUrl','showAllStyleGroups','fetchCastDetails'].forEach(id=>{const el=$(id); if(el) el.addEventListener('input', resetGeneratedState);});
 $('generateBtn').addEventListener('click', async()=>{
   setGeneratingState();
   $('status').innerHTML='取得・解析中...';
   try{
-    const url=$('sourceUrl').value.trim();
-    if(!url) throw new Error('URLが空です');
+    const url=$('sourceUrl').value.trim(); if(!url) throw new Error('URLが空です');
     const manual=$('manualHtml').value.trim();
-    const html=manual || await fetchText(url);
-    const casts=extractFromDocument(html,url);
-    if(!casts.length) throw new Error('キャストを抽出できませんでした。HTML貼り付け欄に一覧ページのソースを貼り付けるか、URLを確認してください。');
+    let html='';
+    if(manual){
+      html=manual;
+    }else{
+      html=await fetchText(url);
+    }
+    let casts=extractFromDocument(html,url);
+    if(!casts.length) throw new Error('キャストを抽出できませんでした。HTML貼り付け欄に一覧ページのソースを貼り付けて再実行してください。');
+    let detailFailed=0;
+    if($('fetchCastDetails')?.checked){
+      $('status').innerHTML=`個別キャストページから経験値・所属を取得中... <b>0</b> / ${casts.length}`;
+      const detailResult=await enrichCastsWithDetails(casts,(done,total,name)=>{
+        $('status').innerHTML=`個別キャストページから経験値・所属を取得中... <b>${done}</b> / ${total}：${esc(name)}`;
+      });
+      casts=detailResult.casts;
+      detailFailed=detailResult.failed;
+    }
     const bgUrl=$('bgUrl').value.trim();
     const bg=bgUrl || await readFileAsDataURL($('bgFile').files[0]);
     generatedHtml=buildOutput(casts,$('titleText').value.trim()||'トーキョーＮ◎ＶＡ キャストリスト',bg,$('showAllStyleGroups')?.checked);
     setGeneratedState(true);
-    $('status').innerHTML=`<span class="ok">✅ HTML生成完了</span>：<b>${casts.length}</b>件のキャストを抽出しました。表示モード：${$('showAllStyleGroups')?.checked ? '全スタイルグループ' : '◎/◎●グループのみ'}`;
+    const detailMsg=$('fetchCastDetails')?.checked ? ` / 詳細取得失敗：<b>${detailFailed}</b>件` : '';
+    $('status').innerHTML=`<span class="ok">✅ HTML生成完了</span>：<b>${casts.length}</b>件のキャストを抽出しました${detailMsg}。表示モード：${$('showAllStyleGroups')?.checked ? '全スタイルグループ' : '◎/◎●グループのみ'}`;
   }catch(e){
     setGeneratedState(false);
     $('status').innerHTML=`<span class="error">エラー</span>：${esc(e.message)}`
