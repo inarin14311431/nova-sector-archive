@@ -83,8 +83,8 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;bac
           <div class="option-check">
             <input id="fetchCastDetails" type="checkbox">
             <div>
-              <label for="fetchCastDetails">各キャストURLから経験値・所属を取得する</label>
-              <div class="small">個別キャストページを順番に取得し、経験値と所属情報をカードへ追加します。403が出る場合は一覧情報のみで生成します。</div>
+              <label for="fetchCastDetails">各キャストURLから消費経験点・所属を取得する</label>
+              <div class="small">個別キャストページを順番に取得し、消費経験点と所属欄の内容をカードへ追加します。403が出る場合は一覧情報のみで生成します。</div>
             </div>
           </div>
 
@@ -98,7 +98,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;bac
 
 <div class="actions"><button id="generateBtn">HTML生成</button><button class="secondary" id="downloadBtn" disabled>生成HTMLをダウンロード</button><button class="secondary" id="copyBtn" disabled>HTMLをコピー</button></div>
     <div id="status" class="status">待機中</div>
-    <div class="preview"><div class="small">仕様：キャラクター一覧URLから自動取得したHTML、または貼り付けた一覧ページHTML内のリンク、STYLE、ID、AGE、GENDERを抽出。STYLE内の「=」は区切りとして扱います。「各キャストURLから経験値・所属を取得する」チェック時は、個別URLから経験値・所属も抽出します。◎または◎●のスタイルを所属グループとして優先。チェックにより所有する全スタイルの各グループへ複製表示可能。100件以上は未対応。</div></div>
+    <div class="preview"><div class="small">仕様：キャラクター一覧URLから自動取得したHTML、または貼り付けた一覧ページHTML内のリンク、STYLE、ID、AGE、GENDERを抽出。STYLE内の「=」は区切りとして扱います。「各キャストURLから消費経験点・所属を取得する」チェック時は、個別URLから消費経験点・所属も抽出します。◎または◎●のスタイルを所属グループとして優先。チェックにより所有する全スタイルの各グループへ複製表示可能。100件以上は未対応。</div></div>
   </div>
 </section>
 </main>
@@ -203,18 +203,40 @@ function extractFieldByLabels(doc, labels){
   }
   return '';
 }
+function extractNumberFromText(value){
+  const text=norm(value);
+  if(!text) return '';
+  const hit=text.match(/[-+]?\d+(?:\.\d+)?/);
+  return hit ? hit[0] : '';
+}
 function extractCastDetailInfo(detailHtml){
   const doc=new DOMParser().parseFromString(detailHtml,'text/html');
-  const affiliation=extractFieldByLabels(doc, ['所属','所属情報','所属組織','所属団体','所属機関','組織','組織名','Organization','ORG']);
-  let exp=extractFieldByLabels(doc, ['経験値','消費経験点','使用経験点','取得経験点','EXP','Experience','Experience Point']);
-  if(exp){
-    const expHit=exp.match(/[-+]?\d+(?:\.\d+)?/);
-    if(expHit) exp=expHit[0];
-  }else{
-    const text=(doc.body?.innerText || doc.body?.textContent || '');
-    const hit=text.match(/(?:経験値|消費経験点|使用経験点|EXP|Experience)\s*[：:\s]*([-+]?\d+(?:\.\d+)?)/i);
+
+  // 所属：基本的に「所属」欄を最優先。補助的に近いラベルも拾う。
+  const affiliation=extractFieldByLabels(doc, [
+    '所属',
+    '所属情報',
+    '所属組織',
+    '所属団体',
+    '所属機関'
+  ]);
+
+  // 経験値：取得経験点などではなく「消費経験点」を最優先。
+  // 表記ゆれ対策として「消費経験値」「使用経験点」も補助的に見る。
+  let expRaw=extractFieldByLabels(doc, [
+    '消費経験点',
+    '消費経験値',
+    '使用経験点',
+    '使用経験値'
+  ]);
+  let exp=extractNumberFromText(expRaw);
+
+  if(!exp){
+    const text=(doc.body?.innerText || doc.body?.textContent || '').replace(/\r/g,'');
+    const hit=text.match(/(?:消費経験点|消費経験値|使用経験点|使用経験値)\s*[：:\s]*([-+]?\d+(?:\.\d+)?)/);
     if(hit) exp=hit[1];
   }
+
   return {affiliation:norm(affiliation), exp:norm(exp)};
 }
 async function enrichCastsWithDetails(casts, onProgress){
@@ -263,7 +285,7 @@ function buildCastCard(c,group){
   const orgValue=c.affiliation||'';
   const expValue=c.exp||'';
   const orgMeta=orgValue ? `<div class="meta-org${metaWideClass(orgValue,6)}"><dt>ORG</dt><dd>${esc(orgValue)}</dd></div>` : '';
-  const expBox=expValue ? `<div class="cast-exp"><span>EXP</span><strong>${esc(expValue)}</strong></div>` : '';
+  const expBox=expValue ? `<div class="cast-exp" title="消費経験点"><span>EXP</span><strong>${esc(expValue)}</strong></div>` : '';
 return `<a class="cast-card" data-style="${esc(group)}" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">
   <header class="cast-head"><div class="cast-name"><div class="cast-yomi">${esc(c.yomi)}</div><div class="cast-pcname">${esc(c.pcname)}</div></div>${expBox}</header>
   <dl class="cast-meta"><div class="meta-rank${metaWideClass(rankValue,2)}"><dt>RANK</dt><dd>${esc(rankValue)}</dd></div><div class="meta-gender${metaWideClass(genderValue,6)}"><dt>GENDER</dt><dd>${esc(genderValue)}</dd></div><div class="meta-age${metaWideClass(ageValue,6)}"><dt>AGE</dt><dd>${esc(ageValue)}</dd></div>${orgMeta}</dl>
@@ -367,9 +389,9 @@ $('generateBtn').addEventListener('click', async()=>{
     if(!casts.length) throw new Error('キャストを抽出できませんでした。HTML貼り付け欄に一覧ページのソースを貼り付けて再実行してください。');
     let detailFailed=0;
     if($('fetchCastDetails')?.checked){
-      $('status').innerHTML=`個別キャストページから経験値・所属を取得中... <b>0</b> / ${casts.length}`;
+      $('status').innerHTML=`個別キャストページから消費経験点・所属を取得中... <b>0</b> / ${casts.length}`;
       const detailResult=await enrichCastsWithDetails(casts,(done,total,name)=>{
-        $('status').innerHTML=`個別キャストページから経験値・所属を取得中... <b>${done}</b> / ${total}：${esc(name)}`;
+        $('status').innerHTML=`個別キャストページから消費経験点・所属を取得中... <b>${done}</b> / ${total}：${esc(name)}`;
       });
       casts=detailResult.casts;
       detailFailed=detailResult.failed;
