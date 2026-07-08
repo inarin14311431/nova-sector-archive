@@ -90,7 +90,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;bac
 
 <div class="actions"><button id="generateBtn">HTML生成</button><button class="secondary" id="downloadBtn" disabled>生成HTMLをダウンロード</button><button class="secondary" id="copyBtn" disabled>HTMLをコピー</button></div>
     <div id="status" class="status">待機中</div>
-    <div class="preview"><div class="small">仕様：キャラクター一覧URLから自動取得したHTML、または貼り付けた一覧ページHTML内のリンク、STYLE、ID、AGE、GENDERを抽出。STYLE内の「=」は区切りとして扱います。◎または◎●のスタイルを所属グループとして優先。</div></div>
+    <div class="preview"><div class="small">仕様：キャスト一覧URLから自動取得したHTML、または貼り付けた一覧ページHTML内のリンク、STYLE、ID、AGE、GENDERを抽出。STYLE内の「=」は区切りとして扱います。STYLE:が重複している場合は最後のSTYLE:以降をスタイルとして扱います。◎または◎●のスタイルを所属グループとして優先。チェックにより所有する全スタイルの各グループへ複製表示可能。</div></div>
   </div>
 </section>
 </main>
@@ -103,6 +103,14 @@ function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&l
 function norm(s){return String(s||"").replace(/　/g," ").replace(/\s+/g," ").trim();}
 function styleBase(s){return norm(s).replace(/[◎●]/g,"").replace(/\s*=[^,]+/g,"").trim();}
 function styleRank(s){return /◎/.test(s) ? 'primary' : /●/.test(s) ? 'secondary' : '';}
+
+function cleanStyleText(raw){
+  let s=String(raw||'');
+  const idx=Math.max(s.lastIndexOf('STYLE:'), s.lastIndexOf('style:'));
+  if(idx>=0) s=s.slice(idx+6);
+  return s;
+}
+
 function splitStyles(styleText){
   return norm(styleText)
     .replace(/[＝=]/g, ',')
@@ -139,14 +147,15 @@ function extractFromDocument(html,baseUrl){
       if(i>=0) text=all[i];
     }
     if(!/STYLE:/i.test(text)) continue;
-    const styleText=(text.match(/STYLE:\s*(.*?)(?:\s+ID:|\s+AGE:|\s+GENDER:|$)/i)||[])[1]||'';
+    let styleText=(text.match(/STYLE:\s*(.*?)(?:\s+ID:|\s+AGE:|\s+GENDER:|$)/i)||[])[1]||'';
+    styleText=cleanStyleText(styleText);
     const id=(text.match(/\bID:\s*(.*?)(?:\s+AGE:|\s+GENDER:|$)/i)||[])[1]||'';
     const age=(text.match(/\bAGE:\s*(.*?)(?:\s+GENDER:|$)/i)||[])[1]||'';
     const gender=(text.match(/\bGENDER:\s*(.*?)$/i)||[])[1]||'';
     let yomi=text.split(/STYLE:/i)[0];
     if(player) yomi=norm(yomi.replace(player,''));
     yomi=norm(yomi.replace(pcname,'')).replace(/^[-–—:：\s]+|[-–—:：\s]+$/g,'') || pcname;
-    const styles=splitStyles(styleText.replace(/^STYLE:/i,''));
+    const styles=splitStyles(cleanStyleText(styleText).replace(/^STYLE:/i,''));
     casts.push({yomi,pcname,styles,id:norm(id),age:norm(age),gender:norm(gender),url:href});
   }
   return casts;
