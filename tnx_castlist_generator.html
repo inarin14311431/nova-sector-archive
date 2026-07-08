@@ -106,15 +106,25 @@ function styleRank(s){return /◎/.test(s) ? 'primary' : /●/.test(s) ? 'second
 
 
 
+
+
 function firstFieldValue(text, field, nextFields){
   const src=String(text||'');
-  const allFields=[field].concat(nextFields||[]);
-  const markerRx=new RegExp('\b(' + allFields.map(f=>f.replace(/[.*+?^${}()|[\]\]/g,'\$&')).join('|') + ')\s*:', 'ig');
+  const names=[field].concat(nextFields||[]).filter(Boolean).map(v=>String(v).toUpperCase());
+  const upper=src.toUpperCase();
   const markers=[];
-  let m;
-  while((m=markerRx.exec(src))!==null){
-    markers.push({field:m[1].toUpperCase(), index:m.index, end:markerRx.lastIndex});
+  for(const name of names){
+    const needle=name + ':';
+    let pos=0;
+    while((pos=upper.indexOf(needle,pos))!==-1){
+      const before=pos===0 ? ' ' : upper.charAt(pos-1);
+      if(!/[A-Z0-9_-]/.test(before)){
+        markers.push({field:name,index:pos,end:pos+needle.length});
+      }
+      pos += needle.length;
+    }
   }
+  markers.sort((a,b)=>a.index-b.index);
   const target=String(field||'').toUpperCase();
   const first=markers.find(x=>x.field===target);
   if(!first) return '';
