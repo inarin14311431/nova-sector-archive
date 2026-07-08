@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TNX Session Cast Showcase Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--cyan:#00f0ff;--magenta:#ff00aa;--yellow:#ffe700;--green:#00ff88;--text:#e8fbff;--muted:#8ca6d8;--cut:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)}
+*,*::before,*::after{box-sizing:border-box}html,body{margin:0;padding:0;min-height:100%}
+body{color:var(--text);font-family:Inter,"Noto Sans JP","Hiragino Sans","Yu Gothic",system-ui,sans-serif;background:linear-gradient(rgba(10,0,31,.58),rgba(10,0,31,.9)),radial-gradient(circle at 80% 12%,rgba(0,240,255,.14),transparent 34%),radial-gradient(circle at 18% 80%,rgba(255,0,170,.12),transparent 42%),#060014;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(circle at top right,transparent 0%,rgba(10,0,31,.92) 74%),linear-gradient(rgba(18,16,16,0) 50%,rgba(0,240,255,.045) 50%);background-size:100% 100%,100% 4px;opacity:.7}
+body::after{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;background:linear-gradient(rgba(0,240,255,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,.18) 1px,transparent 1px);background-size:80px 80px;mask-image:radial-gradient(circle at center,black,transparent 80%);-webkit-mask-image:radial-gradient(circle at center,black,transparent 80%);opacity:.48;animation:gridScroll 5s linear infinite}
+.noise-layer{position:fixed;inset:0;pointer-events:none;opacity:.12;z-index:2;background-image:radial-gradient(circle at 30% 20%,rgba(255,255,255,.32) 0 1px,transparent 1px),radial-gradient(circle at 70% 60%,rgba(255,0,170,.25) 0 1px,transparent 1px);background-size:80px 80px,120px 120px;animation:noiseShift .4s steps(3) infinite}.scan-line-layer{position:fixed;left:0;width:100%;height:2px;background:rgba(146,255,146,.38);box-shadow:0 0 15px var(--cyan);z-index:9999;pointer-events:none;animation:scanlineMove 3s ease-out 1 forwards}.data-stream-glyph{position:fixed;top:-220px;z-index:0;pointer-events:none;writing-mode:vertical-rl;text-orientation:upright;font-family:"Share Tech Mono",monospace;color:var(--cyan);text-shadow:0 0 10px var(--cyan);animation-name:dataBurst;animation-timing-function:linear;animation-iteration-count:infinite}
+.wrap{width:min(1180px,calc(100% - 28px));margin:0 auto;position:relative;z-index:10}.hero{padding:54px 0 28px;text-align:center}.hero h1{margin:0;font-family:Orbitron,sans-serif;font-size:clamp(28px,5vw,62px);line-height:.95;letter-spacing:.03em;text-transform:uppercase;text-shadow:0 0 32px var(--cyan)}.hero h1 span{display:block;background:linear-gradient(90deg,var(--magenta),#7c5cff 42%,var(--cyan),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(0,240,255,.25))}.hero .lead{margin:14px auto 0;max-width:760px;color:#b9d8ff;letter-spacing:.12em;line-height:1.8;font-size:13px}
+.panel{margin:0 auto 80px;background:linear-gradient(180deg,rgba(10,8,32,.86),rgba(5,4,18,.94));border:1px solid rgba(0,240,255,.22);box-shadow:0 25px 80px rgba(0,0,0,.55),inset 0 0 40px rgba(0,240,255,.04);clip-path:var(--cut)}.panel-head{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:20px 24px;border-bottom:1px solid rgba(0,240,255,.22);background:linear-gradient(90deg,rgba(0,240,255,.12),rgba(255,0,170,.08))}.panel-title{font-family:Orbitron,sans-serif;font-weight:900;letter-spacing:.18em;color:#e8fdff}.panel-sub{font-family:"Share Tech Mono",monospace;color:var(--cyan);font-size:12px;opacity:.8}.panel-body{padding:22px 24px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{margin:0 0 15px}label{display:block;margin:0 0 7px;color:#c7eaff;font-size:12px;font-weight:900;letter-spacing:.14em}input,textarea{width:100%;border:1px solid rgba(0,240,255,.22);border-radius:12px;background:rgba(0,0,0,.34);color:#fff;padding:12px 13px;font:inherit;outline:none}textarea{min-height:96px;resize:vertical;line-height:1.7}input:focus,textarea:focus{border-color:rgba(0,240,255,.8);box-shadow:0 0 0 3px rgba(0,240,255,.16)}input[type=file]{border-style:dashed;color:#b9d8ff}input[type=file]::file-selector-button{margin-right:10px;border:0;border-radius:9px;padding:8px 11px;background:rgba(0,240,255,.18);color:#e8fdff;cursor:pointer}
+.cast-editor{position:relative;margin:20px 0;padding:18px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.025));clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)}.cast-editor::before{content:"CAST SLOT " attr(data-no);position:absolute;right:16px;top:10px;font-family:"Share Tech Mono",monospace;font-size:11px;letter-spacing:.18em;color:rgba(0,240,255,.5)}.cast-editor h3{margin:0 0 16px;font-family:Orbitron,sans-serif;letter-spacing:.12em;color:#fff}.hint{margin-top:5px;font-size:12px;color:#8ca6d8;line-height:1.6}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}button{border:0;border-radius:999px;padding:11px 17px;font-weight:900;letter-spacing:.09em;cursor:pointer;color:#06121a;background:linear-gradient(135deg,var(--green),var(--cyan));box-shadow:0 9px 24px -12px var(--cyan);transition:transform .18s ease,filter .18s ease,opacity .18s ease}button:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.08)}button.secondary{color:#dff7ff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);box-shadow:none}button:disabled{opacity:.48;cursor:not-allowed;filter:saturate(.4);transform:none}#generateBtn.is-locked{background:#2b2a35;color:#777184;box-shadow:none;border:1px solid rgba(255,255,255,.14)}#generateBtn.is-locked{background:#2b2a35;color:#777184;box-shadow:none;border:1px solid rgba(255,255,255,.14)}.status{margin-top:14px;color:#c8d8ff;font-size:13px;line-height:1.7}.ok{color:var(--green)}.error{color:#ff7a9b}.warnText{color:var(--yellow)}.previewbox{margin-top:18px;padding:14px 16px;border:1px solid rgba(0,240,255,.16);border-radius:14px;background:rgba(0,240,255,.055);color:#a9c8ff;font-size:12px;line-height:1.8}
+@keyframes dataBurst{0%{transform:translateY(-110%);opacity:0}5%{opacity:1}15%{transform:translateY(110vh);opacity:1}16%{opacity:0}100%{transform:translateY(110vh);opacity:0}}@keyframes gridScroll{0%{background-position:0 0}100%{background-position:0 80px}}@keyframes scanlineMove{0%{top:-10%}100%{top:110%}}@keyframes noiseShift{0%{transform:translate(0,0)}100%{transform:translate(2px,-2px)}}@media(max-width:760px){.grid2{grid-template-columns:1fr}.panel-head{display:block}.hero{padding-top:38px}.panel-body{padding:18px 16px}.cast-editor{padding:16px 13px}.data-stream-glyph,.noise-layer,.scan-line-layer{display:none}}
+
+.actions.is-ready #downloadBtn,
+.actions.is-ready #copyBtn{
+  color:#031019;
+  background:linear-gradient(135deg,#ffe700,#00ff88 48%,#00f0ff);
+  border:1px solid rgba(255,255,255,.45);
+  box-shadow:0 0 24px rgba(0,255,136,.42),0 9px 28px -12px var(--cyan);
+}
+.actions.is-ready #downloadBtn:hover,
+.actions.is-ready #copyBtn:hover{
+  filter:brightness(1.12);
+}
+
+</style>
+</head>
+<body>
+<div class="noise-layer"></div><div class="scan-line-layer"></div>
+<div class="wrap"><header class="hero"><h1>TNX SESSION<span>CAST SHOWCASE GENERATOR</span></h1><p class="lead">1〜6名のセッション参加キャストを、映画の登場人物紹介のようなサイバーパンクHTMLへ変換します。</p></header><section class="panel"><div class="panel-head"><div class="panel-title">INPUT CONTROL</div><div class="panel-sub">DATA SCAN / CAST PROFILE / SESSION ONLY</div></div><div class="panel-body"><div class="grid2"><div class="field"><label>ページタイトル</label><input id="pageTitle" type="text" value="SESSION CAST FILE"></div><div class="field"><label>セッション名 / サブタイトル</label><input id="sessionName" type="text" value="トーキョーＮ◎ＶＡ セッション参加キャスト"></div></div><div class="grid2"><div class="field"><label>背景画像URL（任意）</label><input id="bgUrl" type="url" placeholder="./assets/citymap.png または https://..."></div><div class="field"><label>背景画像ファイル（任意・生成HTMLに埋め込み）</label><input id="bgFile" type="file" accept="image/*"><div class="hint">URLとファイルの両方がある場合はURLを優先します。</div></div></div><div class="field"><label>イントロ文（任意）</label><textarea id="introText" placeholder="例：運命の扉を開く者たち。今夜、N◎VAの闇にアクセスする。"></textarea></div><div class="actions"><button id="addCastBtn" type="button">キャスト枠を追加</button><button id="removeCastBtn" type="button" class="secondary">最後の枠を削除</button></div><div id="castEditors"></div><div class="actions"><button id="generateBtn" type="button">HTML生成</button><button id="downloadBtn" type="button" class="secondary" disabled>生成HTMLをダウンロード</button><button id="copyBtn" type="button" class="secondary" disabled>HTMLをコピー</button></div><div id="status" class="status">待機中</div><div class="previewbox">入力するもの：キャラクターシートURL、キャスト名、読み、STYLE、ID、AGE/GENDER、所属、説明文、イラストURLまたは画像ファイル。<br>生成HTMLでは、各キャストのデータがスキャン表示され、カードクリックでキャラクターシートURLを開きます。<br>「トーキョーN◎VA THE AXLERATION」は有限会社ファーイースト・アミューズメント・リサーチの著作物です。</div></div></section></div>
+<script>
+const MAX_CASTS=6,MIN_CASTS=1;let generatedHtml='';const $=id=>document.getElementById(id);
+const STYLE_DATA=[{key:"Kabuki",ja:"カブキ",color:"#ff3b6b"},{key:"Vasara",ja:"バサラ",color:"#7d3bff"},{key:"Tatara",ja:"タタラ",color:"#3b6cff"},{key:"Mistress",ja:"ミストレス",color:"#ff5cc8"},{key:"Kabuto",ja:"カブト",color:"#3dffa1"},{key:"Charisma",ja:"カリスマ",color:"#ffd23b"},{key:"Mannequin",ja:"マネキン",color:"#ffb93b"},{key:"Kaze",ja:"カゼ",color:"#29c7ff"},{key:"Fate",ja:"フェイト",color:"#ffe66b"},{key:"Kuromaku",ja:"クロマク",color:"#8a6cff"},{key:"Exec",ja:"エグゼク",color:"#ff8a3b"},{key:"Katana",ja:"カタナ",color:"#3bffa4"},{key:"Kugutsu",ja:"クグツ",color:"#c83bff"},{key:"Kage",ja:"カゲ",color:"#6f7cff"},{key:"Chakra",ja:"チャクラ",color:"#3bff8a"},{key:"Legger",ja:"レッガー",color:"#ffb13b"},{key:"Kabuto-Wari",ja:"カブトワリ",color:"#ff3b9b"},{key:"Highlander",ja:"ハイランダー",color:"#9aff3b"},{key:"Mayakashi",ja:"マヤカシ",color:"#3bffd5"},{key:"Talkie",ja:"トーキー",color:"#ff6f3b"},{key:"Inu",ja:"イヌ",color:"#ff4f3b"},{key:"Neuro",ja:"ニューロ",color:"#3bffe1"},{key:"Common",ja:"コモン",color:"#b8ff3b"},{key:"Hiruko",ja:"ヒルコ",color:"#ff3bd5"},{key:"Kurogane",ja:"クロガネ",color:"#a1a8ff"},{key:"Ibuki",ja:"イブキ",color:"#45ffcc"},{key:"Shikigami",ja:"シキガミ",color:"#ff5cc8"},{key:"Arashi",ja:"アラシ",color:"#ff7a3b"},{key:"Kagemusha",ja:"カゲムシャ",color:"#9b3bff"},{key:"Migiude",ja:"ミギウデ",color:"#ffcf3b"},{key:"Etranger",ja:"エトランゼ",color:"#9aff3b"},{key:"Ayakashi",ja:"アヤカシ",color:"#3bffd5"},{key:"Utsuwa",ja:"ウツワ",color:"#fff"}];
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}function norm(s){return String(s||'').replace(/　/g,' ').replace(/\s+/g,' ').trim();}function nl2br(s){return esc(s).replace(/\r?\n/g,'<br>');}function styleBase(s){return norm(s).replace(/[◎●]/g,'').trim();}function styleRank(s){return /◎/.test(s)?'major':/●/.test(s)?'sub':'';}function styleInfo(s){const b=styleBase(s);return STYLE_DATA.find(x=>x.key.toLowerCase()===b.toLowerCase()||x.ja===b)||{key:b,ja:b,color:'#00f0ff'};}function splitStyles(v){return norm(v).replace(/[＝=]/g,',').split(',').map(norm).filter(Boolean);}function setReady(v){const ready=!!v;$('downloadBtn').disabled=!ready;$('copyBtn').disabled=!ready;$('generateBtn').disabled=ready;$('generateBtn').classList.toggle('is-locked',ready);const actionRow=$('downloadBtn')?.closest('.actions');if(actionRow)actionRow.classList.toggle('is-ready',ready);}function readFileAsDataURL(file){return new Promise((resolve,reject)=>{if(!file){resolve('');return;}const fr=new FileReader();fr.onload=()=>resolve(fr.result);fr.onerror=()=>reject(fr.error);fr.readAsDataURL(file);});}
+function castTemplate(i){
+  return `<section class="cast-editor" data-no="${i+1}">
+    <h3>CAST ${String(i+1).padStart(2,'0')}</h3>
+
+    <div class="grid2">
+      <div class="field"><label>キャラクターシートURL</label><input class="cast-url" type="url" placeholder="https://character-sheets.appspot.com/tnx/edit.html?key=..."></div>
+      <div class="field"><label>プレイヤー名</label><input class="cast-player" type="text" placeholder="例：稲荷秋"></div>
+    </div>
+
+    <div class="grid2">
+      <div class="field"><label>キャスト名</label><input class="cast-name" type="text" placeholder="“ハンドル” 名前"></div>
+      <div class="field"><label>読み / ルビ</label><input class="cast-reading" type="text" placeholder="読み、ハンドル読みなど"></div>
+    </div>
+
+    <div class="grid2">
+      <div class="field"><label>STYLE</label><input class="cast-style" type="text" placeholder="例：Mannequin◎●,Talkie,Ayakashi"></div>
+      <div class="field"><label>イラストファイル</label><input class="cast-img-file" type="file" accept="image/*"><div class="hint">イラストURLがある場合はURLを優先します。</div></div>
+    </div>
+
+    <div class="field"><label>イラストURL</label><input class="cast-img-url" type="url" placeholder="./assets/characters/xxx.png または https://..."></div>
+
+    <div class="grid2">
+      <div class="field"><label>AGE</label><input class="cast-age" type="text" placeholder="例：28歳"></div>
+      <div class="field"><label>GENDER</label><input class="cast-gender" type="text" placeholder="例：男"></div>
+    </div>
+
+    <div class="grid2">
+      <div class="field"><label>ID</label><input class="cast-id" type="text" placeholder="例：市民ランク"></div>
+      <div class="field"><label>所属情報</label><input class="cast-affiliation" type="text" placeholder="例：ブラックハウンド機動捜査課"></div>
+    </div>
+
+    <div class="field"><label>説明情報 / PROFILE</label><textarea class="cast-desc" placeholder="映画の登場人物紹介として表示する説明文。改行可。"></textarea></div>
+
+    <div class="field"><label>キャッチコピー / 台詞（任意）</label><input class="cast-quote" type="text" placeholder="例：『真実は、いつだって硝煙の向こうにある』"></div>
+  </section>`;
+}
+function refreshButtons(){const n=document.querySelectorAll('.cast-editor').length;$('addCastBtn').disabled=n>=MAX_CASTS;$('removeCastBtn').disabled=n<=MIN_CASTS;}function addCast(){const box=$('castEditors');const n=box.querySelectorAll('.cast-editor').length;if(n>=MAX_CASTS)return;box.insertAdjacentHTML('beforeend',castTemplate(n));refreshButtons();}function removeCast(){const list=document.querySelectorAll('.cast-editor');if(list.length<=MIN_CASTS)return;list[list.length-1].remove();refreshButtons();}
+async function collectCasts(){const out=[];const editors=[...document.querySelectorAll('.cast-editor')];for(let i=0;i<editors.length;i++){const e=editors[i];const q=sel=>e.querySelector(sel);const name=norm(q('.cast-name').value),url=norm(q('.cast-url').value),styleText=norm(q('.cast-style').value),imgUrl=norm(q('.cast-img-url').value),imgFile=q('.cast-img-file').files[0],image=imgUrl||await readFileAsDataURL(imgFile);if(!name&&!url&&!styleText&&!image&&!norm(q('.cast-desc').value))continue;out.push({no:i+1,url,image,name:name||`CAST ${String(i+1).padStart(2,'0')}`,reading:norm(q('.cast-reading').value),styles:splitStyles(styleText),id:norm(q('.cast-id').value),age:norm(q('.cast-age')?.value),
+      gender:norm(q('.cast-gender')?.value),affiliation:norm(q('.cast-affiliation').value),desc:q('.cast-desc').value.trim(),player:norm(q('.cast-player')?.value),
+      quote:norm(q('.cast-quote').value)});}return out;}
+async function buildOutput(){const bgUrl=norm($('bgUrl').value);const bgData=bgUrl||await readFileAsDataURL($('bgFile').files[0]);const casts=await collectCasts();if(casts.length<1)throw new Error('キャスト情報を1名以上入力してください。');if(casts.length>6)throw new Error('キャストは最大6名までです。');return renderShowcase({title:norm($('pageTitle').value)||'SESSION CAST FILE',session:norm($('sessionName').value)||'トーキョーＮ◎ＶＡ セッション参加キャスト',intro:$('introText').value.trim(),bg:bgData,casts});}
+function renderShowcase(data){const bgStyle=data.bg?`background-image:linear-gradient(rgba(10,0,31,.55),rgba(10,0,31,.9)),url('${esc(data.bg)}')`:'';const cards=data.casts.map((c,idx)=>castCard(c,idx)).join('\n');const nav=data.casts.map((c,idx)=>`<a href="#cast-${idx+1}" class="nav-chip"><span>${String(idx+1).padStart(2,'0')}</span>${esc(c.name)}</a>`).join('');return `<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(data.title)}</title><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet"><style>:root{--cyan:#00f0ff;--magenta:#ff00aa;--yellow:#ffe700;--green:#00ff88;--text:#e0f8ff;--muted:#88aaff;--cut:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px)}*,*::before,*::after{box-sizing:border-box}html,body{margin:0;padding:0;min-height:100%;scroll-behavior:smooth}body{color:var(--text);font-family:Inter,"Noto Sans JP","Hiragino Sans","Yu Gothic",system-ui,sans-serif;background-color:#0a001f;${bgStyle};background-size:cover;background-position:center top;background-attachment:fixed;overflow-x:hidden}body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(circle at top right,transparent 0%,rgba(10,0,31,.92) 74%),linear-gradient(rgba(18,16,16,0) 50%,rgba(0,240,255,.05) 50%);background-size:100% 100%,100% 4px;opacity:.7}body::after{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;background:linear-gradient(rgba(0,240,255,.25) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,.25) 1px,transparent 1px);background-size:80px 80px;mask-image:radial-gradient(circle at center,black,transparent 82%);-webkit-mask-image:radial-gradient(circle at center,black,transparent 82%);opacity:.55;animation:gridScroll 5s linear infinite}.noise{position:fixed;inset:0;pointer-events:none;opacity:.12;z-index:2;background-image:radial-gradient(circle at 30% 20%,rgba(255,255,255,.3) 0 1px,transparent 1px),radial-gradient(circle at 70% 60%,rgba(255,0,170,.25) 0 1px,transparent 1px);background-size:80px 80px,120px 120px;animation:noiseShift .4s steps(3) infinite}.scan-line{position:fixed;left:0;width:100%;height:2px;background:rgba(146,255,146,.4);box-shadow:0 0 15px var(--cyan);z-index:9999;pointer-events:none;animation:scanlineMove 3s ease-out 1 forwards}.data-stream{position:fixed;inset:0;z-index:0;pointer-events:none;font-family:"Share Tech Mono",monospace;color:var(--cyan);opacity:.28}.data-stream span{position:absolute;top:-200px;writing-mode:vertical-rl;text-orientation:upright;animation:dataBurst linear infinite;text-shadow:0 0 10px var(--cyan)}45%{transform:translate(54vw,6vh) scale(1.08)}100%{transform:translate(18vw,48vh) scale(.96)}}
+
+.binary-layer{position:fixed;inset:0;z-index:3;pointer-events:none;overflow:hidden;mix-blend-mode:screen;opacity:.62}
+.binary-column{position:absolute;top:0;writing-mode:vertical-rl;text-orientation:upright;white-space:nowrap;font-family:"Share Tech Mono",monospace;font-weight:700;line-height:1;letter-spacing:.08em;color:rgba(0,240,255,.76);text-shadow:0 0 10px rgba(0,240,255,.9),0 0 20px rgba(0,240,255,.25);will-change:transform}
+.binary-column:nth-child(2n){color:rgba(255,0,170,.54);text-shadow:0 0 10px rgba(255,0,170,.8),0 0 20px rgba(255,0,170,.22)}
+.binary-column:nth-child(3n){color:rgba(0,255,136,.48);text-shadow:0 0 10px rgba(0,255,136,.72),0 0 20px rgba(0,255,136,.2)}
+8%{opacity:1}86%{opacity:.92}100%{transform:translateY(260vh);opacity:0}}
+@keyframes motionPulse{0%{transform:scale(1);opacity:.30}50%{opacity:.72}100%{transform:scale(1.05);opacity:.46}}50%{opacity:.86}100%{transform:scale(1.06);opacity:.56}}
+.wrap{width:min(1320px,calc(100% - 30px));margin:0 auto;position:relative;z-index:10}.hero{min-height:42vh;display:grid;place-items:center;text-align:center;padding:70px 0 44px}.kicker{font-family:"Share Tech Mono",monospace;color:var(--cyan);letter-spacing:.34em;text-shadow:0 0 16px var(--cyan);font-size:13px}.hero h1{margin:14px 0 0;font-family:Orbitron,sans-serif;font-size:clamp(44px,8vw,104px);line-height:.82;letter-spacing:-.06em;text-transform:uppercase;text-shadow:0 0 30px var(--cyan)}.hero h1 span{display:block;background:linear-gradient(90deg,var(--magenta),#7c5cff 36%,var(--cyan),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent}.session-subtitle{margin:18px auto 0;font-family:Orbitron,"Noto Sans JP",sans-serif;font-size:clamp(24px,3.4vw,48px);font-weight:900;line-height:1.15;letter-spacing:.08em;color:#eaffff;text-shadow:0 0 20px rgba(0,240,255,.7),0 0 36px rgba(255,0,170,.34)}
+.lead{max-width:820px;margin:18px auto 0;color:#c8f0ff;line-height:1.8;letter-spacing:.12em}.cast-nav{position:sticky;top:10px;z-index:20;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:0 0 26px;padding:12px;background:rgba(5,8,28,.78);border:1px solid rgba(0,240,255,.28);backdrop-filter:blur(10px);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}.nav-chip{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;color:#e8fdff;text-decoration:none;border:1px solid rgba(0,240,255,.28);background:linear-gradient(180deg,rgba(0,240,255,.12),rgba(255,0,170,.05));font-size:12px;font-weight:900;letter-spacing:.08em;transform:skewX(-8deg)}.nav-chip span{font-family:Orbitron;color:var(--cyan)}.nav-chip:hover{border-color:var(--magenta);box-shadow:0 0 18px rgba(255,0,170,.35)}.cast-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;align-items:start}.cast-grid.single{
+  grid-template-columns:minmax(320px,720px);
+  justify-content:center;
+}
+.cast-grid.single .cast-file{
+  width:100%;
+}
+.cast-file{position:relative;margin:0;min-height:0;border:1px solid rgba(0,240,255,.32);background:linear-gradient(180deg,rgba(15,8,40,.76),rgba(8,4,25,.88));box-shadow:0 0 34px rgba(0,0,0,.7),inset 0 0 30px rgba(0,240,255,.05);clip-path:var(--cut);overflow:hidden;scroll-margin-top:90px;opacity:0;transform:translateY(30px);animation:fileIn .9s ease forwards}.cast-file::before{content:"DATA SCANNING...";position:absolute;right:28px;top:18px;z-index:6;font-family:"Share Tech Mono",monospace;font-size:11px;letter-spacing:.22em;color:rgba(0,240,255,.5)}.cast-file::after{content:"";position:absolute;left:0;top:0;width:100%;height:5px;background:linear-gradient(90deg,transparent,var(--green),#fff,var(--cyan),transparent);box-shadow:0 0 20px var(--green);animation:singleScan .95s cubic-bezier(.4,0,.2,1) forwards;z-index:8}.cast-inner{display:grid;grid-template-columns:1fr;min-height:0}.visual{position:relative;overflow:hidden;background:linear-gradient(180deg,#120a2a,#040312);height:clamp(260px,34vw,420px)}.visual img{position:relative;z-index:2;width:100%;height:100%;object-fit:contain;object-position:center top;filter:blur(13px) brightness(.44) saturate(.7);transform:scale(1.05);animation:imageDecode 1.4s ease forwards .35s}.visual.no-image{display:grid;place-items:center;color:rgba(0,240,255,.52);font-family:Orbitron,sans-serif;font-size:clamp(24px,3vw,42px);letter-spacing:.08em}.visual::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(0,240,255,.10),transparent 42%,rgba(255,0,170,.06));mix-blend-mode:screen;pointer-events:none}.body{padding:32px 28px 30px;position:relative}.index-row{display:flex;justify-content:space-between;gap:12px;align-items:center}.index{font-family:Orbitron,sans-serif;color:var(--cyan);font-size:13px;letter-spacing:.22em}.player{font-family:"Share Tech Mono",monospace;color:#d8e8ff;font-size:12px;letter-spacing:.12em;text-align:right}.player b{color:var(--magenta);font-weight:700;margin-right:6px}.reading{margin-top:16px;color:#b0f0ff;font-size:14px;letter-spacing:.12em}.name{margin:4px 0 18px;font-size:clamp(25px,3vw,42px);line-height:1.05;text-shadow:0 0 18px var(--cyan)}.quote{margin:0 0 24px;padding-left:16px;border-left:3px solid rgba(0,240,255,.6);color:#dffcff;font-size:clamp(15px,2vw,20px);letter-spacing:.08em;line-height:1.7}.meta-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}.meta{padding:12px;border:1px solid rgba(0,240,255,.22);background:rgba(0,240,255,.06)}.meta b{display:block;color:var(--cyan);font-family:"Share Tech Mono",monospace;font-size:10px;letter-spacing:.18em;margin-bottom:6px}.meta span{font-family:Orbitron,sans-serif;color:#fff;font-weight:700}.affiliation{margin:14px 0;padding:14px 16px;border:1px solid rgba(255,0,170,.25);background:linear-gradient(90deg,rgba(255,0,170,.11),rgba(0,240,255,.05));font-weight:700}.affiliation b{font-family:"Share Tech Mono",monospace;color:var(--magenta);font-size:11px;letter-spacing:.16em;margin-right:10px}.styles{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}.chip{position:relative;padding:9px 15px;border:1px solid rgba(255,255,255,.18);background:rgba(50,55,85,.72);font-family:Orbitron,sans-serif;font-size:13px}.chip.major{background:linear-gradient(135deg,#4ee5ff,#00d0ff);color:#001017;font-weight:900;box-shadow:0 0 20px rgba(78,229,255,.7);border:0;overflow:hidden}.chip.sub{border-color:rgba(255,0,170,.55);box-shadow:0 0 14px rgba(255,0,170,.22)}.chip.major::before{content:"";position:absolute;inset:-60%;background:conic-gradient(transparent,rgba(255,255,255,.7),transparent 30%);animation:rotateSonar 3s linear infinite}.chip span{position:relative}.desc{margin-top:20px;color:#d8e8ff;line-height:1.9;font-size:15px}.desc.is-collapsed{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}.read-more{display:block;margin-top:10px;margin-bottom:14px;padding:7px 12px;border:1px solid rgba(0,240,255,.45);background:rgba(0,240,255,.10);color:var(--cyan);font-family:"Share Tech Mono",monospace;font-size:12px;letter-spacing:.12em;cursor:pointer;border-radius:0}.read-more:hover{border-color:var(--magenta);box-shadow:0 0 16px rgba(255,0,170,.25)}.sheet-row{display:block}.sheet-link{display:inline-flex;margin-top:10px;padding:10px 16px;border:1px solid rgba(0,240,255,.55);color:#e8fdff;text-decoration:none;background:rgba(0,240,255,.08);font-family:"Share Tech Mono",monospace;letter-spacing:.12em}.sheet-link:hover{border-color:var(--magenta);box-shadow:0 0 18px rgba(255,0,170,.35)}footer{position:relative;z-index:10;padding:40px 0 70px;text-align:center;color:var(--muted);font-size:13px}@keyframes dataBurst{0%{transform:translateY(-110%);opacity:0}5%{opacity:1}15%{transform:translateY(110vh);opacity:1}16%{opacity:0}100%{transform:translateY(110vh);opacity:0}}@keyframes gridScroll{0%{background-position:0 0}100%{background-position:0 80px}}@keyframes scanlineMove{0%{top:-10%}100%{top:110%}}@keyframes noiseShift{0%{transform:translate(0,0)}100%{transform:translate(2px,-2px)}}@keyframes singleScan{0%{transform:translateY(0);opacity:0}15%{opacity:1}100%{transform:translateY(700px);opacity:0}}@keyframes rotateSonar{100%{transform:rotate(360deg)}}@keyframes fileIn{to{opacity:1;transform:none}}@keyframes imageDecode{to{filter:blur(0) brightness(1.06) saturate(1.04);transform:scale(1)}}@media(max-width:880px){.binary-layer{opacity:.62}.motion-pulse{opacity:.30}.cyber-bg{opacity:.55}.cyber-sweep{animation-duration:12s}.cyber-orb{opacity:.32}.cast-grid{grid-template-columns:1fr}.cast-inner{grid-template-columns:1fr}.visual{height:360px}.body{padding:32px 22px}.meta-grid{grid-template-columns:1fr}.data-stream,.noise,.scan-line{display:none}body{background-attachment:scroll}.cast-file{min-height:0}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition:none!important}.data-stream,.cyber-bg,.cyber-sweep,.cyber-orb,.noise,.scan-line{display:none}}</style></head><body><div class="noise"></div><div class="scan-line"></div><div class="motion-pulse"></div><div class="binary-layer" aria-hidden="true"></div><div class="data-stream" aria-hidden="true"></div><div class="wrap"><header class="hero"><div><div class="kicker">SESSION CAST DATABASE</div><h1><span>${esc(data.title)}</span></h1><div class="session-subtitle">${esc(data.session)}</div>${data.intro?`<p class="lead">${nl2br(data.intro)}</p>`:''}</div></header><nav class="cast-nav" aria-label="cast navigation">${nav}</nav><main class="cast-grid ${data.casts.length===1?'single':''}">${cards}</main><footer>${esc(data.session)}<br>「トーキョーN◎VA THE AXLERATION」は有限会社ファーイースト・アミューズメント・リサーチの著作物です。</footer></div><script>document.addEventListener('click',e=>{const btn=e.target.closest('.read-more');if(!btn)return;const desc=btn.previousElementSibling;if(!desc||!desc.classList.contains('desc'))return;const opening=desc.classList.contains('is-collapsed');desc.classList.toggle('is-collapsed',!opening);btn.textContent=opening?'CLOSE':'READ MORE';});(function(){const flow=document.querySelector('.data-stream');if(!flow||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;const glyphs=['0','1'];const count=Math.min(54,Math.max(24,Math.floor(window.innerWidth/32)));for(let i=0;i<count;i++){const s=document.createElement('span');let text='';const len=5+Math.floor(Math.random()*8);for(let j=0;j<len;j++)text+=glyphs[Math.floor(Math.random()*glyphs.length)];s.textContent=text;s.style.left=(Math.random()*100).toFixed(2)+'%';s.style.fontSize=(10+Math.random()*6).toFixed(1)+'px';s.style.opacity=(.16+Math.random()*.52).toFixed(2);s.style.animationDuration=(7+Math.random()*11).toFixed(2)+'s';s.style.animationDelay=(-Math.random()*14).toFixed(2)+'s';flow.appendChild(s);}})();(function(){
+  const layer=document.querySelector('.binary-layer');
+  if(!layer) return;
+
+  const columns=[];
+  const makeBits=(len)=>Array.from({length:len},()=>Math.random()<0.5?'0':'1').join('');
+
+  function buildBinaryRain(){
+    layer.textContent='';
+    columns.length=0;
+
+    const width=Math.max(window.innerWidth||0, 320);
+    const height=Math.max(window.innerHeight||0, 480);
+    const count=Math.min(54, Math.max(21, Math.floor(width/32)));
+
+    for(let i=0;i<count;i++){
+      const span=document.createElement('span');
+      span.className='binary-column';
+
+      const len=38+Math.floor(Math.random()*54);
+      span.textContent=makeBits(len);
+
+      const x=(i/(count-1))*width + (Math.random()*18-9);
+      const size=10+Math.random()*7;
+      const speed=34+Math.random()*84;
+      const startY=-(height*(0.25+Math.random()*1.2));
+      const opacity=0.18+Math.random()*0.56;
+
+      span.style.left=x.toFixed(1)+'px';
+      span.style.fontSize=size.toFixed(1)+'px';
+      span.style.opacity=opacity.toFixed(2);
+
+      layer.appendChild(span);
+
+      columns.push({
+        el:span,
+        x,
+        y:startY,
+        speed,
+        limit:height+260+Math.random()*260,
+        height
+      });
+    }
+  }
+
+  let last=performance.now();
+  function tick(now){
+    const dt=Math.min(0.05,(now-last)/1000);
+    last=now;
+
+    for(const c of columns){
+      c.y += c.speed*dt;
+      if(c.y > c.limit){
+        c.y = -(c.height*(0.35+Math.random()*0.9));
+        c.el.textContent = makeBits(38+Math.floor(Math.random()*54));
+      }
+      c.el.style.transform = 'translate3d(0,' + c.y.toFixed(1) + 'px,0)';
+    }
+
+    requestAnimationFrame(tick);
+  }
+
+  buildBinaryRain();
+  window.addEventListener('resize', buildBinaryRain, {passive:true});
+  requestAnimationFrame(tick);
+})();<\/script></body></html>`;}
+function castCard(c,idx){const no=String(idx+1).padStart(2,'0');const styles=c.styles.length?c.styles:[];const chips=styles.map(s=>{const info=styleInfo(s);const rank=styleRank(s);return `<span class="chip ${rank}" style="--accent:${info.color}"><span>${esc(s)}</span></span>`;}).join('');const image=c.image?`<div class="visual"><img src="${esc(c.image)}" alt="${esc(c.name)}"></div>`:`<div class="visual no-image">NO IMAGE</div>`;return `<article class="cast-file" id="cast-${idx+1}" style="animation-delay:${idx*.12}s"><div class="cast-inner">${image}<section class="body"><div class="index-row"><div class="index">CAST FILE ${no}</div>${c.player?`<div class="player"><b>PLAYER</b>${esc(c.player)}</div>`:""}</div>${c.reading?`<div class="reading">${esc(c.reading)}</div>`:''}<h2 class="name">${esc(c.name)}</h2>${c.quote?`<p class="quote">${esc(c.quote)}</p>`:''}<div class="meta-grid"><div class="meta"><b>ID</b><span>${esc(c.id||'市民ランク')}</span></div><div class="meta"><b>AGE</b><span>${esc(c.age||'UNKNOWN')}</span></div><div class="meta"><b>GENDER</b><span>${esc(c.gender||'UNKNOWN')}</span></div></div>${c.affiliation?`<div class="affiliation"><b>AFFILIATION</b>${esc(c.affiliation)}</div>`:''}${chips?`<div class="styles">${chips}</div>`:''}${c.desc?`<div class="desc is-collapsed">${nl2br(c.desc)}</div><button class="read-more" type="button">READ MORE</button>`:''}${c.url?`<div class="sheet-row"><a class="sheet-link" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">OPEN CHARACTER SHEET</a></div>`:''}</section></div></article>`;}
+$('addCastBtn').addEventListener('click',()=>{addCast();markDirty();});$('removeCastBtn').addEventListener('click',()=>{removeCast();markDirty();});$('generateBtn').addEventListener('click',async()=>{try{$('generateBtn').disabled=true;$('status').innerHTML='<span class="warnText">SCANNING INPUT DATA...</span>';$('downloadBtn').disabled=true;$('copyBtn').disabled=true;const htmlText=await buildOutput();const count=(await collectCasts()).length;generatedHtml=htmlText;setReady(true);$('status').innerHTML=`<span class="ok">HTML生成完了</span>：${count}名のセッション参加キャストを出力できます。`;}catch(e){generatedHtml='';setReady(false);$('status').innerHTML=`<span class="error">ERROR</span>：${esc(e.message||e)}`;}});$('downloadBtn').addEventListener('click',()=>{if(!generatedHtml)return;const blob=new Blob([generatedHtml],{type:'text/html;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='tnx_session_cast_showcase.html';a.click();URL.revokeObjectURL(a.href);});$('copyBtn').addEventListener('click',async()=>{if(!generatedHtml)return;await navigator.clipboard.writeText(generatedHtml);$('status').innerHTML='<span class="ok">HTMLをクリップボードにコピーしました。</span>';});(function initBg(){if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;const glyphs=['0','1'];for(let i=0;i<34;i++){const s=document.createElement('span');s.className='data-stream-glyph';s.textContent=Array.from({length:40+Math.floor(Math.random()*36)},()=>glyphs[Math.floor(Math.random()*glyphs.length)]).join('');s.style.left=(Math.random()*100).toFixed(2)+'%';s.style.fontSize=(10+Math.random()*5).toFixed(1)+'px';s.style.opacity=(.12+Math.random()*.38).toFixed(2);s.style.animationDuration=(8+Math.random()*10).toFixed(2)+'s';s.style.animationDelay=(-Math.random()*12).toFixed(2)+'s';document.body.appendChild(s);}})();
+function markDirty(){
+  if(generatedHtml){
+    generatedHtml='';
+    setReady(false);
+    $('status').innerHTML='入力内容が変更されました。再度HTML生成してください。';
+  }
+}
+document.addEventListener('input',e=>{
+  if(e.target.closest('.panel-body')) markDirty();
+});
+document.addEventListener('change',e=>{
+  if(e.target.closest('.panel-body')) markDirty();
+});
+
+addCast();
+</script>
+</body>
+</html>
