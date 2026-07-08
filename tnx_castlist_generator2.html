@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TNX キャストリスト HTML 自動生成</title>
+<style>
+*,*::before,*::after{box-sizing:border-box} html,body{margin:0;padding:0}
+body{font-family:ui-sans-serif,system-ui,"Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif;background:linear-gradient(180deg,rgba(5,4,9,.86),rgba(10,9,19,.74),rgba(5,4,9,.94)),url("./assets/citymap.png") center/cover fixed no-repeat,#050409;color:#e8e6f3;min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;background:repeating-linear-gradient(0deg,transparent 0 3px,#ffffff04 3px 4px);mix-blend-mode:overlay;animation:scan 8s linear infinite}@keyframes scan{from{background-position:0 0}to{background-position:0 200px}}
+.top{position:relative;z-index:2;padding:56px 24px 24px;text-align:center}.top h1{font-weight:900;letter-spacing:.06em;font-size:clamp(28px,4.6vw,52px);margin:0;background:linear-gradient(90deg,#ff3b6b,#7c5cff 40%,#29c7ff 75%,#3dffa1);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 24px #7c5cff55)}.glyph{background:linear-gradient(180deg,#fff,#ffd23b);-webkit-background-clip:text;background-clip:text;color:transparent}.subtitle{margin-top:12px;color:#bfb8e0;font-size:13px;letter-spacing:.2em}.wrap{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:18px 24px 80px}.panel{border-radius:18px;background:linear-gradient(180deg,#110d1ccc,#0b0913dd);border:1px solid #ffffff14;box-shadow:0 20px 60px #0008;overflow:hidden}.panel-head{padding:18px 22px;border-bottom:1px solid #ffffff12;background:#ffffff06;font-weight:800;letter-spacing:.06em}.panel-body{padding:20px 22px}.field{margin:0 0 16px}label{display:block;font-size:12px;letter-spacing:.14em;color:#bfb8e0;margin-bottom:7px;font-weight:800}input[type=url],textarea{width:100%;border:1px solid #ffffff1a;border-radius:12px;background:#050409cc;color:#fff;padding:12px 14px;font:inherit;outline:none}input[type=url]:focus,textarea:focus{border-color:#29c7ff99;box-shadow:0 0 0 3px #29c7ff22}textarea{min-height:150px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}button{border:0;border-radius:999px;padding:10px 16px;font-weight:900;letter-spacing:.08em;cursor:pointer;color:#06121a;background:linear-gradient(135deg,#3dffa1,#29c7ff);box-shadow:0 8px 20px -10px #29c7ff;transition:opacity .2s ease,filter .2s ease,box-shadow .2s ease,transform .2s ease}button:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.08)}button.secondary{color:#8c84ad;background:#ffffff12;border:1px solid #ffffff20;box-shadow:none}button:disabled{background:#2b2a35!important;color:#777184!important;border:1px solid #ffffff12!important;box-shadow:none!important;cursor:not-allowed;opacity:.62;filter:saturate(.45)}#downloadBtn.ready{color:#06121a;background:linear-gradient(135deg,#3dffa1,#19b55b);border-color:transparent;box-shadow:0 8px 22px -10px #3dffa1}#copyBtn.ready{color:#fff;background:linear-gradient(135deg,#7c5cff,#b45cff);border-color:transparent;box-shadow:0 8px 22px -10px #7c5cff}.spinner{display:inline-block;width:1em;height:1em;margin-right:.45em;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;vertical-align:-.16em;animation:spin .7s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.status{margin-top:14px;color:#cfc6f0;font-size:13px;line-height:1.7}.status b{color:#fff}.preview{margin-top:18px;border-top:1px solid #ffffff10;padding-top:16px}.small{font-size:12px;color:#8c84ad;line-height:1.7}.file{display:block;width:100%;padding:12px;border:1px dashed #ffffff2a;border-radius:12px;background:#ffffff08;color:#bfb8e0}.warn{color:#ffd23b}.error{color:#ff7a9b}.ok{color:#3dffa1}@media(max-width:720px){.jump-nav{justify-content:flex-start;max-height:112px;overflow:auto}.jump-btn{font-size:10px;padding:4px 8px}.tarot-no{min-width:32px;height:22px;font-size:12px}.row{grid-template-columns:1fr}.wrap{padding:14px}.top{padding:42px 16px 20px}}
+
+.field-group{margin:16px 0}
+.field-group label{display:block;margin-bottom:6px;color:#cfc6f0;font-size:13px;letter-spacing:.08em;font-weight:700}
+.field-group input[type="url"], .field-group input[type="file"]{
+  width:100%;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid #ffffff22;
+  background:#ffffff0a;
+  color:#fff;
+  font:inherit;
+}
+.field-group input[type="file"]::file-selector-button{
+  margin-right:12px;
+  border:0;
+  border-radius:9px;
+  padding:8px 12px;
+  background:#ffffff18;
+  color:#fff;
+  cursor:pointer;
+}
+.hint{margin-top:6px;color:#8c84ad;font-size:12px}
+
+
+.option-check{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  margin:16px 0;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid #ffffff1a;
+  background:#ffffff08;
+}
+.option-check input{
+  width:18px;
+  height:18px;
+  margin-top:2px;
+  accent-color:#29c7ff;
+}
+.option-check label{
+  margin:0;
+  color:#e8e6f3;
+  letter-spacing:.08em;
+}
+.option-check .small{
+  margin-top:4px;
+}
+
+</style>
+</head>
+<body>
+<header class="top"><h1>TNX <span class="glyph">CAST HTML</span> GENERATOR</h1><div class="subtitle">URL を貼り付けてキャストリストHTMLを生成</div></header>
+<main class="wrap">
+<section class="panel">
+  <div class="panel-head">INPUT</div>
+  <div class="panel-body">
+    <div class="field"><label>キャラクター一覧URL</label><input id="sourceUrl" type="url" value="https://character-sheets.appspot.com/tnx/?player=%E7%A8%B2%E8%8D%B7%E7%A7%8B&name=&searchtype=1"></div>
+    <div class="row">
+      <div class="field"><label>タイトル</label><input id="titleText" type="text" value="トーキョーＮ◎ＶＡ キャストリスト" style="width:100%;border:1px solid #ffffff1a;border-radius:12px;background:#050409cc;color:#fff;padding:12px 14px;font:inherit;outline:none"></div>
+      <div class="field"><label>背景画像ファイル（任意・出力HTMLに埋め込み）</label><input id="bgFile" class="file" type="file" accept="image/*"><div class="small">背景画像URLと両方設定された場合は、URLを優先します。</div></div>
+    </div>
+    <div class="field"><label>自動取得できない場合のHTML貼り付け欄（任意）</label><textarea id="manualHtml" placeholder="ブラウザのCORS制限等で取得できない場合、一覧ページのHTMLソースをここに貼り付けると解析できます。"></textarea></div>
+    
+          <div class="field-group">
+            <label for="bgUrl">背景画像URL（外部参照・優先）</label>
+            <input id="bgUrl" type="url" placeholder="例: ./assets/citymap.png または https://example.com/citymap.png">
+          </div>
+</div>
+</div>
+
+          <div class="option-check">
+            <input id="showAllStyleGroups" type="checkbox">
+            <div>
+              <label for="showAllStyleGroups">全スタイルのグループに表示する</label>
+              <div class="small">未チェック時は、◎または◎●が付いたスタイルのグループにだけ表示します。チェック時は、所有している全スタイルのグループに同じキャストカードを表示します。</div>
+            </div>
+          </div>
+
+<div class="actions"><button id="generateBtn">HTML生成</button><button class="secondary" id="downloadBtn" disabled>生成HTMLをダウンロード</button><button class="secondary" id="copyBtn" disabled>HTMLをコピー</button></div>
+    <div id="status" class="status">待機中</div>
+    <div class="preview"><div class="small">仕様：キャラクター一覧URLから自動取得したHTML、または貼り付けた一覧ページHTML内のリンク、STYLE、ID、AGE、GENDERを抽出。STYLE内の「=」は区切りとして扱います。STYLE:が重複している場合は最後のSTYLE:以降をスタイルとして扱います。ID/AGE/GENDERが重複している場合は最初の値のみ採用します。出力リスト上部には各スタイルへのジャンプボタンを表示し、各スタイル見出しにはtarot番号を表示します。◎または◎●のスタイルを所属グループとして優先。チェックにより所有する全スタイルの各グループへ複製表示可能。100件以上は未対応。</div></div>
+  </div>
+</section>
+</main>
+<script>
+const STYLE_DATA = [{"key": "Kabuki", "ja": "カブキ", "label": "芸術家、芸に生きる者", "color": "#ff3b6b", "tarot": "0", "position": "upright"}, {"key": "Vasara", "ja": "バサラ", "label": "超能力者、魔術師", "color": "#7d3bff", "tarot": "I", "position": "upright"}, {"key": "Tatara", "ja": "タタラ", "label": "研究者、技術者", "color": "#3b6cff", "tarot": "II", "position": "upright"}, {"key": "Mistress", "ja": "ミストレス", "label": "女将、女性リーダー", "color": "#ff5cc8", "tarot": "III", "position": "upright"}, {"key": "Kabuto", "ja": "カブト", "label": "ボディガード、用心棒", "color": "#3dffa1", "tarot": "IV", "position": "upright"}, {"key": "Charisma", "ja": "カリスマ", "label": "政治家、思想家", "color": "#ffd23b", "tarot": "V", "position": "upright"}, {"key": "Mannequin", "ja": "マネキン", "label": "ヒモ、庇護される者", "color": "#ffb93b", "tarot": "VI", "position": "upright"}, {"key": "Kaze", "ja": "カゼ", "label": "走り屋、車両操縦者", "color": "#29c7ff", "tarot": "VII", "position": "upright"}, {"key": "Fate", "ja": "フェイト", "label": "探偵", "color": "#ffe66b", "tarot": "VIII", "position": "upright"}, {"key": "Kuromaku", "ja": "クロマク", "label": "裏社会の権力者", "color": "#8a6cff", "tarot": "IX", "position": "upright"}, {"key": "Exec", "ja": "エグゼク", "label": "大企業重役", "color": "#ff8a3b", "tarot": "X", "position": "upright"}, {"key": "Katana", "ja": "カタナ", "label": "殺し屋、剣客", "color": "#3bffa4", "tarot": "XI", "position": "upright"}, {"key": "Kugutsu", "ja": "クグツ", "label": "企業の非合法工作員", "color": "#c83bff", "tarot": "XII", "position": "upright"}, {"key": "Kage", "ja": "カゲ", "label": "スパイ、忍者、暗殺者", "color": "#6f7cff", "tarot": "XIII", "position": "upright"}, {"key": "Chakra", "ja": "チャクラ", "label": "格闘家", "color": "#3bff8a", "tarot": "XIV", "position": "upright"}, {"key": "Legger", "ja": "レッガー", "label": "暴力団、ギャング", "color": "#ffb13b", "tarot": "XV", "position": "upright"}, {"key": "Kabuto-Wari", "ja": "カブトワリ", "label": "スナイパー", "color": "#ff3b9b", "tarot": "XVI", "position": "upright"}, {"key": "Highlander", "ja": "ハイランダー", "label": "地球外エリート", "color": "#9aff3b", "tarot": "XVII", "position": "upright"}, {"key": "Mayakashi", "ja": "マヤカシ", "label": "幻術師", "color": "#3bffd5", "tarot": "XVIII", "position": "upright"}, {"key": "Talkie", "ja": "トーキー", "label": "報道員、記者", "color": "#ff6f3b", "tarot": "XIX", "position": "upright"}, {"key": "Inu", "ja": "イヌ", "label": "警察官", "color": "#ff4f3b", "tarot": "XX", "position": "upright"}, {"key": "Neuro", "ja": "ニューロ", "label": "ハッカー", "color": "#3bffe1", "tarot": "XXI", "position": "upright"}, {"key": "Common", "ja": "コモン", "label": "一般人、学生、主婦", "color": "#b8ff3b", "tarot": "0", "position": "reversed"}, {"key": "Hiruko", "ja": "ヒルコ", "label": "突然変異体（ミュータント）", "color": "#ff3bd5", "tarot": "I", "position": "reversed"}, {"key": "Kurogane", "ja": "クロガネ", "label": "意思を持つ器物（AI、付喪神）", "color": "#a1a8ff", "tarot": "II", "position": "reversed"}, {"key": "Ibuki", "ja": "イブキ", "label": "人命救助のプロ（救命士、レスキュー）", "color": "#45ffcc", "tarot": "III", "position": "reversed"}, {"key": "Shikigami", "ja": "シキガミ", "label": "式神使い", "color": "#ff5cc8", "tarot": "IV", "position": "reversed"}, {"key": "Arashi", "ja": "アラシ", "label": "戦車・兵器乗り", "color": "#ff7a3b", "tarot": "V", "position": "reversed"}, {"key": "Kagemusha", "ja": "カゲムシャ", "label": "影武者、代理人", "color": "#9b3bff", "tarot": "VI", "position": "reversed"}, {"key": "Migiude", "ja": "ミギウデ", "label": "特定の個人に忠誠を尽くす者", "color": "#ffcf3b", "tarot": "VII", "position": "reversed"}, {"key": "Etranger", "ja": "エトランゼ", "label": "宇宙人、未来人、異世界人", "color": "#9aff3b", "tarot": "VIII", "position": "reversed"}, {"key": "Ayakashi", "ja": "アヤカシ", "label": "吸血鬼、妖怪などの人外", "color": "#3bffd5", "tarot": "IX", "position": "reversed"}, {"key": "Utsuwa", "ja": "ウツワ", "label": "神や英雄の記憶を宿した転生者", "color": "#ffffff", "tarot": "X", "position": "reversed"}];
+const DEFAULT_BG = "";
+let generatedHtml = "";
+const $ = id => document.getElementById(id);
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function norm(s){return String(s||"").replace(/　/g," ").replace(/\s+/g," ").trim();}
+function styleBase(s){return norm(s).replace(/[◎●]/g,"").replace(/\s*=[^,]+/g,"").trim();}
+function styleRank(s){return /◎/.test(s) ? 'primary' : /●/.test(s) ? 'secondary' : '';}
+
+
+function firstFieldValue(text, field, nextFields){
+  const flags='i';
+  const next = nextFields && nextFields.length
+    ? nextFields.map(f=>f.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')
+    : '$';
+  const rx = new RegExp('\\\\b'+field.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&')+'\\\\s*:\\\\s*([\\\\s\\\\S]*?)(?=\\\\s+(?:'+next+')\\\\s*:|$)', flags);
+  const hit = String(text||'').match(rx);
+  return hit ? norm(hit[1]) : '';
+}
+
+function cleanStyleText(raw){
+  let s=String(raw||'');
+  const idx=Math.max(s.lastIndexOf('STYLE:'), s.lastIndexOf('style:'));
+  if(idx>=0) s=s.slice(idx+6);
+  return s;
+}
+
+function splitStyles(styleText){
+  return norm(styleText)
+    .replace(/[＝=]/g, ',')
+    .split(',')
+    .map(norm)
+    .filter(Boolean);
+}
+function textLen(v){return Array.from(norm(v)).length;}
+function metaWideClass(value, limit){return textLen(value) > limit ? ' is-wide' : '';}
+function absUrl(href,base){try{return new URL(href,base).href}catch(e){return href||""}}
+async function fetchText(url){
+  const tries=[url, 'https://api.allorigins.win/raw?url='+encodeURIComponent(url), 'https://corsproxy.io/?'+encodeURIComponent(url)];
+  let last='';
+  for(const u of tries){try{const r=await fetch(u); if(!r.ok) throw new Error(r.status+' '+r.statusText); const t=await r.text(); if(t && /STYLE:|Profile|Cast/i.test(t)) return t; last='取得内容が一覧ページに見えません';}catch(e){last=e.message}}
+  throw new Error((last && /403/.test(last)) ? '403 Forbidden：取得先サイトがブラウザからの自動取得を拒否しています。HTMLソース貼り付け欄を使用してください。' : (last||'取得失敗'));
+}
+function extractFromDocument(html,baseUrl){
+  const doc=new DOMParser().parseFromString(html,'text/html');
+  const player=new URL(baseUrl).searchParams.get('player') || '';
+  const anchors=[...doc.querySelectorAll('a')].filter(a=>{
+    const tx=norm(a.textContent); const href=a.getAttribute('href')||'';
+    if(!tx || tx==='トップへ戻る' || tx==='新規作成') return false;
+    return /tnx\//.test(absUrl(href,baseUrl)) || /display|edit|key=/.test(href);
+  });
+  const seen=new Set(), casts=[];
+  for(const a of anchors){
+    const href=absUrl(a.getAttribute('href')||'',baseUrl); const pcname=norm(a.textContent);
+    if(seen.has(href+'|'+pcname)) continue; seen.add(href+'|'+pcname);
+    let holder=a.closest('tr,li,div,p') || a.parentElement || doc.body;
+    let text=norm(holder.innerText || holder.textContent || '');
+    if(!/STYLE:/i.test(text)){
+      const all=(doc.body.innerText||'').split(/\n+/).map(norm).filter(Boolean);
+      const i=all.findIndex(line=>line.includes(pcname) && /STYLE:/i.test(line));
+      if(i>=0) text=all[i];
+    }
+    if(!/STYLE:/i.test(text)) continue;
+    let styleText=(text.match(/STYLE:\s*(.*?)(?:\s+ID:|\s+AGE:|\s+GENDER:|$)/i)||[])[1]||'';
+    styleText=cleanStyleText(styleText);
+    const id=firstFieldValue(text,'ID',['AGE','GENDER','STYLE']);
+    const age=firstFieldValue(text,'AGE',['GENDER','ID','STYLE']);
+    const gender=firstFieldValue(text,'GENDER',['ID','AGE','STYLE']);
+    let yomi=text.split(/STYLE:/i)[0];
+    if(player) yomi=norm(yomi.replace(player,''));
+    yomi=norm(yomi.replace(pcname,'')).replace(/^[-–—:：\s]+|[-–—:：\s]+$/g,'') || pcname;
+    const styles=splitStyles(cleanStyleText(styleText).replace(/^STYLE:/i,''));
+    casts.push({yomi,pcname,styles,id:norm(id),age:norm(age),gender:norm(gender),url:href});
+  }
+  return casts;
+}
+
+function groupKey(c){
+  const primary=c.styles.find(s=>/◎/.test(s)) || c.styles[0] || 'Common';
+  const b=styleBase(primary);
+  const hit=STYLE_DATA.find(x=>x.key.toLowerCase()===b.toLowerCase() || x.ja===b);
+  return hit ? hit.key : b;
+}
+function groupKeys(c, includeAllStyleGroups){
+  if(!includeAllStyleGroups) return [groupKey(c)];
+  const keys=[];
+  for(const st of c.styles){
+    const b=styleBase(st);
+    if(!b) continue;
+    const hit=STYLE_DATA.find(x=>x.key.toLowerCase()===b.toLowerCase() || x.ja===b);
+    const key=hit ? hit.key : b;
+    if(key && !keys.includes(key)) keys.push(key);
+  }
+  return keys.length ? keys : [groupKey(c)];
+}
+function sectionId(key){return 'style-' + String(key||'').replace(/[^a-zA-Z0-9_-]/g,'-');}
+function chipHtml(s){const r=styleRank(s); return `<span class="chip ${r==='primary'?'chip-primary':r==='secondary'?'chip-secondary':''}">${esc(s)}</span>`}
+function buildCastCard(c,group){
+  const rankValue=c.id||'-';
+  const genderValue=c.gender||'-';
+  const ageValue=c.age||'-';
+return `<a class="cast-card" data-style="${esc(group)}" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">
+  <header class="cast-head"><div class="cast-name"><div class="cast-yomi">${esc(c.yomi)}</div><div class="cast-pcname">${esc(c.pcname)}</div></div></header>
+  <dl class="cast-meta"><div class="meta-rank${metaWideClass(rankValue,2)}"><dt>RANK</dt><dd>${esc(rankValue)}</dd></div><div class="meta-gender${metaWideClass(genderValue,6)}"><dt>GENDER</dt><dd>${esc(genderValue)}</dd></div><div class="meta-age${metaWideClass(ageValue,6)}"><dt>AGE</dt><dd>${esc(ageValue)}</dd></div></dl>
+  <div class="chip-row">${c.styles.map(chipHtml).join('')}</div>
+</a>`;}
+function buildOutput(casts,title,bgData,includeAllStyleGroups=false){
+  const groups=new Map(); for(const s of STYLE_DATA) groups.set(s.key,[]);
+  for(const c of casts){for(const g of groupKeys(c, includeAllStyleGroups)){ if(!groups.has(g)) groups.set(g,[]); groups.get(g).push(c)}}
+  const jumpLinks=STYLE_DATA.map(s=>`<a class="jump-btn ${s.position==='reversed'?'is-reversed':'is-upright'}" href="#${esc(sectionId(s.key))}" style="--accent:${s.color}">${esc(s.ja)}</a>`).join('');
+  const sections=[]; let delay=0;
+  for(const s of STYLE_DATA){ const list=groups.get(s.key)||[]; const body=list.length?list.map(c=>buildCastCard(c,s.key)).join('\n'):'<div class="cast-empty">— NO CAST YET —</div>'; const posClass=s.position==='reversed'?'is-reversed':'is-upright'; sections.push(`<section id="${esc(sectionId(s.key))}" class="style-block ${list.length?'':'is-empty'}" data-style="${esc(s.key)}" style="--accent:${s.color};animation-delay:${delay}ms"><button class="style-head" type="button" aria-expanded="false"><span class="style-tag"><span class="tarot-no ${posClass}">${esc(s.tarot||'')}</span><span class="style-mark">◉</span><span class="style-name">${esc(s.key)}</span><span class="style-kanji">— ${esc(s.ja)} / ${esc(s.label)}</span></span><span class="style-end"><span class="style-count">${list.length}</span><span class="style-caret" aria-hidden="true">▾</span></span></button><div class="style-body"><div class="cast-grid">${body}</div></div></section>`); delay+=18;}
+  for(const [k,list] of groups){ if(STYLE_DATA.some(s=>s.key===k)) continue; sections.push(`<section id="${esc(sectionId(k))}" class="style-block" data-style="${esc(k)}" style="--accent:#cfc6f0"><button class="style-head" type="button" aria-expanded="false"><span class="style-tag"><span class="tarot-no is-other">—</span><span class="style-mark">◉</span><span class="style-name">${esc(k)}</span><span class="style-kanji">— OTHER</span></span><span class="style-end"><span class="style-count">${list.length}</span><span class="style-caret">▾</span></span></button><div class="style-body"><div class="cast-grid">${list.map(c=>buildCastCard(c,k)).join('\n')}</div></div></section>`); }
+  return `<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><style>${(bgData ? OUTPUT_CSS.replaceAll('__BG_URL__', bgData) : OUTPUT_CSS.replace(/,url\("__BG_URL__"\) center center\/cover fixed no-repeat/g,''))}
+.field-group{margin:16px 0}
+.field-group label{display:block;margin-bottom:6px;color:#cfc6f0;font-size:13px;letter-spacing:.08em;font-weight:700}
+.field-group input[type="url"], .field-group input[type="file"]{
+  width:100%;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid #ffffff22;
+  background:#ffffff0a;
+  color:#fff;
+  font:inherit;
+}
+.field-group input[type="file"]::file-selector-button{
+  margin-right:12px;
+  border:0;
+  border-radius:9px;
+  padding:8px 12px;
+  background:#ffffff18;
+  color:#fff;
+  cursor:pointer;
+}
+.hint{margin-top:6px;color:#8c84ad;font-size:12px}
+
+
+.option-check{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  margin:16px 0;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid #ffffff1a;
+  background:#ffffff08;
+}
+.option-check input{
+  width:18px;
+  height:18px;
+  margin-top:2px;
+  accent-color:#29c7ff;
+}
+.option-check label{
+  margin:0;
+  color:#e8e6f3;
+  letter-spacing:.08em;
+}
+.option-check .small{
+  margin-top:4px;
+}
+
+</style></head><body><header class="top"><h1>${esc(title).replace('Ｎ◎ＶＡ','<span class="glyph">Ｎ◎ＶＡ</span>')}</h1><div class="subtitle">— CAST INDEX —</div><div class="subline">STYLE-GROUPED ・ CLICK TO OPEN</div><div class="badge">CASTS ${casts.length} / ${casts.length}</div></header><main><nav class="jump-nav" aria-label="スタイルジャンプ">${jumpLinks}</nav>${sections.join('\n')}</main><footer>GENERATED FROM CHARACTER-SHEETS URL</footer><script>document.querySelectorAll('.style-head').forEach(btn=>btn.addEventListener('click',()=>{const block=btn.closest('.style-block');const open=block.classList.toggle('is-open');btn.setAttribute('aria-expanded',open?'true':'false')}));<\/script>
+</body></html>`;
+}
+const OUTPUT_CSS = `*,*::before,*::after{box-sizing:border-box}html,body{margin:0;padding:0}body{font-family:ui-sans-serif,system-ui,"Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif;background:linear-gradient(180deg,rgba(5,4,9,.82) 0%,rgba(10,9,19,.70) 44%,rgba(5,4,9,.90) 100%),url("__BG_URL__") center center/cover fixed no-repeat,#050409;color:#e8e6f3;min-height:100vh;overflow-x:hidden}::selection{background:#ff3b6b88;color:#fff}.top{position:relative;padding:64px 28px 40px;text-align:center}.top h1{font-weight:900;letter-spacing:.06em;font-size:clamp(28px,4.6vw,54px);margin:0;background:linear-gradient(90deg,#ff3b6b,#7c5cff 40%,#29c7ff 75%,#3dffa1);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 24px #7c5cff55);animation:titleGlow 6s ease-in-out infinite}.top h1 .glyph{display:inline-block;transform:translateY(-.06em);background:linear-gradient(180deg,#fff,#ffd23b);-webkit-background-clip:text;background-clip:text;color:transparent}.top .subtitle{margin-top:14px;color:#bfb8e0;font-size:14px;letter-spacing:.18em}.top .subline{margin-top:8px;color:#8c84ad;font-size:12px;letter-spacing:.3em}.top .badge{display:inline-block;margin-top:18px;padding:6px 14px;border:1px solid #ffffff22;border-radius:999px;font-size:12px;letter-spacing:.18em;background:#ffffff08;color:#cfc6f0;animation:badgePulse 3.2s ease-in-out infinite}@keyframes titleGlow{0%,100%{filter:drop-shadow(0 2px 24px #7c5cff55)}50%{filter:drop-shadow(0 4px 36px #29c7ff77)}}@keyframes badgePulse{0%,100%{box-shadow:0 0 0 0 #ff3b6b22}50%{box-shadow:0 0 0 10px #ff3b6b00}}body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;background:repeating-linear-gradient(0deg,transparent 0 3px,#ffffff04 3px 4px);mix-blend-mode:overlay;animation:scan 8s linear infinite}@keyframes scan{from{background-position:0 0}to{background-position:0 200px}}main{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:8px 28px 120px}.style-block{margin:18px 0;border-radius:16px;background:linear-gradient(180deg,#110d1c88,#0b0913aa);border:1px solid #ffffff10;position:relative;opacity:0;transform:translateY(20px);animation:blockIn .7s cubic-bezier(.2,.7,.2,1) forwards;overflow:hidden}.style-block::before{content:"";position:absolute;inset:-1px;border-radius:18px;background:linear-gradient(120deg,var(--accent,#7c5cff55),transparent 40%,transparent 60%,var(--accent,#7c5cff55));background-size:200% 100%;z-index:-1;opacity:.45;animation:edgeSlide 8s linear infinite;pointer-events:none}@keyframes edgeSlide{0%{background-position:0% 50%}100%{background-position:200% 50%}}@keyframes blockIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}.style-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:transparent;border:0;color:#fff;text-align:left;cursor:pointer;padding:18px 22px;font:inherit;transition:background .2s ease}.style-head:hover{background:#ffffff08}.jump-nav{position:sticky;top:10px;z-index:5;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:0 0 20px;padding:10px;border:1px solid #ffffff12;border-radius:16px;background:linear-gradient(180deg,#110d1cdd,#080611dd);backdrop-filter:blur(8px);box-shadow:0 12px 28px -22px #000}.jump-btn{display:inline-flex;align-items:center;justify-content:center;min-height:26px;padding:5px 9px;border-radius:999px;text-decoration:none;font-size:11px;font-weight:900;letter-spacing:.08em;color:#e8e6f3;background:#ffffff0c;border:1px solid #ffffff18;transition:transform .18s ease,border-color .18s ease,background .18s ease,color .18s ease}.jump-btn:hover{transform:translateY(-1px);border-color:var(--accent,#7c5cff);background:color-mix(in srgb,var(--accent,#7c5cff) 22%,transparent);color:#fff}.jump-btn.is-upright{box-shadow:inset 0 -2px 0 color-mix(in srgb,var(--accent,#29c7ff) 70%,transparent)}.jump-btn.is-reversed{color:#d6c7ff;background:linear-gradient(180deg,#ffffff0a,#2c174a44);border-color:#b45cff33;box-shadow:inset 0 -2px 0 #b45cff88}.style-block{scroll-margin-top:92px}.tarot-no{display:inline-flex;align-items:center;justify-content:center;min-width:38px;height:24px;padding:0 7px;border-radius:8px;font-family:Georgia,"Times New Roman",serif;font-size:13px;font-weight:900;letter-spacing:.04em;border:1px solid #ffffff22;background:#ffffff10;color:#e8e6f3;text-shadow:0 1px 0 #000}.tarot-no.is-upright{color:#06121a;background:linear-gradient(135deg,#ffd23b,#fff2a6);border-color:#fff5b8;box-shadow:0 0 16px -8px #ffd23b}.tarot-no.is-reversed{color:#f0e6ff;background:linear-gradient(135deg,#2b164f,#8a3bff);border-color:#c89bff66;box-shadow:0 0 18px -8px #9b3bff}.tarot-no.is-other{color:#aaa;background:#ffffff08}.style-tag{display:flex;align-items:baseline;gap:10px}.style-mark{color:var(--accent,#ff3b6b);font-size:18px;filter:drop-shadow(0 0 8px var(--accent,#ff3b6b));animation:pulseDot 1.6s ease-in-out infinite}@keyframes pulseDot{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}.style-name{font-weight:800;font-size:22px;letter-spacing:.04em;color:#fff;text-shadow:0 1px 0 #00000080}.style-kanji{font-size:13px;color:#cfc6f0aa;letter-spacing:.1em}.style-end{display:flex;align-items:center;gap:10px}.style-count{font-size:12px;padding:4px 10px;border-radius:999px;background:#ffffff10;border:1px solid #ffffff1a;color:#cfc6f0cc}.style-caret{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#ffffff10;border:1px solid #ffffff1a;color:#cfc6f0;font-size:12px;transition:transform .3s ease,color .3s ease,background .3s ease}.style-block.is-open .style-caret{transform:rotate(180deg);color:var(--accent,#ff3b6b);background:color-mix(in srgb,var(--accent,#7c5cff) 18%,transparent)}.style-body{max-height:0;opacity:0;overflow:hidden;transition:max-height .45s cubic-bezier(.2,.7,.2,1),opacity .35s ease,padding .35s ease;padding:0 22px}.style-block.is-open .style-body{max-height:5000px;opacity:1;padding:6px 22px 22px}.cast-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}.cast-card{display:block;text-decoration:none;color:inherit;position:relative;border-radius:14px;padding:14px 14px 12px;background:linear-gradient(180deg,#1a1530cc,#0f0c1fcc);border:1px solid #ffffff14;overflow:hidden;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;opacity:0;transform:translateY(14px);animation:cardIn .55s cubic-bezier(.2,.7,.2,1) forwards}.cast-card::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,transparent 30%,#ffffff10 50%,transparent 70%);transform:translateX(-120%);transition:transform .8s ease}.cast-card:hover{transform:translateY(-4px);border-color:var(--accent,#7c5cff77);box-shadow:0 14px 28px -10px var(--accent,#7c5cff66),inset 0 0 0 1px var(--accent,#7c5cff33)}.cast-card:hover::after{transform:translateX(120%)}@keyframes cardIn{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}.cast-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.cast-name{line-height:1.3;color:#fff;font-weight:800;font-size:17px;letter-spacing:.02em}.cast-yomi{font-size:12px;color:#a9a2c9;font-weight:700;letter-spacing:.04em;margin-bottom:3px}.cast-pcname{font-size:17px;color:#fff}.cast-meta{display:flex;flex-wrap:wrap;gap:6px 10px;margin:10px 0 0;padding:0}.cast-meta>div{display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:8px;background:#ffffff08;border:1px solid #ffffff10;font-size:12px;min-width:0}.cast-meta .meta-rank{flex:0 0 86px}.cast-meta .meta-gender{flex:1 1 132px}.cast-meta .meta-age{flex:0 0 112px}.cast-meta>div.is-wide{flex:1 1 100%;}.cast-meta dt{color:#8a83b8;font-weight:700;letter-spacing:.1em;min-width:auto;white-space:nowrap}.cast-meta dd{margin:0;color:#fff;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cast-meta>div.is-wide dd{white-space:normal;overflow:visible;text-overflow:clip;word-break:break-word}.chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.chip{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:4px 9px;border-radius:8px;background:#ffffff0a;border:1px solid #ffffff1a;color:#cfc6f0d0;letter-spacing:.04em;transition:transform .15s ease,border-color .15s ease,background .15s ease,color .15s ease}.chip:hover{transform:translateY(-1px);border-color:#ffffff40}.chip-primary{color:#06121a;background:linear-gradient(135deg,var(--accent,#ffd23b) 0%,color-mix(in srgb,var(--accent,#ffd23b) 70%,#fff 30%) 100%);border-color:transparent;box-shadow:0 0 0 1px #ffffff66 inset,0 4px 12px -4px var(--accent,#ff3b6b88);text-shadow:0 1px 0 #ffffff55;font-weight:800}.chip-secondary{color:#fff;background:color-mix(in srgb,var(--accent,#7c5cff) 32%,transparent);border-color:color-mix(in srgb,var(--accent,#7c5cff) 60%,transparent);font-weight:700}.cast-empty{color:#8c84ad;border:1px dashed #ffffff20;border-radius:12px;padding:16px;text-align:center;background:#ffffff06}footer{margin-top:40px;text-align:center;color:#6e6a8d;font-size:11px;letter-spacing:.18em;padding:20px}@media(max-width:720px){.cast-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}.top{padding:48px 18px 28px}.style-head{padding:14px 16px}.style-kanji{display:none}.style-body{padding:0 16px}.style-block.is-open .style-body{padding:4px 16px 16px}.cast-meta>div,.cast-meta .meta-rank,.cast-meta .meta-gender,.cast-meta .meta-age{flex:1 1 100%}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition:none!important}.style-block,.cast-card{opacity:1!important;transform:none!important}}`;
+function readFileAsDataURL(file){return new Promise((res,rej)=>{if(!file)return res('');const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(r.error);r.readAsDataURL(file)})}
+function setGeneratedState(done){
+  $('generateBtn').disabled = done;
+  $('generateBtn').innerHTML = 'HTML生成';
+  $('downloadBtn').disabled = !done;
+  $('copyBtn').disabled = !done;
+  $('downloadBtn').classList.toggle('ready', done);
+  $('copyBtn').classList.toggle('ready', done);
+}
+function setGeneratingState(){
+  $('generateBtn').disabled = true;
+  $('generateBtn').innerHTML = '<span class="spinner" aria-hidden="true"></span>HTML生成中...';
+  $('downloadBtn').disabled = true;
+  $('copyBtn').disabled = true;
+  $('downloadBtn').classList.remove('ready');
+  $('copyBtn').classList.remove('ready');
+}
+function resetGeneratedState(){
+  generatedHtml = '';
+  setGeneratedState(false);
+  $('status').innerHTML='待機中';
+}
+['sourceUrl','titleText','manualHtml','bgFile','bgUrl','showAllStyleGroups'].forEach(id=>{const el=$(id); if(el) el.addEventListener('input', resetGeneratedState);});
+$('generateBtn').addEventListener('click', async()=>{
+  setGeneratingState();
+  $('status').innerHTML='取得・解析中...';
+  try{
+    const url=$('sourceUrl').value.trim(); if(!url) throw new Error('URLが空です');
+    const manual=$('manualHtml').value.trim();
+    let html='';
+    if(manual){
+      html=manual;
+    }else{
+      html=await fetchText(url);
+    }
+    const casts=extractFromDocument(html,url);
+    if(!casts.length) throw new Error('キャストを抽出できませんでした。HTML貼り付け欄に一覧ページのソースを貼り付けて再実行してください。');
+    const bgUrl=$('bgUrl').value.trim();
+    const bg=bgUrl || await readFileAsDataURL($('bgFile').files[0]);
+    generatedHtml=buildOutput(casts,$('titleText').value.trim()||'トーキョーＮ◎ＶＡ キャストリスト',bg,$('showAllStyleGroups')?.checked);
+    setGeneratedState(true);
+    $('status').innerHTML=`<span class="ok">✅ HTML生成完了</span>：<b>${casts.length}</b>件のキャストを抽出しました。表示モード：${$('showAllStyleGroups')?.checked ? '全スタイルグループ' : '◎/◎●グループのみ'}`;
+  }catch(e){
+    setGeneratedState(false);
+    $('status').innerHTML=`<span class="error">エラー</span>：${esc(e.message)}`
+  }
+});
+$('downloadBtn').addEventListener('click',()=>{const blob=new Blob([generatedHtml],{type:'text/html;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='castlist_tnv_generated.html';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);$('downloadBtn').textContent='✓ ダウンロード済み';});
+$('copyBtn').addEventListener('click',async()=>{await navigator.clipboard.writeText(generatedHtml);const old=$('copyBtn').textContent;$('copyBtn').textContent='✔ コピーしました';$('status').innerHTML='<span class="ok">HTMLをクリップボードにコピーしました。</span>';setTimeout(()=>{$('copyBtn').textContent=old},2000)});
+setGeneratedState(false);
+</script>
+
+
+
+
+</body>
+</html>
