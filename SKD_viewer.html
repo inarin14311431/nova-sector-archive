@@ -1,0 +1,883 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SKD Skill View Builder</title>
+<style>
+:root{
+  --bg:#0f0f10;
+  --panel:#19191b;
+  --ink:#f4f4f4;
+  --muted:#b9b9b9;
+  --line:#3a3a3d;
+  --card:#f3f3f3;
+  --cardText:#202020;
+  --head:#1e1412;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:linear-gradient(135deg,#090909,#171719 58%,#070707);
+  color:var(--ink);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Yu Gothic","Yu Gothic UI",Meiryo,sans-serif;
+}
+header{
+  position:sticky;
+  top:0;
+  z-index:30;
+  background:rgba(10,10,11,.96);
+  border-bottom:1px solid var(--line);
+  padding:10px 18px 12px;
+}
+.header-inner{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:16px;
+}
+.header-main{
+  min-width:0;
+}
+h1{
+  margin:0;
+  font-size:20px;
+  letter-spacing:.05em;
+}
+.sub{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:4px;
+  line-height:1.5;
+}
+.header-tabs{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:center;
+}
+.header-tab{
+  padding:10px 18px;
+  border-radius:999px;
+  border:1px solid #f0f0f0;
+  background:linear-gradient(180deg,#45484f,#2a2c31);
+  cursor:pointer;
+  font-size:14px;
+  font-weight:900;
+  color:#fff;
+  user-select:none;
+  box-shadow:0 0 0 1px rgba(255,255,255,.08) inset, 0 6px 18px rgba(0,0,0,.35);
+}
+.header-tab:hover{
+  background:linear-gradient(180deg,#5a5e68,#353840);
+}
+.header-tab.active{
+  background:linear-gradient(180deg,#ffffff,#d7d7d7);
+  color:#111;
+  border-color:#fff;
+}
+.header-info{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:6px;
+  min-width:0;
+}
+.header-status{
+  width:100%;
+  text-align:right;
+  color:#bbb;
+  font-size:12px;
+  line-height:1.35;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.header-count{
+  color:#ddd;
+  font-size:12px;
+  white-space:nowrap;
+  padding:5px 9px;
+  background:#2b2b2f;
+  border:1px solid #444;
+  border-radius:999px;
+}
+main{
+  display:grid;
+  grid-template-columns:370px 1fr;
+  gap:16px;
+  padding:16px;
+}
+.panel{
+  background:rgba(25,25,27,.95);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:14px;
+  box-shadow:0 18px 50px rgba(0,0,0,.35);
+}
+.controls{
+  position:sticky;
+  top:104px;
+  align-self:start;
+  max-height:calc(100vh - 92px);
+  overflow:auto;
+}
+label{
+  display:block;
+  font-size:12px;
+  color:var(--muted);
+  margin:12px 0 5px;
+}
+input,select,textarea,button{font-family:inherit}
+input[type="text"],input[type="number"],select,textarea{
+  width:100%;
+  border:1px solid #555;
+  background:#101012;
+  color:var(--ink);
+  border-radius:8px;
+  padding:9px 10px;
+  outline:none;
+}
+input[type="file"]{
+  width:100%;
+  color:#ddd;
+  font-size:12px;
+}
+select[multiple]{min-height:120px}
+.row2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+.btns{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:14px;
+}
+button{
+  border:1px solid #696969;
+  background:#2f2f33;
+  color:#fff;
+  border-radius:9px;
+  padding:9px 10px;
+  cursor:pointer;
+  font-weight:700;
+}
+button:hover{background:#3d3d42}
+button.primary{background:#f1f1f1;color:#111;border-color:#fff}
+button.warn{background:#4b2727}
+button.wide{grid-column:1 / -1}
+.statbar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:12px;
+}
+.badge{
+  display:inline-flex;
+  gap:4px;
+  align-items:center;
+  padding:5px 9px;
+  background:#2b2b2f;
+  border:1px solid #444;
+  border-radius:999px;
+  color:#ddd;
+  font-size:12px;
+}
+.status{
+  color:#bbb;
+  font-size:12px;
+  line-height:1.5;
+}
+.tabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:12px;
+}
+.tab{
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid #555;
+  background:#1c1c1f;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:700;
+}
+.tab.active{
+  background:#eee;
+  color:#111;
+}
+.result-list{
+  display:grid;
+  gap:10px;
+}
+.result{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:10px;
+  background:#161619;
+  border:1px solid #353539;
+  border-radius:10px;
+  padding:10px;
+}
+.result:hover{border-color:#777}
+.result input[type="checkbox"]{
+  width:20px;
+  height:20px;
+  margin-top:3px;
+}
+.result-title{
+  font-weight:800;
+  font-size:16px;
+}
+.result-yomigana{
+  color:#aaa;
+  font-size:12px;
+  font-weight:700;
+  margin-left:4px;
+}
+.meta{
+  color:#bfbfbf;
+  font-size:12px;
+  margin:4px 0 6px;
+}
+.desc{
+  white-space:pre-wrap;
+  line-height:1.55;
+  font-size:13px;
+  color:#e6e6e6;
+}
+.view-fixed{
+  position:fixed;
+  top:104px;
+  left:402px;
+  right:16px;
+  bottom:16px;
+  z-index:18;
+  overflow:auto;
+  background:rgba(25,25,27,.98);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:14px;
+  box-shadow:0 18px 50px rgba(0,0,0,.45);
+}
+.view-fixed-head{
+  position:sticky;
+  top:0;
+  z-index:2;
+  background:rgba(25,25,27,.98);
+  border-bottom:1px solid #444;
+  padding:0 0 10px;
+  margin-bottom:14px;
+}
+.view-fixed-head .view-title{
+  font-weight:900;
+  font-size:15px;
+  letter-spacing:.04em;
+}
+.view-fixed-head .view-note{
+  color:#bbb;
+  font-size:12px;
+  margin-top:3px;
+}
+.view-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:18px;
+}
+.skill-card{
+  background:var(--card);
+  color:var(--cardText);
+  border:2px solid #2a2a2a;
+  min-height:380px;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 8px 20px rgba(0,0,0,.25);
+  break-inside:avoid;
+}
+.skill-card .card-head{
+  position:relative;
+  background:var(--head);
+  color:#fff;
+  min-height:82px;
+  padding:12px 12px 8px;
+  border-bottom:2px solid #2b2b2b;
+  overflow:hidden;
+}
+.card-yomigana{
+  color:#b8b8b8;
+  font-size:11px;
+  line-height:1.1;
+  font-weight:700;
+  letter-spacing:.06em;
+  margin-bottom:4px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.card-title{
+  font-size:24px;
+  line-height:1.08;
+  font-weight:900;
+  letter-spacing:-.02em;
+  word-break:break-word;
+}
+.card-style{
+  margin-top:8px;
+  color:#d8d8d8;
+  font-size:11px;
+  letter-spacing:.04em;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.card-body{
+  padding:12px 14px 16px;
+  font-size:14px;
+  line-height:1.55;
+  flex:1;
+}
+.spec{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  column-gap:14px;
+  row-gap:2px;
+  margin-bottom:8px;
+  font-size:14px;
+}
+.spec div{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.spec .full{
+  grid-column:1 / -1;
+  white-space:normal;
+  overflow:visible;
+  text-overflow:clip;
+}
+.card-desc{
+  white-space:pre-wrap;
+  line-height:1.62;
+}
+.empty{
+  color:#bbb;
+  text-align:center;
+  padding:56px 10px;
+  border:1px dashed #555;
+  border-radius:12px;
+}
+.hidden{display:none!important}
+.small-note{
+  color:#aaa;
+  font-size:12px;
+  line-height:1.5;
+  margin-top:10px;
+}
+@media(max-width:900px){
+  .header-inner{grid-template-columns:1fr}
+  .header-tabs{width:100%;flex-wrap:wrap}
+  .header-info{justify-content:flex-start}
+  .header-status{text-align:left}
+  main{grid-template-columns:1fr}
+  .controls{position:static;max-height:none}
+  .view-fixed{
+    left:16px;
+    top:190px;
+  }
+}
+@media print{
+  body{background:#fff;color:#000}
+  header,.controls,.tabs,.statbar,.result-list,#searchPanel,.view-fixed-head{display:none!important}
+  main{display:block;padding:0}
+  .panel{border:none;box-shadow:none;background:#fff;padding:0}
+  #viewPanel{display:block!important}
+  .view-grid{grid-template-columns:repeat(3,1fr);gap:10mm}
+  .skill-card{box-shadow:none;page-break-inside:avoid;min-height:120mm}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="header-main">
+      <h1>SKD Skill View Builder</h1>
+      <div class="sub">Googleスプレッドシートを自動参照して検索します。</div>
+    </div>
+    <div class="header-tabs">
+      <div class="header-tab active" data-tab="search">検索結果VIEW</div>
+      <div class="header-tab" data-tab="view">選択VIEW</div>
+    </div>
+    <div class="header-info">
+      <span class="header-count">全件 <b id="headerTotalCount">0</b></span>
+      <span class="header-count">表示 <b id="headerShownCount">0</b></span>
+      <span class="header-count">選択 <b id="headerSelectedCount">0</b></span>
+      <div class="header-status" id="headerStatus">未読込</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <aside class="panel controls">
+    <label>参照シートURL</label>
+    <input id="sheetUrl" type="text" value="https://docs.google.com/spreadsheets/d/1XSSgipkhFU0nukt4Hy7rk3AC1MJ0XhzdSe-J873Uivo/edit?gid=1787190988#gid=1787190988">
+    <div class="btns">
+      <button class="primary wide" id="loadSheet">Googleシートを再読込</button>
+    </div>
+
+    <label>CSVファイルを読み込む（予備）</label>
+    <input id="csvFile" type="file" accept=".csv,text/csv">
+
+    <label>キーワード（名称・技能・解説など全体検索）</label>
+    <input id="q" type="text" placeholder="例：ダメージ軽減 常時 カバーリング">
+
+    <div class="row2">
+      <div>
+        <label>検索方式</label>
+        <select id="mode">
+          <option value="and">すべて含む</option>
+          <option value="or">いずれか含む</option>
+        </select>
+      </div>
+      <div>
+        <label>チェック表示</label>
+        <select id="checkedMode">
+          <option value="all">すべて</option>
+          <option value="checked">チェック済のみ</option>
+          <option value="unchecked">未チェックのみ</option>
+        </select>
+      </div>
+    </div>
+
+    <label>スタイル（複数選択可）</label>
+    <select id="styleFilter" multiple></select>
+
+    <div class="row2">
+      <div>
+        <label>技能</label>
+        <input id="skillFilter" type="text" placeholder="例：〈白兵〉">
+      </div>
+      <div>
+        <label>タイミング</label>
+        <input id="timingFilter" type="text" placeholder="例：常時">
+      </div>
+    </div>
+
+    <div class="row2">
+      <div>
+        <label>対象</label>
+        <input id="targetFilter" type="text" placeholder="例：自身">
+      </div>
+      <div>
+        <label>射程</label>
+        <input id="rangeFilter" type="text" placeholder="例：武器">
+      </div>
+    </div>
+
+    <div class="row2">
+      <div>
+        <label>ページ from</label>
+        <input id="pageMin" type="number" inputmode="numeric">
+      </div>
+      <div>
+        <label>ページ to</label>
+        <input id="pageMax" type="number" inputmode="numeric">
+      </div>
+    </div>
+
+    <label>除外キーワード</label>
+    <input id="exclude" type="text" placeholder="例：NPC専用 ウェット">
+
+    <div class="btns">
+      <button class="primary" id="apply">検索</button>
+      <button id="reset">条件クリア</button>
+      <button id="checkVisible">表示分をチェック</button>
+      <button id="uncheckVisible">表示分を解除</button>
+      <button class="warn" id="clearAll">全チェック解除</button>
+      <button id="printView">VIEW印刷</button>
+      <button id="downloadCsv">選択CSV</button>
+      <button id="copyTsv">選択TSVコピー</button>
+    </div>
+
+    <div class="small-note">
+      選択CSVはE列にブランク列を入れて出力します。ローカルHTMLからの直接fetchが失敗する環境でも、Google Visualization APIのJSONPで読み込みます。
+    </div>
+  </aside>
+
+  <section class="panel">
+
+    <div id="searchPanel">
+      <div id="resultList" class="result-list"></div>
+    </div>
+
+    <div id="viewPanel" class="view-fixed hidden">
+      <div class="view-fixed-head">
+        <div class="view-title">選択VIEW</div>
+        <div class="view-note">画面上部に固定表示。検索結果をスクロールしてもこのVIEWは動きません。</div>
+      </div>
+      <div id="viewGrid" class="view-grid"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+let DATA = [];
+let filtered = [];
+const selected = new Set();
+
+const $ = id => document.getElementById(id);
+const norm = v => String(v ?? "").toLowerCase().replace(/\s+/g," ").trim();
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function rowKey(r){
+  return [r.No, r.スタイル, r.ページ番号, r.名称, r.ヨミガナ, r.技能, r.タイミング].join("::");
+}
+function terms(s){
+  return norm(s).split(/[\s　]+/).filter(Boolean);
+}
+function haystack(r){
+  return norm(Object.values(r).join(" "));
+}
+function setStatus(msg){
+  $("headerStatus").textContent = msg;
+}
+function extractSheetId(url){
+  const m = String(url).match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  return m ? m[1] : "";
+}
+function extractGid(url){
+  const m = String(url).match(/[?&#]gid=(\d+)/);
+  return m ? m[1] : "0";
+}
+
+function normalizeHeader(h){
+  return String(h ?? "")
+    .replace(/^\uFEFF/,"")
+    .replace(/\s+/g,"")
+    .trim();
+}
+function pick(row, names){
+  for(const name of names){
+    if(row[name] !== undefined) return row[name];
+  }
+  return "";
+}
+function normalizeRecords(rawRows){
+  return rawRows.map((r, i) => {
+    const nr = {};
+    for(const [k,v] of Object.entries(r)){
+      nr[normalizeHeader(k)] = v ?? "";
+    }
+    return {
+      "No": pick(nr, ["No","NO","番号"]) || "",
+      "スタイル": pick(nr, ["スタイル","style","Style"]) || "",
+      "ページ番号": pick(nr, ["ページ番号","頁","ページ","page","Page"]) || "",
+      "名称": pick(nr, ["名称","名前","特技名","name","Name"]) || "",
+      "ヨミガナ": pick(nr, ["ヨミガナ","読み仮名","読み","よみがな","フリガナ","ふりがな","ruby","Ruby","kana","Kana"]) || "",
+      "技能": pick(nr, ["技能","skill","Skill"]) || "",
+      "上限": pick(nr, ["上限","limit","Limit"]) || "",
+      "タイミング": pick(nr, ["タイミング","timing","Timing"]) || "",
+      "対象": pick(nr, ["対象","target","Target"]) || "",
+      "射程": pick(nr, ["射程","range","Range"]) || "",
+      "目標値": pick(nr, ["目標値","目標","targetvalue","TargetValue"]) || "",
+      "対決": pick(nr, ["対決","oppose","Oppose"]) || "",
+      "解説": pick(nr, ["解説","効果","説明","desc","Description"]) || ""
+    };
+  }).filter(r => r.名称 || r.解説 || r.スタイル);
+}
+
+function parseCsv(text){
+  const rows = [];
+  let row = [], cell = "", inQ = false;
+  for(let i=0;i<text.length;i++){
+    const c = text[i], n = text[i+1];
+    if(inQ){
+      if(c === '"' && n === '"'){ cell += '"'; i++; }
+      else if(c === '"'){ inQ = false; }
+      else cell += c;
+    }else{
+      if(c === '"') inQ = true;
+      else if(c === ","){ row.push(cell); cell = ""; }
+      else if(c === "\n"){
+        row.push(cell); rows.push(row); row = []; cell = "";
+      }else if(c !== "\r") cell += c;
+    }
+  }
+  row.push(cell); rows.push(row);
+  const header = rows.shift().map(h => h.replace(/^\uFEFF/,""));
+  return rows.filter(r => r.some(v => String(v).trim() !== "")).map(r => {
+    const o = {};
+    header.forEach((h,i) => o[h] = r[i] ?? "");
+    return o;
+  });
+}
+
+function gvizToRecords(resp){
+  const cols = resp.table.cols.map(c => c.label || c.id || "");
+  return resp.table.rows.map(row => {
+    const o = {};
+    cols.forEach((h,i) => {
+      const cell = row.c[i];
+      o[h] = cell ? (cell.f ?? cell.v ?? "") : "";
+    });
+    return o;
+  });
+}
+
+let gvizScript = null;
+function loadGoogleSheet(){
+  const url = $("sheetUrl").value.trim();
+  const id = extractSheetId(url);
+  const gid = extractGid(url);
+  if(!id){
+    setStatus("シートURLからIDを取得できません。");
+    return;
+  }
+  setStatus("Googleシート読込中...");
+  if(gvizScript) gvizScript.remove();
+
+  window.google = window.google || {};
+  google.visualization = google.visualization || {};
+  google.visualization.Query = google.visualization.Query || {};
+  google.visualization.Query.setResponse = function(resp){
+    try{
+      if(resp.status === "error"){
+        setStatus("Googleシート読込エラー: " + (resp.errors?.[0]?.message || "unknown"));
+        return;
+      }
+      const raw = gvizToRecords(resp);
+      DATA = normalizeRecords(raw);
+      selected.clear();
+      initStyles();
+      applyFilters();
+      setStatus(`Googleシート読込完了: ${DATA.length}件`);
+    }catch(e){
+      console.error(e);
+      setStatus("Googleシートの解析に失敗: " + e.message);
+    }
+  };
+
+  const src = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?gid=${gid}&headers=1&tqx=out:json`;
+  gvizScript = document.createElement("script");
+  gvizScript.src = src;
+  gvizScript.onerror = () => setStatus("Googleシートを読み込めません。共有設定またはURLを確認してください。");
+  document.body.appendChild(gvizScript);
+}
+
+function initStyles(){
+  const styles = [...new Set(DATA.map(r => r.スタイル).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"ja"));
+  $("styleFilter").innerHTML = styles.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join("");
+}
+
+function getSelectedOptions(sel){
+  return [...sel.selectedOptions].map(o => o.value);
+}
+
+function applyFilters(){
+  const qTerms = terms($("q").value);
+  const exTerms = terms($("exclude").value);
+  const mode = $("mode").value;
+  const styles = getSelectedOptions($("styleFilter"));
+  const skill = norm($("skillFilter").value);
+  const timing = norm($("timingFilter").value);
+  const target = norm($("targetFilter").value);
+  const range = norm($("rangeFilter").value);
+  const pageMin = $("pageMin").value === "" ? null : Number($("pageMin").value);
+  const pageMax = $("pageMax").value === "" ? null : Number($("pageMax").value);
+  const checkedMode = $("checkedMode").value;
+
+  filtered = DATA.filter(r => {
+    const h = haystack(r);
+    if(qTerms.length){
+      const ok = mode === "and" ? qTerms.every(t => h.includes(t)) : qTerms.some(t => h.includes(t));
+      if(!ok) return false;
+    }
+    if(exTerms.length && exTerms.some(t => h.includes(t))) return false;
+    if(styles.length && !styles.includes(r.スタイル)) return false;
+    if(skill && !norm(r.技能).includes(skill)) return false;
+    if(timing && !norm(r.タイミング).includes(timing)) return false;
+    if(target && !norm(r.対象).includes(target)) return false;
+    if(range && !norm(r.射程).includes(range)) return false;
+    const p = Number(String(r.ページ番号).replace(/[^0-9]/g,""));
+    if(pageMin !== null && (!p || p < pageMin)) return false;
+    if(pageMax !== null && (!p || p > pageMax)) return false;
+    const isChecked = selected.has(rowKey(r));
+    if(checkedMode === "checked" && !isChecked) return false;
+    if(checkedMode === "unchecked" && isChecked) return false;
+    return true;
+  });
+  render();
+}
+
+function render(){
+  $("headerTotalCount").textContent = DATA.length;
+  $("headerShownCount").textContent = filtered.length;
+  $("headerSelectedCount").textContent = selected.size;
+  renderResults();
+  renderView();
+}
+
+function renderResults(){
+  const list = $("resultList");
+  if(!DATA.length){
+    list.innerHTML = `<div class="empty">Googleシートを読み込み中、またはデータがありません。</div>`;
+    return;
+  }
+  if(!filtered.length){
+    list.innerHTML = `<div class="empty">条件に一致する特技がありません。</div>`;
+    return;
+  }
+  list.innerHTML = filtered.map(r => {
+    const key = rowKey(r);
+    const checked = selected.has(key) ? "checked" : "";
+    const yomi = String(r.ヨミガナ || "").trim();
+    const title = yomi
+      ? `${esc(r.名称)}<span class="result-yomigana">（${esc(yomi)}）</span>`
+      : esc(r.名称);
+    return `<div class="result">
+      <input type="checkbox" data-key="${esc(key)}" ${checked}>
+      <div>
+        <div class="result-title">${title}</div>
+        <div class="meta">${esc(r.スタイル)} / p.${esc(r.ページ番号)} / 技能：${esc(r.技能)} / 上限：${esc(r.上限)} / タイミング：${esc(r.タイミング)}</div>
+        <div class="desc">${esc(r.解説)}</div>
+      </div>
+    </div>`;
+  }).join("");
+  list.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener("change", e => {
+      if(e.target.checked) selected.add(e.target.dataset.key);
+      else selected.delete(e.target.dataset.key);
+      render();
+    });
+  });
+}
+
+function selectedRows(){
+  const keys = new Set(selected);
+  return DATA.filter(r => keys.has(rowKey(r)));
+}
+
+function cardHtml(r){
+  const yomi = String(r.ヨミガナ || "").trim();
+  const yomiHtml = yomi ? `<div class="card-yomigana">${esc(yomi)}</div>` : "";
+  return `<article class="skill-card">
+    <div class="card-head">
+      ${yomiHtml}
+      <div class="card-title">${esc(r.名称)}</div>
+      <div class="card-style">${esc(r.スタイル)} / p.${esc(r.ページ番号)}</div>
+    </div>
+    <div class="card-body">
+      <div class="spec">
+        <div>技能：${esc(r.技能)}</div><div>上限：${esc(r.上限)}</div>
+        <div class="full">タイミング：${esc(r.タイミング)}</div>
+        <div>対象：${esc(r.対象)}</div><div>射程：${esc(r.射程)}</div>
+        <div>目標値：${esc(r.目標値)}</div><div>対決：${esc(r.対決)}</div>
+      </div>
+      <div class="card-desc">解説：${esc(r.解説)}</div>
+    </div>
+  </article>`;
+}
+
+function renderView(){
+  const rows = selectedRows();
+  const grid = $("viewGrid");
+  if(!rows.length){
+    grid.innerHTML = `<div class="empty">チェックした特技がここにカード表示されます。</div>`;
+    return;
+  }
+  grid.innerHTML = rows.map(cardHtml).join("");
+}
+
+function resetFilters(){
+  ["q","skillFilter","timingFilter","targetFilter","rangeFilter","pageMin","pageMax","exclude"].forEach(id => $(id).value = "");
+  $("mode").value = "and";
+  $("checkedMode").value = "all";
+  [...$("styleFilter").options].forEach(o => o.selected = false);
+  applyFilters();
+}
+
+function makeCsv(rows){
+  const headers = ["No","スタイル","ページ番号","名称","","技能","上限","タイミング","対象","射程","目標値","対決","解説"];
+  const quote = v => `"${String(v ?? "").replace(/"/g,'""')}"`;
+  return [headers.map(quote).join(","), ...rows.map(r => headers.map(h => quote(h ? r[h] : "")).join(","))].join("\r\n");
+}
+function download(filename,text,type="text/plain"){
+  const blob = new Blob(["\uFEFF" + text], {type});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+function makeTsv(rows){
+  const headers = ["名称","種別","レベル","技能","上限","タイミング","対象","射程","目標値","対決","解説","参照P"];
+  const clean = v => String(v ?? "").replace(/\t/g," ").replace(/\r?\n/g,"\\n");
+  const lines = [headers.join("\t")];
+  for(const r of rows){
+    lines.push([
+      r.名称,"スタイル技能","",r.技能,r.上限,r.タイミング,r.対象,r.射程,r.目標値,r.対決,r.解説,r.ページ番号
+    ].map(clean).join("\t"));
+  }
+  return lines.join("\n");
+}
+
+function switchTab(tab){
+  document.querySelectorAll(".header-tab").forEach(t => t.classList.toggle("active", t.dataset.tab === tab));
+  $("searchPanel").classList.toggle("hidden", tab !== "search");
+  $("viewPanel").classList.toggle("hidden", tab !== "view");
+}
+document.addEventListener("click", e => {
+  if(e.target.classList.contains("header-tab")){
+    switchTab(e.target.dataset.tab);
+  }
+});
+
+$("loadSheet").addEventListener("click", loadGoogleSheet);
+$("csvFile").addEventListener("change", async e => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const text = await file.text();
+  DATA = normalizeRecords(parseCsv(text));
+  selected.clear();
+  initStyles();
+  applyFilters();
+  setStatus(`CSV読込完了: ${DATA.length}件`);
+});
+$("apply").addEventListener("click", applyFilters);
+["q","skillFilter","timingFilter","targetFilter","rangeFilter","pageMin","pageMax","exclude"].forEach(id => {
+  $(id).addEventListener("keydown", e => { if(e.key === "Enter") applyFilters(); });
+});
+["mode","checkedMode","styleFilter"].forEach(id => $(id).addEventListener("change", applyFilters));
+$("reset").addEventListener("click", resetFilters);
+$("checkVisible").addEventListener("click", () => { filtered.forEach(r => selected.add(rowKey(r))); render(); });
+$("uncheckVisible").addEventListener("click", () => { filtered.forEach(r => selected.delete(rowKey(r))); render(); });
+$("clearAll").addEventListener("click", () => { selected.clear(); render(); });
+$("printView").addEventListener("click", () => { switchTab("view"); window.print(); });
+$("downloadCsv").addEventListener("click", () => {
+  const rows = selectedRows();
+  if(!rows.length) return alert("選択された特技がありません。");
+  download("skd_selected_skills.csv", makeCsv(rows), "text/csv");
+});
+$("copyTsv").addEventListener("click", async () => {
+  const rows = selectedRows();
+  if(!rows.length) return alert("選択された特技がありません。");
+  const tsv = makeTsv(rows);
+  try{
+    await navigator.clipboard.writeText(tsv);
+    alert(`${rows.length}件のTSVをコピーしました。`);
+  }catch(e){
+    prompt("コピーできないため、手動でコピーしてください。", tsv);
+  }
+});
+
+loadGoogleSheet();
+</script>
+</body>
+</html>
